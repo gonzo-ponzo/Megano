@@ -16,7 +16,3 @@ docker-compose up -d --no-deps --build web
 ```commandline
 docker ps
 ```
-* Зайти в контейнер для запуска консольных команд
-```commandline
-docker exec -it <имя контейнера с web> bash 
-```
