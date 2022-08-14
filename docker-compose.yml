@@ -24,7 +24,6 @@ services:
       - redis_db
 
   db:
-    container_name: postgres
     image: postgres:13
     environment:
       POSTGRES_USER: $POSTGRES_USER

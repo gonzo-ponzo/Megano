@@ -6,3 +6,4 @@ redis==4.3.1
 celery==5.2.7
 environs==9.3.0
 psycopg2==2.9.3
+django-timestampable==1.0.3
