@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from django.views.generic import CreateView
 
-# Create your views here.
+from product.forms import ProductForm
+from product.models import Product
+
+
+class CreateProductView(CreateView):
+    model = Product
+    form_class = ProductForm
