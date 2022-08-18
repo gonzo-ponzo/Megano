@@ -15,8 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from product.views import MainPage
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', MainPage.as_view(), name='main page'),
     path('product/', include('product.urls')),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
