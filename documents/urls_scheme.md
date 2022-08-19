@@ -477,7 +477,6 @@
         <td>
         </td>
     </tr>
-<<<<<<< HEAD
     <tr>
         <td>
             user
@@ -592,6 +591,4 @@
         <td>
         </td>
     </tr>
-=======
->>>>>>> origin/urls_scheme
 </table>
