@@ -268,7 +268,7 @@
             get
         </td>
         <td>
-            /user_page/&lt;id&gt;
+            /user_page
         </td>
     </tr>
     <tr>
@@ -285,7 +285,7 @@
             post
         </td>
         <td>
-            /user_page/&lt;id&gt;/save
+            /user_page/update
         </td>
     </tr>
     <tr>
@@ -370,7 +370,7 @@
             get
         </td>
         <td>
-            /basket/delet_product/&lt;id&gt;
+            /basket/delete_product/&lt;id&gt;
         </td>
     </tr>
     <tr>
