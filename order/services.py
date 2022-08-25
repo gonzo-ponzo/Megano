@@ -45,7 +45,7 @@ class Order:
 		pass
 
 	def set_pay_param(self):
-		"""Установить параметры доставки"""
+		"""Установить параметры оплтаты"""
 		pass
 
 	def get_order_status(self):
