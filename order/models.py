@@ -43,7 +43,7 @@ class OrderOffer(Model):
     order = models.ForeignKey(Order, on_delete=models.PROTECT, verbose_name=_("заказ"))
     offer = models.ForeignKey(Offer, on_delete=models.PROTECT, verbose_name=_("предложение магазина"))
     price = models.DecimalField(max_digits=11, decimal_places=2, verbose_name=_("цена"))
-    amount = models.IntegerField(verbose_name=_("количество"))
+    amount = models.PositiveIntegerField(verbose_name=_("количество"))
 
     class Meta:
         verbose_name = _("товар в заказе")

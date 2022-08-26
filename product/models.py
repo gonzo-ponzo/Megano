@@ -29,7 +29,7 @@ class Offer(Model):
     shop = models.ForeignKey(Shop, on_delete=models.PROTECT, verbose_name=_("магазин"))
     product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name=_("продукт"))
     price = models.DecimalField(max_digits=11, decimal_places=2, verbose_name=_("цена"))
-    amount = models.IntegerField(verbose_name=_("количество"))
+    amount = models.PositiveIntegerField(verbose_name=_("количество"))
 
     class Meta:
         verbose_name = _("предложение магазина")
@@ -51,6 +51,7 @@ class ProductCategory(MPTTModel, Model):
     name = models.CharField(max_length=512, verbose_name=_("название"))
     description = models.TextField(blank=True, verbose_name=_("описание"))
     icon = models.ImageField(upload_to="static/img/category", verbose_name=_("значок"))
+    slug = models.SlugField(max_length=100, unique=True, verbose_name='url')
     parent = TreeForeignKey('self', on_delete=models.PROTECT, null=True, blank=True, related_name='children')
 
     def __str__(self):
