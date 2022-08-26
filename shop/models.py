@@ -9,11 +9,10 @@ class Shop(models.Model):
     name = models.CharField(max_length=512, null=False, verbose_name=_("название"))
     description = models.TextField(max_length=5000, verbose_name=_("описание"))
     phone = PhoneNumberField(null=False, blank=False, unique=True, verbose_name=_("телефон"))
-    email = models.EmailField(
-        max_length=70, blank=False, null= False, unique= True, verbose_name=_("электронная почта"))
-    address = models.CharField(max_length=512, null=False, verbose_name=_("адрес магазина"))
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
+    email = models.EmailField(max_length=70, blank=False, null=False, unique=True, verbose_name=_("электронная почта"))
+    address = models.CharField(max_length=512, null=False, verbose_name=_("адрес"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("дата создания"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("дата последнего обновления"))
     image = models.ImageField(blank=True, upload_to="static/img/shop_logo", verbose_name=_("логотип"))
     user_id = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name=_("владелец"))
 
