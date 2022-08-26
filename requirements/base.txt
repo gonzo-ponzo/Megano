@@ -7,3 +7,4 @@ celery==5.2.7
 environs==9.3.0
 psycopg2==2.9.3
 django-timestampable==1.0.3
+django-mptt==0.13.4

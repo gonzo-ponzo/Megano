@@ -1,6 +1,7 @@
 from timestamps.models import models, Model, Timestampable
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
+from mptt.models import MPTTModel, TreeForeignKey
 
 from shop.models import Shop
 
@@ -45,18 +46,20 @@ class ProductImage(Model):
         verbose_name_plural = _("картинки продукта")
 
 
-class ProductCategory(Model):
+class ProductCategory(MPTTModel, Model):
     """Категория продукта"""
     name = models.CharField(max_length=512, verbose_name=_("название"))
     description = models.TextField(blank=True, verbose_name=_("описание"))
     icon = models.ImageField(upload_to="static/img/category", verbose_name=_("значок"))
+    parent = TreeForeignKey('self', on_delete=models.PROTECT, null=True, blank=True, related_name='children')
 
     def __str__(self):
         return self.name
 
-    class Meta:
+    class MPTTMeta:
         verbose_name = _("категория")
         verbose_name_plural = _("категории")
+        order_insertion_by = ['id']
 
 
 class Property(Model):
