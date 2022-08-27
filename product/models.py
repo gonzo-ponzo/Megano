@@ -36,9 +36,9 @@ class Offer(Model):
         verbose_name_plural = _("предложения магазина")
 
 
-class ProductImage(Model):
+class ProductImage(Timestampable):
     """Картинка продукта"""
-    product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name=_("продукт"))
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=_("продукт"))
     image = models.ImageField(upload_to="product/%Y/%m/%d", verbose_name=_("фото"))
 
     class Meta:
@@ -51,7 +51,7 @@ class ProductCategory(MPTTModel, Model):
     name = models.CharField(max_length=512, verbose_name=_("название"))
     description = models.TextField(blank=True, verbose_name=_("описание"))
     icon = models.ImageField(upload_to="category/%Y/%m/%d", verbose_name=_("значок"))
-    slug = models.SlugField(max_length=100, unique=True, verbose_name='url')
+    slug = models.SlugField(max_length=100, unique=True, verbose_name="url")
     parent = TreeForeignKey('self', on_delete=models.PROTECT, null=True, blank=True, related_name='children')
 
     def __str__(self):
@@ -63,7 +63,7 @@ class ProductCategory(MPTTModel, Model):
         order_insertion_by = ['id']
 
 
-class Property(Model):
+class Property(Timestampable):
     """Свойство продукта"""
     name = models.CharField(max_length=512, verbose_name=_("наименование"))
     description = models.TextField(blank=True, verbose_name=_("описание"))
@@ -76,10 +76,10 @@ class Property(Model):
         verbose_name_plural = _("свойства продукта")
 
 
-class ProductProperty(Model):
+class ProductProperty(Timestampable):
     """Значение свойства продукта"""
     product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name=_("продукт"))
-    property = models.ForeignKey(Property, on_delete=models.PROTECT, verbose_name=_("свойство"))
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, verbose_name=_("свойство"))
     value = models.CharField(max_length=128, verbose_name=_("значение"))
 
     class Meta:
@@ -101,7 +101,7 @@ class Manufacturer(Model):
         verbose_name_plural = _("производители")
 
 
-class Review(Model):
+class Review(Timestampable):
     """Отзыв"""
     MIN_GRADE = 1
     MAX_GRADE = 5
