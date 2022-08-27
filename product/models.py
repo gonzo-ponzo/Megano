@@ -39,7 +39,7 @@ class Offer(Model):
 class ProductImage(Model):
     """Картинка продукта"""
     product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name=_("продукт"))
-    image = models.ImageField(upload_to="static/img/product", verbose_name=_("фото"))
+    image = models.ImageField(upload_to="product/%Y/%m/%d", verbose_name=_("фото"))
 
     class Meta:
         verbose_name = _("картинка продукта")
@@ -50,7 +50,7 @@ class ProductCategory(MPTTModel, Model):
     """Категория продукта"""
     name = models.CharField(max_length=512, verbose_name=_("название"))
     description = models.TextField(blank=True, verbose_name=_("описание"))
-    icon = models.ImageField(upload_to="static/img/category", verbose_name=_("значок"))
+    icon = models.ImageField(upload_to="category/%Y/%m/%d", verbose_name=_("значок"))
     slug = models.SlugField(max_length=100, unique=True, verbose_name='url')
     parent = TreeForeignKey('self', on_delete=models.PROTECT, null=True, blank=True, related_name='children')
 
@@ -90,7 +90,7 @@ class ProductProperty(Model):
 class Manufacturer(Model):
     """Производитель"""
     name = models.CharField(max_length=255, verbose_name=_("название"))
-    logo = models.ImageField(blank=True, upload_to="static/img/manufacturer", verbose_name=_("логотип"))
+    logo = models.ImageField(blank=True, upload_to="manufacturer/%Y/%m/%d", verbose_name=_("логотип"))
     description = models.TextField(blank=True, verbose_name=_("описание"))
 
     def __str__(self):
