@@ -12,9 +12,4 @@ class Banner(Model):
     image = models.ImageField(upload_to="static/img/banner", verbose_name=_("баннер"))
     is_active = models.BooleanField(default=False, verbose_name=_("активный"))
 
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = _("баннер")
-        verbose_name_plural = _("баннеры")
+# Create your models here.
