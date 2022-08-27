@@ -28,7 +28,7 @@ class Order(Model):
     delivery_type = models.IntegerField(choices=DELIVERY_CHOICES, verbose_name=_("тип доставки"))
     payment_type = models.IntegerField(choices=PAYMENT_CHOICES, verbose_name=_("способ оплаты"))
     status_type = models.IntegerField(choices=STATUS_CHOICES, verbose_name=_("статус заказа"))
-    error_type = models.IntegerField(choices=ERROR_CHOICES, verbose_name=_("ошибка заказа"))
+    error_type = models.IntegerField(blank=True, null=True, choices=ERROR_CHOICES, verbose_name=_("ошибка заказа"))
     delivery = models.ForeignKey("Delivery", blank=True, null=True, on_delete=models.PROTECT,
                                  verbose_name=_("доставка"))
     offer = models.ManyToManyField(Offer, through="OrderOffer", verbose_name=_("заказанные продукты"))
