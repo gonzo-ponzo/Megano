@@ -1,0 +1,269 @@
+{% load static %}
+<head>
+  <title>Megano</title>
+  {% include 'base.html' %}
+</head>
+<body class="Site">
+  {% include 'header.html' %}
+  <div class="Middle Middle_top">
+    <div class="Middle-top">
+      <div class="wrap">
+        <div class="Middle-header">
+          <h1 class="Middle-title">Личный кабинет
+          </h1>
+          <ul class="breadcrumbs Middle-breadcrumbs">
+            <li class="breadcrumbs-item"><a href="index.html">home</a>
+            </li>
+            <li class="breadcrumbs-item breadcrumbs-item_current"><span>Личный кабинет</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="Section Section_column Section_columnLeft">
+      <div class="wrap">
+        <div class="Section-column">
+          <div class="Section-columnSection">
+            <header class="Section-header">
+              <strong class="Section-title">Навигация
+              </strong>
+            </header>
+            <div class="Section-columnContent">
+              <div class="NavigateProfile">
+                <ul class="menu menu_vt">
+                  <li class="menu-item_ACTIVE menu-item"><a class="menu-link" href="account.html">Личный кабинет</a>
+                  </li>
+                  <li class="menu-item"><a class="menu-link" href="profile.html">Профиль</a>
+                  </li>
+                  <li class="menu-item"><a class="menu-link" href="historyorder.html">История заказов</a>
+                  </li>
+                  <li class="menu-item"><a class="menu-link" href="historyview.html">История просмотра</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="Section-content">
+          <div class="Account">
+            <div class="Account-group">
+              <div class="Account-column">
+                <div class="Account-avatar"><img src="assets/img/content/home/card.jpg" alt="card.jpg"/>
+                </div>
+              </div>
+              <div class="Account-column">
+                <div class="Account-name">Иванов Иван Иванович
+                </div><a class="Account-editLink" href="profile.html">Редактировать профиль</a>
+              </div>
+            </div>
+            <div class="Account-group">
+              <div class="Account-column Account-column_full">
+                <div class="Order Order_anons">
+                  <div class="Order-personal">
+                    <div class="row">
+                      <div class="row-block"><a class="Order-title" href="oneorder.html">Заказ&#32;<span class="Order-numberOrder">№200</span>&#32;от&#32;<span class="Order-dateOrder">21.07.2020</span></a>
+                        <div class="Account-editLink"><a href="historyorder.html">История заказов</a>
+                        </div>
+                      </div>
+                      <div class="row-block">
+                        <div class="Order-info Order-info_delivery">
+                          <div class="Order-infoType">Тип доставки:
+                          </div>
+                          <div class="Order-infoContent">Обычная доставка
+                          </div>
+                        </div>
+                        <div class="Order-info Order-info_pay">
+                          <div class="Order-infoType">Оплата:
+                          </div>
+                          <div class="Order-infoContent">Онлайн картой
+                          </div>
+                        </div>
+                        <div class="Order-info">
+                          <div class="Order-infoType">Общая стоимость:
+                          </div>
+                          <div class="Order-infoContent">200.99$
+                          </div>
+                        </div>
+                        <div class="Order-info Order-info_status">
+                          <div class="Order-infoType">Статус:
+                          </div>
+                          <div class="Order-infoContent">Не оплачен
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="Account-group">
+              <div class="Account-column Account-column_full">
+                <header class="Section-header">
+                  <h2 class="Section-title">История просмотров
+                  </h2>
+                </header>
+                <div class="Cards Cards_account">
+                  <div class="Card"><a class="Card-picture" href="#"><img src="assets/img/content/home/card.jpg" alt="card.jpg"/></a>
+                    <div class="Card-content">
+                      <strong class="Card-title"><a href="#">Corsair Carbide Series Arctic White Steel</a>
+                      </strong>
+                      <div class="Card-description">
+                        <div class="Card-cost"><span class="Card-priceOld">$115.00</span><span class="Card-price">$85.00</span>
+                        </div>
+                        <div class="Card-category">Games / xbox
+                        </div>
+                        <div class="Card-hover"><a class="Card-btn" href="#"><img src="assets/img/icons/card/bookmark.svg" alt="bookmark.svg"/></a><a class="Card-btn" href="#"><img src="assets/img/icons/card/cart.svg" alt="cart.svg"/></a><a class="Card-btn" href="#"><img src="assets/img/icons/card/change.svg" alt="change.svg"/></a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="Card-sale">-60%
+                    </div>
+                  </div>
+                  <div class="Card hide_700"><a class="Card-picture" href="#"><img src="assets/img/content/home/card.jpg" alt="card.jpg"/></a>
+                    <div class="Card-content">
+                      <strong class="Card-title"><a href="#">Barand New Phone Smart Business</a>
+                      </strong>
+                      <div class="Card-description">
+                        <div class="Card-cost"><span class="Card-priceOld">$115.00</span><span class="Card-price">$85.00</span>
+                        </div>
+                        <div class="Card-category">Games / xbox
+                        </div>
+                        <div class="Card-hover"><a class="Card-btn" href="#"><img src="assets/img/icons/card/bookmark.svg" alt="bookmark.svg"/></a><a class="Card-btn" href="#"><img src="assets/img/icons/card/cart.svg" alt="cart.svg"/></a><a class="Card-btn" href="#"><img src="assets/img/icons/card/change.svg" alt="change.svg"/></a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="Card-sale">-60%
+                    </div>
+                  </div>
+                  <div class="Card hide_md"><a class="Card-picture" href="#"><img src="assets/img/content/home/card.jpg" alt="card.jpg"/></a>
+                    <div class="Card-content">
+                      <strong class="Card-title"><a href="#">Mavic PRO Mini Drones Hobby RC Quadcopter</a>
+                      </strong>
+                      <div class="Card-description">
+                        <div class="Card-cost"><span class="Card-priceOld">$115.00</span><span class="Card-price">$185.00</span>
+                        </div>
+                        <div class="Card-category">Digital / xbox
+                        </div>
+                        <div class="Card-hover"><a class="Card-btn" href="#"><img src="assets/img/icons/card/bookmark.svg" alt="bookmark.svg"/></a><a class="Card-btn" href="#"><img src="assets/img/icons/card/cart.svg" alt="cart.svg"/></a><a class="Card-btn" href="#"><img src="assets/img/icons/card/change.svg" alt="change.svg"/></a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="Card-sale">-60%
+                    </div>
+                  </div>
+                </div>
+                <div class="Account-editLink Account-editLink_view"><a href="historyview.html">Перейти на полный список</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="Footer">
+    <div class="wrap">
+      <div class="row Footer-main">
+        <div class="row-block"><a class="logo Footer-logo" href="index.html"><img class="logo-image" src="assets/img/logo_footer.png" alt="logo_footer.png"/></a>
+          <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincid  unt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad
+          </p>
+          <ul class="menu menu_img menu_smallImg Footer-menuSoc">
+            <li class="menu-item"><a class="menu-link" href="#"><img src="assets/img/icons/socialFooter/fb.svg" alt="fb.svg"/></a>
+            </li>
+            <li class="menu-item"><a class="menu-link" href="#"><img src="assets/img/icons/socialFooter/tw.svg" alt="tw.svg"/></a>
+            </li>
+            <li class="menu-item"><a class="menu-link" href="#"><img src="assets/img/icons/socialFooter/in.svg" alt="in.svg"/></a>
+            </li>
+            <li class="menu-item"><a class="menu-link" href="#"><img src="assets/img/icons/socialFooter/pt.svg" alt="pt.svg"/></a>
+            </li>
+            <li class="menu-item"><a class="menu-link" href="#"><img src="assets/img/icons/socialFooter/mail.svg" alt="mail.svg"/></a>
+            </li>
+          </ul>
+        </div>
+        <div class="row-block">
+          <strong class="Footer-title">Useful Links
+          </strong>
+          <ul class="menu menu_vt Footer-menu">
+            <li class="menu-item"><a class="menu-link" href="#">Checkout</a>
+            </li>
+            <li class="menu-item"><a class="menu-link" href="#">My Cart</a>
+            </li>
+            <li class="menu-item"><a class="menu-link" href="#">Delivery</a>
+            </li>
+            <li class="menu-item"><a class="menu-link" href="#">Order Info</a>
+            </li>
+            <li class="menu-item"><a class="menu-link" href="#">Terms</a>
+            </li>
+            <li class="menu-item"><a class="menu-link" href="#">Conditions</a>
+            </li>
+          </ul>
+        </div>
+        <div class="row-block">
+          <strong class="Footer-title">My Account
+          </strong>
+          <ul class="menu menu_vt Footer-menu">
+            <li class="menu-item"><a class="menu-link" href="#">Accessories</a>
+            </li>
+            <li class="menu-item"><a class="menu-link" href="#">Bags</a>
+            </li>
+            <li class="menu-item"><a class="menu-link" href="#">Cameras</a>
+            </li>
+            <li class="menu-item"><a class="menu-link" href="#">Clothings</a>
+            </li>
+            <li class="menu-item"><a class="menu-link" href="#">Electronics</a>
+            </li>
+            <li class="menu-item"><a class="menu-link" href="#">Fashion</a>
+            </li>
+          </ul>
+        </div>
+        <div class="row-block">
+          <strong class="Footer-title">Contacts
+          </strong>
+          <p>Phone: 8.800.200.600<br>Email: Support@ninzio.com<br>Skype: techno<br>Address: New York, north<br>Avenue 26/7<br>0057
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="Footer-copy">
+      <div class="wrap">
+        <div class="row row_space">
+          <div class="row-block">© Copyright&#32;<a href="#">Megano Store.</a>&#32;All rights reserved.
+          </div>
+          <div class="row-block"><span>Accepted Payments</span>
+            <div class="Footer-payments">
+              <div><img src="assets/img/payments/visa.png" alt="visa.png"/>
+              </div>
+              <div><img src="assets/img/payments/mastercard.png" alt="mastercard.png"/>
+              </div>
+              <div><img src="assets/img/payments/paypal.png" alt="paypal.png"/>
+              </div>
+              <div><img src="assets/img/payments/american.png" alt="american.png"/>
+              </div>
+              <div><img src="assets/img/payments/electron.png" alt="electron.png"/>
+              </div>
+              <div><img src="assets/img/payments/maestro.png" alt="maestro.png"/>
+              </div>
+              <div><img src="assets/img/payments/delta.png" alt="delta.png"/>
+              </div>
+              <div><img src="assets/img/payments/e.png" alt="e.png"/>
+              </div>
+              <div><img src="assets/img/payments/dk.png" alt="dk.png"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!--+Middle-->
+  <!--    +div.-top-->
+  <!--        +breadcrumbs('Главная','Портфолио')-->
+  <!--    +Article('portfolio')-->
+  <!---->
+  <script src="assets/plg/jQuery/jquery-3.5.0.slim.min.js"></script>
+  <script src="assets/plg/form/jquery.form.js"></script>
+  <script src="assets/plg/form/jquery.maskedinput.min.js"></script>
+  <script src="assets/plg/range/ion.rangeSlider.min.js"></script>
+  <script src="assets/plg/Slider/slick.min.js"></script>
+  <script src="assets/js/scripts.js"></script>
+</body>
