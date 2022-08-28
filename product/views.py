@@ -1,5 +1,5 @@
 from django.views.generic import CreateView
-from django.shortcuts import render
+from django.shortcuts import render  # noqa: F401
 from product.forms import ProductForm
 from product.models import Product
 from django.views.generic import TemplateView
@@ -11,4 +11,4 @@ class CreateProductView(CreateView):
 
 
 class MainPage(TemplateView):
-    template_name = 'index.html'
+    template_name = "index.html"
