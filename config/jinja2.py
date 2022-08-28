@@ -19,8 +19,10 @@ def environment(**options):
             env.globals[name] = obj
 
     # Добавляем ф-ции django
-    env.globals.update({
-        'static': static,
-        'url': reverse,
-    })
+    env.globals.update(
+        {
+            "static": static,
+            "url": reverse,
+        }
+    )
     return env
