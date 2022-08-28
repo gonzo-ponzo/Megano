@@ -6,6 +6,7 @@ from product.models import Product
 
 class Banner(Timestampable):
     """Баннер"""
+
     product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name=_("продукт"))
     name = models.CharField(max_length=255, verbose_name=_("название"))
     description = models.TextField(blank=True, verbose_name=_("описание"))

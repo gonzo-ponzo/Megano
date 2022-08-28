@@ -11,4 +11,4 @@ class CreateProductView(CreateView):
 
 
 class MainPage(TemplateView):
-    template_name = 'index.html'
+    template_name = "index.html"
