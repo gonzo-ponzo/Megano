@@ -7,14 +7,17 @@ from product.models import Offer
 
 class Order(Model):
     """Заказ"""
+
     DELIVERIES = (_("Доставка"), _("Экспресс-доставка"))
     PAYMENTS = (_("Онлайн картой"), _("Онлайн со случайного чужого счёта"))
 
     # TODO над статусами и ошибками над еще подумать какие надо,
     #  и может вообще в отдельные таблицы занести
     STATUSES = (_("Оплачен"), _("Не оплачен"))
-    ERRORS = (_("Оплата не выполнена, на вашем счёте не хватает средств"),
-              _("Оплата не выполнена, произошел сбой при списании средств"))
+    ERRORS = (
+        _("Оплата не выполнена, на вашем счёте не хватает средств"),
+        _("Оплата не выполнена, произошел сбой при списании средств"),
+    )
 
     DELIVERY_CHOICES = [(idx, value) for idx, value in enumerate(DELIVERIES)]
     PAYMENT_CHOICES = [(idx, value) for idx, value in enumerate(PAYMENTS)]
@@ -29,8 +32,9 @@ class Order(Model):
     payment_type = models.IntegerField(choices=PAYMENT_CHOICES, verbose_name=_("способ оплаты"))
     status_type = models.IntegerField(choices=STATUS_CHOICES, verbose_name=_("статус заказа"))
     error_type = models.IntegerField(blank=True, null=True, choices=ERROR_CHOICES, verbose_name=_("ошибка заказа"))
-    delivery = models.ForeignKey("Delivery", blank=True, null=True, on_delete=models.PROTECT,
-                                 verbose_name=_("доставка"))
+    delivery = models.ForeignKey(
+        "Delivery", blank=True, null=True, on_delete=models.PROTECT, verbose_name=_("доставка")
+    )
     offer = models.ManyToManyField(Offer, through="OrderOffer", verbose_name=_("заказанные продукты"))
 
     class Meta:
@@ -40,6 +44,7 @@ class Order(Model):
 
 class OrderOffer(Model):
     """Товар в заказе"""
+
     order = models.ForeignKey(Order, on_delete=models.PROTECT, verbose_name=_("заказ"))
     offer = models.ForeignKey(Offer, on_delete=models.PROTECT, verbose_name=_("предложение магазина"))
     price = models.DecimalField(max_digits=11, decimal_places=2, verbose_name=_("цена"))
@@ -52,6 +57,7 @@ class OrderOffer(Model):
 
 class Delivery(Model):
     """Цена доставки"""
+
     price = models.DecimalField(max_digits=11, decimal_places=2, verbose_name=_("цена"))
     express_price = models.DecimalField(max_digits=11, decimal_places=2, verbose_name=_("экспресс-цена"))
     sum_order = models.DecimalField(max_digits=11, decimal_places=2, verbose_name=_("мин. цена корзины"))

@@ -8,6 +8,7 @@ from shop.models import Shop
 
 class Product(Model):
     """Продукт"""
+
     name = models.CharField(max_length=512, verbose_name=_("наименование"))
     description = models.TextField(blank=True, verbose_name=_("описание"))
     limited = models.BooleanField(default=False, verbose_name=_("ограниченный тираж"))
@@ -26,6 +27,7 @@ class Product(Model):
 
 class Offer(Model):
     """Предложение магазина"""
+
     shop = models.ForeignKey(Shop, on_delete=models.PROTECT, verbose_name=_("магазин"))
     product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name=_("продукт"))
     price = models.DecimalField(max_digits=11, decimal_places=2, verbose_name=_("цена"))
@@ -38,6 +40,7 @@ class Offer(Model):
 
 class ProductImage(Timestampable):
     """Картинка продукта"""
+
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=_("продукт"))
     image = models.ImageField(upload_to="product/%Y/%m/%d", verbose_name=_("фото"))
 
@@ -48,11 +51,12 @@ class ProductImage(Timestampable):
 
 class ProductCategory(MPTTModel, Model):
     """Категория продукта"""
+
     name = models.CharField(max_length=512, verbose_name=_("название"))
     description = models.TextField(blank=True, verbose_name=_("описание"))
     icon = models.ImageField(upload_to="category/%Y/%m/%d", verbose_name=_("значок"))
     slug = models.SlugField(max_length=100, unique=True, verbose_name="url")
-    parent = TreeForeignKey('self', on_delete=models.PROTECT, null=True, blank=True, related_name='children')
+    parent = TreeForeignKey("self", on_delete=models.PROTECT, null=True, blank=True, related_name="children")
 
     def __str__(self):
         return self.name
@@ -60,11 +64,12 @@ class ProductCategory(MPTTModel, Model):
     class MPTTMeta:
         verbose_name = _("категория")
         verbose_name_plural = _("категории")
-        order_insertion_by = ['id']
+        order_insertion_by = ["id"]
 
 
 class Property(Timestampable):
     """Свойство продукта"""
+
     name = models.CharField(max_length=512, verbose_name=_("наименование"))
     description = models.TextField(blank=True, verbose_name=_("описание"))
 
@@ -78,6 +83,7 @@ class Property(Timestampable):
 
 class ProductProperty(Timestampable):
     """Значение свойства продукта"""
+
     product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name=_("продукт"))
     property = models.ForeignKey(Property, on_delete=models.CASCADE, verbose_name=_("свойство"))
     value = models.CharField(max_length=128, verbose_name=_("значение"))
@@ -89,6 +95,7 @@ class ProductProperty(Timestampable):
 
 class Manufacturer(Model):
     """Производитель"""
+
     name = models.CharField(max_length=255, verbose_name=_("название"))
     logo = models.ImageField(blank=True, upload_to="manufacturer/%Y/%m/%d", verbose_name=_("логотип"))
     description = models.TextField(blank=True, verbose_name=_("описание"))
@@ -103,6 +110,7 @@ class Manufacturer(Model):
 
 class Review(Timestampable):
     """Отзыв"""
+
     MIN_GRADE = 1
     MAX_GRADE = 5
     GRADE_CHOICES = [(grade, grade) for grade in range(MIN_GRADE, MAX_GRADE + 1)]
@@ -119,6 +127,7 @@ class Review(Timestampable):
 
 class ProductView(Model):
     """Список просмотренных продуктов"""
+
     user = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name=_("пользователь"))
     product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name=_("продукт"))
 
