@@ -1,6 +1,6 @@
 from timestamps.models import models, Timestampable
 from django.utils.translation import gettext_lazy as _
-
+from django.db import models
 from product.models import Product
 
 
@@ -19,3 +19,10 @@ class Banner(Timestampable):
     class Meta:
         verbose_name = _("баннер")
         verbose_name_plural = _("баннеры")
+
+
+class Promotion(models.Model):
+    name = models.CharField(max_length=255, verbose_name=_("название"))
+
+    class Meta:
+        managed = False
