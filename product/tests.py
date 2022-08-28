@@ -12,4 +12,3 @@ class ProductView(TestCase):
         response = self.client.post(path=path, data=data, content_type='application/json')
         self.assertEquals(response.status_code, 200)
         self.assertEquals(Product.objects.count(), 1)
-

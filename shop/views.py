@@ -1,8 +1,10 @@
 from django.views.generic import ListView, TemplateView
 from shop.models import Shop
-from django.shortcuts import render
+from django.shortcuts import render  # noqa: F401
 
 # Create your views here.
+
+
 class ShopListView(ListView):
     model = Shop
     template_name = 'shop.html'
