@@ -1,8 +1,8 @@
-
 class Pay:
     """
     Оплата заказа
     """
+
     def pay(self):
         pass
 

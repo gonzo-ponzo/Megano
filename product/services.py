@@ -1,8 +1,8 @@
-
 class ReviewForItem:
     """
     Отзывы к товарам
     """
+
     def add_review(self):
         """Добавить отзыв"""
         pass
@@ -16,6 +16,7 @@ class ComparisonList:
     """
     Список сравниваемых товаров
     """
+
     def add_item(self):
         """Добавить товар к сравнению"""
         pass
@@ -33,6 +34,7 @@ class ProductsFilter:
     """
     Фильтр для списка продуктов
     """
+
     def filter(self):
         """Отфильтровать список по указанным параметрам"""
         self.by_price()
@@ -79,6 +81,7 @@ class SearchProduct:
     """
     Поиск продукта
     """
+
     def search(self):
         pass
 
@@ -101,5 +104,6 @@ class ImportProducts:
     """
     Импорт данных о продуктах из файла
     """
+
     def import_from_dir(self):
         pass
