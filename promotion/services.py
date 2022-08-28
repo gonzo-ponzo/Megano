@@ -71,4 +71,3 @@ class CartDiscount:
     def apply(self):
         """Применить скидку"""
         pass
-
