@@ -24,6 +24,7 @@ class Shop(models.Model):
         verbose_name_plural = _("магазины")
 
 
+# предлагаю добавить таблицу в нашу схему
 class ShopImage(models.Model):
     """Фотографии магазинов"""
     image = models.ImageField(blank=False, upload_to="static/img/shop_photo", verbose_name=_("фото"))
