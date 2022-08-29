@@ -6,15 +6,51 @@ from django.contrib.auth.models import User
 
 class Shop(models.Model):
     """Магазин"""
-    name = models.CharField(max_length=512, null=False, verbose_name=_("название"))
-    description = models.TextField(max_length=5000, verbose_name=_("описание"))
-    phone = PhoneNumberField(null=False, blank=False, unique=True, verbose_name=_("телефон"))
-    email = models.EmailField(max_length=70, blank=False, null=False, unique=True, verbose_name=_("электронная почта"))
-    address = models.CharField(max_length=512, null=False, verbose_name=_("адрес"))
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("дата создания"))
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("дата последнего обновления"))
-    image = models.ImageField(blank=True, upload_to="static/img/shop_logo", verbose_name=_("логотип"))
-    user_id = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name=_("владелец"))
+    name = models.CharField(
+        max_length=512,
+        null=False,
+        verbose_name=_("название")
+    )
+    description = models.TextField(
+        max_length=5000,
+        verbose_name=_("описание")
+    )
+    phone = PhoneNumberField(
+        null=False,
+        blank=False,
+        unique=True,
+        verbose_name=_("телефон")
+    )
+    email = models.EmailField(
+        max_length=70,
+        blank=False,
+        null=False,
+        unique=True,
+        verbose_name=_("электронная почта")
+    )
+    address = models.CharField(
+        max_length=512,
+        null=False,
+        verbose_name=_("адрес")
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("дата создания"
+                       ))
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("дата последнего обновления")
+    )
+    image = models.ImageField(
+        blank=True,
+        upload_to="static/img/shop_logo",
+        verbose_name=_("логотип")
+    )
+    user_id = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        verbose_name=_("владелец")
+    )
 
     def __str__(self):
         return self.name
@@ -27,5 +63,13 @@ class Shop(models.Model):
 # предлагаю добавить таблицу в нашу схему
 class ShopImage(models.Model):
     """Фотографии магазинов"""
-    image = models.ImageField(blank=False, upload_to="static/img/shop_photo", verbose_name=_("фото"))
-    shop_id = models.ForeignKey(Shop, on_delete=models.CASCADE, verbose_name=_("магазин"))
+    image = models.ImageField(
+        blank=False,
+        upload_to="static/img/shop_photo",
+        verbose_name=_("фото")
+    )
+    shop_id = models.ForeignKey(
+        Shop,
+        on_delete=models.CASCADE,
+        verbose_name=_("магазин")
+    )
