@@ -1,6 +1,6 @@
 from timestamps.models import models, Timestampable
 from django.utils.translation import gettext_lazy as _
-
+from django.db.models import Model
 from product.models import Product
 
 
@@ -13,4 +13,16 @@ class Banner(Timestampable):
     image = models.ImageField(upload_to="banner/%Y/%m/%d", verbose_name=_("баннер"))
     is_active = models.BooleanField(default=False, verbose_name=_("активный"))
 
-# Create your models here.
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("баннер")
+        verbose_name_plural = _("баннеры")
+
+
+class Promotion(Model):
+    name = models.CharField(max_length=255, verbose_name=_("название"))
+
+    class Meta:
+        managed = False
