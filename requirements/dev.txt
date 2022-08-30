@@ -2,3 +2,4 @@
 flake8==4.0.1
 black==21.12b0
 click==8.0.3
+django-debug-toolbar==3.6.0
