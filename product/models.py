@@ -1,3 +1,4 @@
+from django.urls import reverse
 from timestamps.models import models, Model, Timestampable
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
@@ -13,7 +14,7 @@ class Product(Model):
     description = models.TextField(blank=True, verbose_name=_("описание"))
     limited = models.BooleanField(default=False, verbose_name=_("ограниченный тираж"))
     manufacturer = models.ForeignKey("Manufacturer", on_delete=models.PROTECT, verbose_name=_("производитель"))
-    category = models.ForeignKey("ProductCategory", on_delete=models.PROTECT, verbose_name=_("категория"))
+    category = models.ForeignKey("ProductCategory", default=0, on_delete=models.PROTECT, verbose_name=_("категория"))
     property = models.ManyToManyField("Property", through="ProductProperty", verbose_name=_("характеристики"))
     shop = models.ManyToManyField(Shop, through="Offer", verbose_name=_("магазины"))
 
@@ -23,6 +24,9 @@ class Product(Model):
     class Meta:
         verbose_name = _("продукт")
         verbose_name_plural = _("продукты")
+
+    # def get_absolute_url(self):
+    #     return reverse("product_detail", args=[str(self.pk)])
 
 
 class Offer(Model):

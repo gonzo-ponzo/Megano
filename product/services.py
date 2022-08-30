@@ -1,3 +1,6 @@
+from product.models import Product, Offer
+
+
 class ReviewForItem:
     """
     Отзывы к товарам
@@ -27,6 +30,29 @@ class ComparisonList:
 
     def get_compare_list(self):
         """Получить список сравниваемых товаров"""
+        pass
+
+
+class GetProduct:
+    """
+    Получить список товаров при выборе категории
+    """
+    def get_product_list(self, category_tree: list[str]):
+        queryset = Product.objects.all()
+        for item in queryset:
+            average_price = self.get_average_price(product=item)
+            item.average_price = average_price
+
+            # Проверить наличие скидки на товар и применить ее. Пока просто вычитаю, изображая скидку
+            item.price_with_discount = average_price - 1000
+
+        return queryset
+
+    def get_average_price(self, product) -> float:
+        offers = Offer.objects.filter(product=product)
+        return sum([item.price for item in offers]) / len(offers)
+
+    def check_discount_and_apply(self, item):
         pass
 
 
