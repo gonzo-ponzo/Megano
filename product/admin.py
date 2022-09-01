@@ -45,7 +45,7 @@ class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at", "updated_at")
     inlines = (ProductImageInLine, ProductPropertyInLine, OfferInLine)
     save_on_top = True
-    actions = ['make_limited', 'make_unlimited']
+    actions = ["make_limited", "make_unlimited"]
 
     @admin.action(description=_("сделать ограниченный тираж"))
     def make_limited(self, request, queryset):
@@ -94,4 +94,4 @@ class ReviewAdmin(admin.ModelAdmin):
 
     @staticmethod
     def text_short(obj):
-        return f'{obj.text[:20]}...'
+        return f"{obj.text[:20]}..."

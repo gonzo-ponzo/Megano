@@ -58,8 +58,14 @@ class ProductCategory(MPTTModel, Model):
     description = models.TextField(blank=True, verbose_name=_("описание"))
     icon = models.ImageField(upload_to="category/%Y/%m/%d", verbose_name=_("значок"))
     slug = models.SlugField(max_length=100, unique=True, verbose_name="url")
-    parent = TreeForeignKey("self", on_delete=models.PROTECT, null=True, blank=True, related_name="children",
-                            verbose_name=_("родительская категория"))
+    parent = TreeForeignKey(
+        "self",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="children",
+        verbose_name=_("родительская категория"),
+    )
 
     def __str__(self):
         return self.name

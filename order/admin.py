@@ -15,10 +15,20 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "city", "address", "status_type", "error_type", "created_at", "updated_at")
     list_display_links = ("id", "user")
     search_fields = ("user",)
-    fields = ("user", "delivery_type", "payment_type", "city", "address", "comment",
-              "status_type", "error_type", "created_at", "updated_at")
+    fields = (
+        "user",
+        "delivery_type",
+        "payment_type",
+        "city",
+        "address",
+        "comment",
+        "status_type",
+        "error_type",
+        "created_at",
+        "updated_at",
+    )
     readonly_fields = ("error_type", "created_at", "updated_at")
-    inlines = (OrderOfferInLine, )
+    inlines = (OrderOfferInLine,)
     save_on_top = True
 
 

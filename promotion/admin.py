@@ -11,7 +11,7 @@ class BannerAdmin(admin.ModelAdmin):
     search_fields = ("name", "product__name")
     fields = ("name", "product", "description", "get_image", "image", "is_active", "created_at", "updated_at")
     readonly_fields = ("get_image", "created_at", "updated_at")
-    actions = ['make_active', 'make_inactive']
+    actions = ["make_active", "make_inactive"]
 
     @admin.action(description=_("сделать активным(и)"))
     def make_active(self, request, queryset):
