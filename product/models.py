@@ -2,7 +2,6 @@ from timestamps.models import models, Model, Timestampable
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
-
 from shop.models import Shop
 
 
@@ -12,8 +11,8 @@ class Product(Model):
     name = models.CharField(max_length=512, verbose_name=_("наименование"))
     description = models.TextField(blank=True, verbose_name=_("описание"))
     limited = models.BooleanField(default=False, verbose_name=_("ограниченный тираж"))
-    manufacturer = models.ForeignKey("Manufacturer", on_delete=models.PROTECT, verbose_name=_("производитель"))
-    category = models.ForeignKey("ProductCategory", on_delete=models.PROTECT, verbose_name=_("категория"))
+    manufacturer = models.ForeignKey("Manufacturer", on_delete=models.DO_NOTHING, verbose_name=_("производитель"))
+    category = models.ForeignKey("ProductCategory", on_delete=models.DO_NOTHING, verbose_name=_("категория"))
     property = models.ManyToManyField("Property", through="ProductProperty", verbose_name=_("характеристики"))
     shop = models.ManyToManyField(Shop, through="Offer", verbose_name=_("магазины"))
 
@@ -28,10 +27,13 @@ class Product(Model):
 class Offer(Model):
     """Предложение магазина"""
 
-    shop = models.ForeignKey(Shop, on_delete=models.PROTECT, verbose_name=_("магазин"))
-    product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name=_("продукт"))
+    shop = models.ForeignKey(Shop, on_delete=models.DO_NOTHING, verbose_name=_("магазин"))
+    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, verbose_name=_("продукт"))
     price = models.DecimalField(max_digits=11, decimal_places=2, verbose_name=_("цена"))
     amount = models.PositiveIntegerField(verbose_name=_("количество"))
+
+    def __str__(self):
+        return f"{self.shop} - {self.product}"
 
     class Meta:
         verbose_name = _("предложение магазина")
@@ -39,14 +41,14 @@ class Offer(Model):
 
 
 class ProductImage(Timestampable):
-    """Картинка продукта"""
+    """Изображение продукта"""
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=_("продукт"))
     image = models.ImageField(upload_to="product/%Y/%m/%d", verbose_name=_("фото"))
 
     class Meta:
-        verbose_name = _("картинка продукта")
-        verbose_name_plural = _("картинки продукта")
+        verbose_name = _("изображение продукта")
+        verbose_name_plural = _("изображения продукта")
 
 
 class ProductCategory(MPTTModel, Model):
@@ -56,15 +58,18 @@ class ProductCategory(MPTTModel, Model):
     description = models.TextField(blank=True, verbose_name=_("описание"))
     icon = models.ImageField(upload_to="category/%Y/%m/%d", verbose_name=_("значок"))
     slug = models.SlugField(max_length=100, unique=True, verbose_name="url")
-    parent = TreeForeignKey("self", on_delete=models.PROTECT, null=True, blank=True, related_name="children")
+    parent = TreeForeignKey("self", on_delete=models.PROTECT, null=True, blank=True, related_name="children",
+                            verbose_name=_("родительская категория"))
 
     def __str__(self):
         return self.name
 
     class MPTTMeta:
+        order_insertion_by = ["id"]
+
+    class Meta:
         verbose_name = _("категория")
         verbose_name_plural = _("категории")
-        order_insertion_by = ["id"]
 
 
 class Property(Timestampable):
@@ -84,7 +89,7 @@ class Property(Timestampable):
 class ProductProperty(Timestampable):
     """Значение свойства продукта"""
 
-    product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name=_("продукт"))
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=_("продукт"))
     property = models.ForeignKey(Property, on_delete=models.CASCADE, verbose_name=_("свойство"))
     value = models.CharField(max_length=128, verbose_name=_("значение"))
 
@@ -108,15 +113,15 @@ class Manufacturer(Model):
         verbose_name_plural = _("производители")
 
 
-class Review(Timestampable):
+class Review(Model):
     """Отзыв"""
 
     MIN_GRADE = 1
     MAX_GRADE = 5
     GRADE_CHOICES = [(grade, grade) for grade in range(MIN_GRADE, MAX_GRADE + 1)]
 
-    product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name=_("продукт"))
-    user = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name=_("пользователь"))
+    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, verbose_name=_("продукт"))
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name=_("пользователь"))
     text = models.TextField(verbose_name=_("текст"))
     rating = models.IntegerField(choices=GRADE_CHOICES, verbose_name=_("рейтинг"))
 
@@ -128,8 +133,8 @@ class Review(Timestampable):
 class ProductView(Model):
     """Список просмотренных продуктов"""
 
-    user = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name=_("пользователь"))
-    product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name=_("продукт"))
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name=_("пользователь"))
+    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, verbose_name=_("продукт"))
 
     class Meta:
         verbose_name = _("просмотренный продукт")
