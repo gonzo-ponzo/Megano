@@ -1,3 +1,9 @@
-from django.contrib import admin  # noqa: F401
+from django.contrib import admin
+from shop.models import Shop
 
-# Register your models here.
+
+class ShopsAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(Shop, ShopsAdmin)
