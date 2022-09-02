@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import User
+from django.core.validators import validate_email
 
 
 class Shop(models.Model):
@@ -22,10 +23,11 @@ class Shop(models.Model):
         verbose_name=_("телефон")
     )
     email = models.EmailField(
-        max_length=70,
+        max_length=100,
         blank=False,
         null=False,
         unique=True,
+        validators=[validate_email],
         verbose_name=_("электронная почта")
     )
     address = models.CharField(
@@ -43,7 +45,7 @@ class Shop(models.Model):
     )
     image = models.ImageField(
         blank=True,
-        upload_to="shop_logo",
+        upload_to="shop_logo/%Y/%m/%d",
         verbose_name=_("логотип")
     )
     user_id = models.ForeignKey(
