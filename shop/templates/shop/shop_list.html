@@ -126,51 +126,32 @@
 
 
         <div class="Section-content">
-          <div class="row row_verticalCenter row_maxHalf">
-            <div class="row-block">
-              <div class="pict"><img src="{{ shop_description.image.url }}" alt="logo {{ shop_description.name }}"/>
-              </div>
-            </div>
-            <div class="row-block">
-                <h2>{{ shop_description.name }}</h2>
-                <p>{{ shop_description.description }}</p>
-                <p>{{ shop_description.address }}</p>
-                <a href="{{ shop_description.email }}">{{ shop_description.email }}</a>
-                <br><a href="tel:{{ shop_description.phone }}">{{ shop_description.phone }}</a>
-            </div>
-          </div>
-            {% if top_products|length == 0 %}
-                <header class="Section-header">
-                    <h2 class="Section-title">У магазина нет предложений
-                    </h2>
-                </header>
-            {% else %}
-                <header class="Section-header">
-                    <h2 class="Section-title">Популярные товары магазина
-                    </h2>
-                </header>
-                <div class="Cards">
-                {% for i in top_products %}
-                    <div class="Card">
-                        <a class="Card-picture" href="/product/{{ i.product_id }}"><img src="{{ i.product.productimage_set.first.image.url }}" alt="product {{ id.product.name }}"/></a>
-                        <div class="Card-content">
-                            <strong class="Card-title"><a href="/product/{{ i.product_id }}">{{ i.product.name }}</a>
-                            </strong>
-                            <div class="Card-description">
-                                <div class="Card-cost"><span class="Card-priceOld">{{ i.price }}</span><span class="Card-price">скидки?</span>
-                                </div>
-                                <div class="Card-category">достать категорию
-                                </div>
-                                <div class="Card-hover"><a class="Card-btn" href="#"><img src="{% static 'img/icons/card/bookmark.svg' %}" alt="bookmark.svg"/></a><a class="Card-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Card-btn" href="#"><img src="{% static 'img/icons/card/change.svg' %}" alt="change.svg"/></a>
-                                </div>
+            <header class="Section-header">
+                <h2 class="Section-title">Магазины
+                </h2>
+            </header>
+                {% for shop in object_list %}
+                    <table>
+
+                    <tr>
+                        <td>
+                            <div class="pict">
+                                <a href="{{ shop.id }}">
+                                    <img src="{{ shop.image.url }}" height="50" alt="logo {{ shop.name }}"/>
+                                </a>
                             </div>
-                        </div>
-                        <div class="Card-sale">-60%
-                        </div>
-                    </div>
+                        </td>
+                        <td>
+                            <a href="{{ shop.id }}">
+                                {{ shop.name }}
+                            </a>
+                        </td>
+                    </tr>
+
+                    </table>
                 {% endfor %}
-                </div>
-            {% endif %}
+
+
         </div>
 
 

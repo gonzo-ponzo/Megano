@@ -36,3 +36,5 @@ if DEBUG:
     import socket
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
     INTERNAL_IPS += [ip[: ip.rfind(".")] + ".1" for ip in ips]
+
+COUNT_ELEMENTS_BEST_OFFER_SHOP = 6

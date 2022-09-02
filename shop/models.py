@@ -43,7 +43,7 @@ class Shop(models.Model):
     )
     image = models.ImageField(
         blank=True,
-        upload_to="static/img/shop_logo",
+        upload_to="shop_logo",
         verbose_name=_("логотип")
     )
     user_id = models.ForeignKey(
