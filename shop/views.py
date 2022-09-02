@@ -1,20 +1,23 @@
-from django.views.generic import ListView, TemplateView
+from django.views import View
+from django.views.generic import ListView
+from shop.services import ShopDetail
+from django.shortcuts import render
 from shop.models import Shop
-from django.shortcuts import render  # noqa: F401
 
-# Create your views here.
+
+class ShopDetailView(View):  # добавить проверку, если нет такого ID в бд, то отправлять на список магазинов
+
+    def get(self, request, *args, **kwargs):
+        shop = ShopDetail(kwargs['pk'])
+        shop_description = shop.get_shop_description
+        top_products = shop.get_top_products
+        return render(request, 'shop/shop.html', {
+            'shop_description': shop_description,
+            'top_products': top_products
+        })
 
 
 class ShopListView(ListView):
     model = Shop
-    template_name = 'shop.html'
-    context_objects_name = 'shop_list'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['list'] = Shop.objects.all()
-        return context
-
-
-class ContactsPage(TemplateView):
-    template_name = 'contacts.html'
+    template_name = 'shop/shop_list.html'
+    paginate_by = 20

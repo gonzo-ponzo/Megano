@@ -16,7 +16,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from product.views import MainPage, LoginView
-from shop.views import ContactsPage
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -24,7 +23,6 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", MainPage.as_view(), name="main-page"),
-    path("contacts", ContactsPage.as_view(), name="contacts-page"),
     path("login/", LoginView.as_view(), name="login-page"),
     path("product/", include("product.urls")),
     path("shop/", include("shop.urls")),

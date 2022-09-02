@@ -1,0 +1,170 @@
+{% load static %}
+<head>
+  <title>Megano</title>
+    {% include 'base.html' %}
+</head>
+<body class="Site">
+  {% include 'header.html' %}
+  <div class="Middle Middle_top">
+    <div class="Middle-top">
+      <div class="wrap">
+        <div class="Middle-header">
+          <h1 class="Middle-title">About Megano
+          </h1>
+          <ul class="breadcrumbs Middle-breadcrumbs">
+            <li class="breadcrumbs-item"><a href="/">home</a>
+            </li>
+            <li class="breadcrumbs-item breadcrumbs-item_current"><span>Shop</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="Section Section_column Section_columnLeft Section_columnWide">
+      <div class="wrap">
+        <div class="Section-column">
+          <div class="Section-columnSection Section-columnSection_mark">
+            <div class="media media_advantage">
+              <div class="media-image"><img src="{% static 'img/icons/advantages/shipping.svg' %}" alt="shipping.svg"/>
+              </div>
+              <div class="media-content">
+                <strong class="media-title">Shipping & Returns
+                </strong>
+                <p class="media-text">World wide shipping
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="Section-columnSection Section-columnSection_mark">
+            <div class="media media_advantage">
+              <div class="media-image"><img src="{% static 'img/icons/advantages/moneyBack.svg' %}" alt="moneyBack.svg"/>
+              </div>
+              <div class="media-content">
+                <strong class="media-title">Money Back
+                </strong>
+                <p class="media-text">Guaranted payments
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="Section-columnSection Section-columnSection_mark">
+            <div class="media media_advantage">
+              <div class="media-image"><img src="{% static 'img/icons/advantages/support.svg' %}" alt="support.svg"/>
+              </div>
+              <div class="media-content">
+                <strong class="media-title">Support Policy
+                </strong>
+                <p class="media-text">Fast support team
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="Section-columnSection Section-columnSection_mark">
+            <div class="media media_advantage">
+              <div class="media-image"><img src="{% static 'img/icons/advantages/quality.svg' %}" alt="quality.svg"/>
+              </div>
+              <div class="media-content">
+                <strong class="media-title">Quality Guarantee
+                </strong>
+                <p class="media-text">Best guaranted items
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="Section-columnSection Section-columnSection_mark">
+            <div class="media media_middle">
+              <div class="media-image"><img src="{% static 'img/icons/contacts/phone.svg' %}" alt="phone.svg"/>
+              </div>
+              <div class="media-content">Phone:&#32;
+                <nobr>+8 (200) 800-2000-600</nobr><br>Mobile:&#32;
+                <nobr>+8 (200) 800-2000-650</nobr>
+              </div>
+            </div>
+          </div>
+          <div class="Section-columnSection Section-columnSection_mark">
+            <div class="media media_middle">
+              <div class="media-image"><img src="{% static 'img/icons/contacts/address.svg' %}" alt="address.svg"/>
+              </div>
+              <div class="media-content">
+                Megano Business Center,
+                0012 United States, Los Angeles
+                Creative Street 15/4
+              </div>
+            </div>
+          </div>
+          <div class="Section-columnSection Section-columnSection_mark">
+            <div class="media media_middle">
+              <div class="media-image"><img src="{% static 'img/icons/contacts/mail.svg' %}" alt="mail.svg"/>
+              </div>
+              <div class="media-content">General: hello@ninzio.com<br>Editor: editor@ninzio.com
+              </div>
+            </div>
+          </div>
+          <div class="Section-columnSection">
+            <header class="Section-header">
+              <strong class="Section-title">Follow Us
+              </strong>
+            </header>
+            <div class="Section-columnContent">
+              <div class="Footer-payments Footer-payments_column">
+                <div><img src="{% static 'img/icons/socialContent/fb.png' %}" alt="fb.png"/>
+                </div>
+                <div><img src="{% static 'img/icons/socialContent/tw.png' %}" alt="tw.png"/>
+                </div>
+                <div><img src="{% static 'img/icons/socialContent/gg.png' %}" alt="gg.png"/>
+                </div>
+                <div><img src="{% static 'img/icons/socialContent/in.png' %}" alt="in.png"/>
+                </div>
+                <div><img src="{% static 'img/icons/socialContent/pt.png' %}" alt="pt.png"/>
+                </div>
+                <div><img src="{% static 'img/icons/socialContent/ml.png' %}" alt="ml.png"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="Section-content">
+            <header class="Section-header">
+                <h2 class="Section-title">Магазины
+                </h2>
+            </header>
+                {% for shop in object_list %}
+                    <table>
+
+                    <tr>
+                        <td>
+                            <div class="pict">
+                                <a href="{{ shop.id }}">
+                                    <img src="{{ shop.image.url }}" height="50" alt="logo {{ shop.name }}"/>
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                            <a href="{{ shop.id }}">
+                                {{ shop.name }}
+                            </a>
+                        </td>
+                    </tr>
+
+                    </table>
+                {% endfor %}
+
+
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+
+  {% include 'footer.html' %}
+  <script src="{% static 'plg/jQuery/jquery-3.5.0.slim.min.js' %}"></script>
+  <script src="{% static 'plg/form/jquery.form.js' %}"></script>
+  <script src="{% static 'plg/form/jquery.maskedinput.min.js' %}"></script>
+  <script src="{% static 'plg/range/ion.rangeSlider.min.js' %}"></script>
+  <script src="{% static 'plg/Slider/slick.min.js' %}"></script>
+  <script src="{% static 'js/scripts.js' %}"></script>
+</body>
