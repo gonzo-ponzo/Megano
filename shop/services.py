@@ -1,7 +1,6 @@
-from shop.models import Shop, ShopImage
-from product.models import Offer, Product
+from shop.models import Shop
+from product.models import Offer
 from config.settings.dev import COUNT_ELEMENTS_BEST_OFFER_SHOP
-
 
 
 class ShopDetail:
@@ -27,9 +26,10 @@ class ShopDetail:
 
     def get_top_products(self):
         """Получить топ товаров продавца"""
-        top_products = Offer.objects.filter(shop=self.shop_id)[:COUNT_ELEMENTS_BEST_OFFER_SHOP]
+        top_products = Offer.objects.filter(
+            shop=self.shop_id
+        )[:COUNT_ELEMENTS_BEST_OFFER_SHOP]
         return top_products
-
 
 
 class ShopList:

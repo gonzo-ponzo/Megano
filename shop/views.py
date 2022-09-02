@@ -5,7 +5,7 @@ from django.shortcuts import render
 from shop.models import Shop
 
 
-class ShopDetailView(View): # добавить проверку, если нет такого ID в бд, то отправлять на список магазинов
+class ShopDetailView(View):  # добавить проверку, если нет такого ID в бд, то отправлять на список магазинов
 
     def get(self, request, *args, **kwargs):
         shop = ShopDetail(kwargs['pk'])
