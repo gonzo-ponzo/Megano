@@ -12,7 +12,7 @@ class ShopAdmin(admin.ModelAdmin):
         "address",
         "created_at",
         "updated_at",
-        "user_id"
+        "user"
     )
     list_display_links = ("id", "name")
     search_fields = ("name",)
@@ -23,7 +23,7 @@ class ShopAdmin(admin.ModelAdmin):
         "address",
         "description",
         "image",
-        "user_id",
+        "user",
         "created_at",
         "updated_at"
     )

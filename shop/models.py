@@ -40,7 +40,7 @@ class Shop(Model):
         upload_to="shop_logo/%Y/%m/%d",
         verbose_name=_("логотип")
     )
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         on_delete=models.PROTECT,
         verbose_name=_("владелец")
@@ -62,7 +62,7 @@ class ShopImage(Timestampable):
         upload_to="shop_photo/%Y/%m/%d",
         verbose_name=_("фото")
     )
-    shop_id = models.ForeignKey(
+    shop = models.ForeignKey(
         Shop,
         on_delete=models.CASCADE,
         verbose_name=_("магазин")
