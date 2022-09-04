@@ -8,3 +8,6 @@ environs==9.3.0
 psycopg2==2.9.3
 django-timestampable==1.0.3
 django-mptt==0.13.4
+django-phonenumber-field==6.1.0
+phonenumbers==8.12.54
+phonenumberslite==8.12.44

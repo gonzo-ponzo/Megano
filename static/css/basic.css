@@ -2536,3 +2536,18 @@ button.link {
 .wrap-content {
   margin: 0 auto;
 }
+
+.login-form-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-form-container th {
+  text-align: center;
+  font-size: larger;
+}
+
+.login-form .btn {
+  width: 100%;
+}

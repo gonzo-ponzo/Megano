@@ -13,10 +13,6 @@ class MainPage(TemplateView):
     template_name = 'index.html'
 
 
-class LoginView(TemplateView):
-    template_name = 'login.html'
-
-
 class CompareView(TemplateView):
     template_name = 'compare.html'
 

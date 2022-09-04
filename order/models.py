@@ -1,8 +1,10 @@
 from timestamps.models import models, Model
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
 from product.models import Offer
+
+User = get_user_model()
 
 
 class Order(Model):
