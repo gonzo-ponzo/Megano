@@ -1,6 +1,6 @@
 from django.core.validators import RegexValidator
-from timestamps.models import models, Model
-from django.contrib.auth.models import User, AbstractBaseUser, BaseUserManager, PermissionsMixin, AbstractUser
+from timestamps.models import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 
 
