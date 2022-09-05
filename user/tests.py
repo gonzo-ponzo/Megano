@@ -21,7 +21,8 @@ def user_create(email="test@test.com"):
 class UserRegisterViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        user = user_create()
+        user_create()
+
 
     def test_url_address_and_template(self):
         url = reverse("registration-page")

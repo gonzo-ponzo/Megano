@@ -1,7 +1,7 @@
-from django.test import TestCase
-from django.urls import reverse
-
-from product.models import Product
+# from django.test import TestCase
+# from django.urls import reverse
+#
+# from product.models import Product
 
 
 # class ProductView(TestCase):
