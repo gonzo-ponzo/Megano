@@ -1,0 +1,36 @@
+{% load static %}
+{% load i18n %}
+<head>
+    <title>Megano</title>
+    {% include 'base.html' %}
+</head>
+<body class="Site">
+<div class="login-form-container">
+    <form class="registration-form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table class="login-form-table">
+            <thead>
+                <th colspan="2">Регистрация</th>
+            </thead>
+            {% if form.errors %}
+                {% for field in form %}
+                   {% for error in field.errors %}
+                       <tr>
+                           <td class="form-error" colspan="2">{{ error|escape }}</td>
+                       </tr>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+            {% for field in form %}
+            <tr>
+                <td>{{ field.label_tag }}</td>
+                <td>{{ field }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="2" class="login-form-button"><button class="btn btn_primary" type="submit">{% translate "Зарегистрироваться" %}</button></td>
+            </tr>
+        </table>
+    </form>
+</div>
+</body>
