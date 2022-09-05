@@ -23,7 +23,6 @@ class UserRegisterViewTest(TestCase):
     def setUpTestData(cls):
         user_create()
 
-
     def test_url_address_and_template(self):
         url = reverse("registration-page")
         response = self.client.get(url)
