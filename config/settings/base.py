@@ -103,6 +103,15 @@ TEMPLATES = [
     },
 ]
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    }
+}
+
+CACHE_TIMEOUT_PRODUCT_CATEGORY = 24 * 60 * 60
+CACHE_NAME_PRODUCT_CATEGORY = "product_category"
+
 WSGI_APPLICATION = "config.wsgi.application"
 
 
