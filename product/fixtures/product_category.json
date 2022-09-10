@@ -1,0 +1,274 @@
+[
+  {
+    "model": "product.productcategory",
+    "pk": 1,
+    "fields": {
+      "created_at": "2022-09-02T11:28:31.077Z",
+      "updated_at": "2022-09-08T20:36:35.823Z",
+      "deleted_at": null,
+      "name": "электроника",
+      "description": "",
+      "slug": "elektronika",
+      "parent": null,
+      "lft": 1,
+      "rght": 8,
+      "tree_id": 1,
+      "level": 0
+    }
+  },
+  {
+    "model": "product.productcategory",
+    "pk": 2,
+    "fields": {
+      "created_at": "2022-09-02T11:28:37.455Z",
+      "updated_at": "2022-09-08T20:35:40.199Z",
+      "deleted_at": null,
+      "name": "компьютеры",
+      "description": "",
+      "slug": "kompyutery",
+      "parent": null,
+      "lft": 1,
+      "rght": 10,
+      "tree_id": 2,
+      "level": 0
+    }
+  },
+  {
+    "model": "product.productcategory",
+    "pk": 3,
+    "fields": {
+      "created_at": "2022-09-02T11:28:44.548Z",
+      "updated_at": "2022-09-08T20:37:49.612Z",
+      "deleted_at": null,
+      "name": "бытовая техника",
+      "description": "",
+      "slug": "bytovaya-tehnika",
+      "parent": null,
+      "lft": 1,
+      "rght": 6,
+      "tree_id": 3,
+      "level": 0
+    }
+  },
+  {
+    "model": "product.productcategory",
+    "pk": 4,
+    "fields": {
+      "created_at": "2022-09-02T11:28:51.476Z",
+      "updated_at": "2022-09-08T20:38:51.284Z",
+      "deleted_at": null,
+      "name": "одежда и обувь",
+      "description": "",
+      "slug": "odezhda-i-obuv",
+      "parent": null,
+      "lft": 1,
+      "rght": 6,
+      "tree_id": 4,
+      "level": 0
+    }
+  },
+  {
+    "model": "product.productcategory",
+    "pk": 5,
+    "fields": {
+      "created_at": "2022-09-02T11:29:08.002Z",
+      "updated_at": "2022-09-08T20:39:32.486Z",
+      "deleted_at": null,
+      "name": "верхняя одежда",
+      "description": "",
+      "slug": "verhnyaya-odezhda",
+      "parent": 4,
+      "lft": 2,
+      "rght": 3,
+      "tree_id": 4,
+      "level": 1
+    }
+  },
+  {
+    "model": "product.productcategory",
+    "pk": 6,
+    "fields": {
+      "created_at": "2022-09-02T11:29:15.207Z",
+      "updated_at": "2022-09-08T20:39:32.495Z",
+      "deleted_at": null,
+      "name": "спортивная одежда",
+      "description": "",
+      "slug": "sportivnaya-odezhda",
+      "parent": 4,
+      "lft": 4,
+      "rght": 5,
+      "tree_id": 4,
+      "level": 1
+    }
+  },
+  {
+    "model": "product.productcategory",
+    "pk": 7,
+    "fields": {
+      "created_at": "2022-09-02T11:29:28.260Z",
+      "updated_at": "2022-09-08T20:39:44.226Z",
+      "deleted_at": null,
+      "name": "холодильники",
+      "description": "",
+      "slug": "holodilniki",
+      "parent": 3,
+      "lft": 2,
+      "rght": 3,
+      "tree_id": 3,
+      "level": 1
+    }
+  },
+  {
+    "model": "product.productcategory",
+    "pk": 8,
+    "fields": {
+      "created_at": "2022-09-02T11:29:36.324Z",
+      "updated_at": "2022-09-08T20:39:44.234Z",
+      "deleted_at": null,
+      "name": "плиты",
+      "description": "",
+      "slug": "plity",
+      "parent": 3,
+      "lft": 4,
+      "rght": 5,
+      "tree_id": 3,
+      "level": 1
+    }
+  },
+  {
+    "model": "product.productcategory",
+    "pk": 9,
+    "fields": {
+      "created_at": "2022-09-02T11:29:41.969Z",
+      "updated_at": "2022-09-08T20:39:58.925Z",
+      "deleted_at": null,
+      "name": "ноутбуки",
+      "description": "",
+      "slug": "noutbuki",
+      "parent": 2,
+      "lft": 2,
+      "rght": 3,
+      "tree_id": 2,
+      "level": 1
+    }
+  },
+  {
+    "model": "product.productcategory",
+    "pk": 10,
+    "fields": {
+      "created_at": "2022-09-02T11:29:50.948Z",
+      "updated_at": "2022-09-08T20:39:58.932Z",
+      "deleted_at": null,
+      "name": "мониторы",
+      "description": "",
+      "slug": "monitory",
+      "parent": 2,
+      "lft": 4,
+      "rght": 5,
+      "tree_id": 2,
+      "level": 1
+    }
+  },
+  {
+    "model": "product.productcategory",
+    "pk": 11,
+    "fields": {
+      "created_at": "2022-09-02T11:29:56.325Z",
+      "updated_at": "2022-09-02T11:29:56.325Z",
+      "deleted_at": null,
+      "name": "смартфоны",
+      "description": "",
+      "slug": "smartfony",
+      "parent": 1,
+      "lft": 2,
+      "rght": 3,
+      "tree_id": 1,
+      "level": 1
+    }
+  },
+  {
+    "model": "product.productcategory",
+    "pk": 12,
+    "fields": {
+      "created_at": "2022-09-02T11:30:02.365Z",
+      "updated_at": "2022-09-08T20:39:58.940Z",
+      "deleted_at": null,
+      "name": "планшеты",
+      "description": "",
+      "slug": "planshety",
+      "parent": 2,
+      "lft": 6,
+      "rght": 7,
+      "tree_id": 2,
+      "level": 1
+    }
+  },
+  {
+    "model": "product.productcategory",
+    "pk": 13,
+    "fields": {
+      "created_at": "2022-09-02T11:30:14.174Z",
+      "updated_at": "2022-09-02T11:30:14.174Z",
+      "deleted_at": null,
+      "name": "телевизоры",
+      "description": "",
+      "slug": "televizory",
+      "parent": 1,
+      "lft": 4,
+      "rght": 5,
+      "tree_id": 1,
+      "level": 1
+    }
+  },
+  {
+    "model": "product.productcategory",
+    "pk": 14,
+    "fields": {
+      "created_at": "2022-09-02T11:30:19.990Z",
+      "updated_at": "2022-09-02T11:30:19.990Z",
+      "deleted_at": null,
+      "name": "умные часы и браслеты",
+      "description": "",
+      "slug": "umnye-chasy-i-braslety",
+      "parent": 1,
+      "lft": 6,
+      "rght": 7,
+      "tree_id": 1,
+      "level": 1
+    }
+  },
+  {
+    "model": "product.productcategory",
+    "pk": 15,
+    "fields": {
+      "created_at": "2022-09-02T12:16:52.859Z",
+      "updated_at": "2022-09-08T20:39:24.802Z",
+      "deleted_at": null,
+      "name": "антивирусы",
+      "description": "",
+      "slug": "antivirusy",
+      "parent": 2,
+      "lft": 8,
+      "rght": 9,
+      "tree_id": 2,
+      "level": 1
+    }
+  },
+  {
+    "model": "product.productcategory",
+    "pk": 16,
+    "fields": {
+      "created_at": "2022-09-08T13:16:55.929Z",
+      "updated_at": "2022-09-08T13:16:55.929Z",
+      "deleted_at": null,
+      "name": "аптека",
+      "description": "",
+      "slug": "apteka",
+      "parent": null,
+      "lft": 1,
+      "rght": 2,
+      "tree_id": 5,
+      "level": 0
+    }
+  }
+]
