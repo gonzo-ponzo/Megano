@@ -1,0 +1,36 @@
+{% load static %}
+{% load i18n %}
+{% load mptt_tags %}
+{% load category_tag %}
+<div class="Header-categories">
+    <div class="CategoriesButton">
+        <div class="CategoriesButton-title">
+            <div class="CategoriesButton-icon"><img src="{% static 'img/icons/allDep.svg' %}" alt="allDep.svg"/>
+            </div>
+            <span class="CategoriesButton-text">{% trans "Каталог" %}</span>
+            <div class="CategoriesButton-arrow">
+            </div>
+        </div>
+        <div class="CategoriesButton-content">
+            {% get_product_categories as categories %}
+            {% recursetree categories %}
+                <div class="CategoriesButton-link">
+                    <a href={{ node.slug }}>
+                        <div class="CategoriesButton-icon">
+                            <img src="{% static 'img/icons/departments/1.svg' %}" alt="1.svg"/>
+                        </div>
+                        <span class="CategoriesButton-text">{{ node.name }}</span>
+                    </a>
+                    {% if not node.is_leaf_node %}
+                        <a class="CategoriesButton-arrow" href="#"></a>
+                    {% endif %}
+                    {% if not node.is_leaf_node %}
+                        <div class="CategoriesButton-submenu">
+                            {{ children }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endrecursetree %}
+        </div>
+    </div>
+</div>
