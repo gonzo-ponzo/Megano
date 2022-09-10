@@ -22,6 +22,7 @@ services:
     depends_on:
       - db
       - redis_db
+    container_name: python_django_team-web  
 
   db:
     image: postgres:13
@@ -36,6 +37,7 @@ services:
       - $POSTGRES_PORT:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    container_name: python_django_team-postgres_db  
 
   redis_db:
     image: redis:alpine
@@ -43,6 +45,7 @@ services:
       - redis_data:/data
     networks:
       - web_net
+    container_name: python_django_team-redis_db  
 
 volumes:
   postgres_data:
