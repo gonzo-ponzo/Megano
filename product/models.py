@@ -1,7 +1,7 @@
 from timestamps.models import models, Model, Timestampable
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from mptt.models import MPTTModel, TreeForeignKey
+from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 from shop.models import Shop
 
 User = get_user_model()
@@ -14,7 +14,7 @@ class Product(Model):
     description = models.TextField(blank=True, verbose_name=_("описание"))
     limited = models.BooleanField(default=False, verbose_name=_("ограниченный тираж"))
     manufacturer = models.ForeignKey("Manufacturer", on_delete=models.DO_NOTHING, verbose_name=_("производитель"))
-    category = models.ForeignKey("ProductCategory", on_delete=models.DO_NOTHING, verbose_name=_("категория"))
+    category = TreeForeignKey("ProductCategory", on_delete=models.DO_NOTHING, verbose_name=_("категория"))
     property = models.ManyToManyField("Property", through="ProductProperty", verbose_name=_("характеристики"))
     shop = models.ManyToManyField(Shop, through="Offer", verbose_name=_("магазины"))
 
@@ -53,27 +53,46 @@ class ProductImage(Timestampable):
         verbose_name_plural = _("изображения продукта")
 
 
+class TreeSoftDeleteManager(TreeManager):
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset()
+        return queryset.filter(deleted_at__isnull=True)
+
+
 class ProductCategory(MPTTModel, Model):
     """Категория продукта"""
 
+    objects = TreeSoftDeleteManager()
+
     name = models.CharField(max_length=512, verbose_name=_("название"))
     description = models.TextField(blank=True, verbose_name=_("описание"))
-    icon = models.ImageField(upload_to="category/%Y/%m/%d", verbose_name=_("значок"))
     slug = models.SlugField(max_length=100, unique=True, verbose_name="url")
     parent = TreeForeignKey(
         "self",
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         null=True,
         blank=True,
         related_name="children",
         verbose_name=_("родительская категория"),
     )
 
+    @classmethod
+    def with_active_products_count(cls):
+        return cls.objects.add_related_count(
+            cls.objects, Product, "category", "products_cumulative_count", cumulative=True
+        )
+
     def __str__(self):
         return self.name
 
-    class MPTTMeta:
-        order_insertion_by = ["id"]
+    def delete(self, *args, **kwargs):
+        super().delete()
+
+        if not self.is_leaf_node():
+            children = self.get_descendants()
+            for child in children:
+                child.deleted_at = self.deleted_at
+            ProductCategory.objects.bulk_update(children, fields=["deleted_at"])
 
     class Meta:
         verbose_name = _("категория")

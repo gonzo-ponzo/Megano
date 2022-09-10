@@ -59,11 +59,19 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(ProductCategory)
 class ProductCategoryAdmin(MPTTModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
-    list_display = ("name", "id", "slug", "created_at", "updated_at")
+    list_display = ("name", "id", "slug", "created_at", "updated_at", "related_products_cumulative_count")
     list_display_links = ("name", "id")
     search_fields = ("name",)
-    fields = ("name", "slug", "parent", "icon", "description", "created_at", "updated_at")
+    fields = ("name", "slug", "parent", "description", "created_at", "updated_at")
     readonly_fields = ("created_at", "updated_at")
+
+    def get_queryset(self, request):
+        return ProductCategory.with_active_products_count()
+
+    def related_products_cumulative_count(self, instance):
+        return instance.products_cumulative_count
+
+    related_products_cumulative_count.short_description = _("количество продуктов")
 
 
 @admin.register(Property)

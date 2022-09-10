@@ -1,0 +1,86 @@
+[
+  {
+    "model": "product.product",
+    "pk": 1,
+    "fields": {
+      "created_at": "2022-09-08T14:36:23.618Z",
+      "updated_at": "2022-09-08T14:36:23.618Z",
+      "deleted_at": null,
+      "name": "Смартфон Apple iPhone 13 128GB (темная ночь)",
+      "description": "",
+      "limited": false,
+      "manufacturer": 1,
+      "category": 11
+    }
+  },
+  {
+    "model": "product.product",
+    "pk": 2,
+    "fields": {
+      "created_at": "2022-09-08T14:37:03.931Z",
+      "updated_at": "2022-09-08T14:37:03.931Z",
+      "deleted_at": null,
+      "name": "Телевизор Samsung UE32T5300AU",
+      "description": "",
+      "limited": false,
+      "manufacturer": 2,
+      "category": 13
+    }
+  },
+  {
+    "model": "product.product",
+    "pk": 3,
+    "fields": {
+      "created_at": "2022-09-08T14:38:07.988Z",
+      "updated_at": "2022-09-08T14:38:07.988Z",
+      "deleted_at": null,
+      "name": "Ноутбук Apple Macbook Air 13\" M1 2020 MGN63",
+      "description": "",
+      "limited": false,
+      "manufacturer": 1,
+      "category": 9
+    }
+  },
+  {
+    "model": "product.product",
+    "pk": 4,
+    "fields": {
+      "created_at": "2022-09-10T12:35:10.054Z",
+      "updated_at": "2022-09-10T12:35:10.054Z",
+      "deleted_at": null,
+      "name": "Ноутбук Huawei MateBook D 15 BoB-WAH9Q 53012KRC",
+      "description": "",
+      "limited": false,
+      "manufacturer": 4,
+      "category": 9
+    }
+  },
+  {
+    "model": "product.product",
+    "pk": 5,
+    "fields": {
+      "created_at": "2022-09-10T12:35:46.066Z",
+      "updated_at": "2022-09-10T12:35:46.066Z",
+      "deleted_at": null,
+      "name": "Планшет Xiaomi Pad 5 128GB (международная версия, серый космос)",
+      "description": "",
+      "limited": false,
+      "manufacturer": 5,
+      "category": 12
+    }
+  },
+  {
+    "model": "product.product",
+    "pk": 6,
+    "fields": {
+      "created_at": "2022-09-10T12:38:17.670Z",
+      "updated_at": "2022-09-10T12:38:17.670Z",
+      "deleted_at": null,
+      "name": "Холодильник side by side LG DoorCooling+ GC-B257SBZV",
+      "description": "",
+      "limited": false,
+      "manufacturer": 3,
+      "category": 7
+    }
+  }
+]
