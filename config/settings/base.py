@@ -16,7 +16,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 env = Env()
 env.read_env()
 
@@ -33,8 +32,7 @@ SECRET_KEY = "django-insecure-7ljcff0x1vz2$y)7byy!3!&ys1%f(wfu*zkwb)twdt%z1&ox(u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -111,11 +109,14 @@ CACHES = {
     }
 }
 
-CACHE_TIMEOUT_PRODUCT_CATEGORY = 24 * 60 * 60
-CACHE_NAME_PRODUCT_CATEGORY = "product_category"
+CACHE_KEY_PRODUCT_CATEGORY = "product_category"
+CACHE_KEY_BANNER = "banner"
+CACHE_TIMEOUT = {
+    CACHE_KEY_PRODUCT_CATEGORY: 60 * 60 * 24,
+    CACHE_KEY_BANNER: 60 * 10,
+}
 
 WSGI_APPLICATION = "config.wsgi.application"
-
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -149,7 +150,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -160,7 +160,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/

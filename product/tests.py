@@ -1,5 +1,8 @@
 from django.test import TestCase
 from product.models import ProductCategory
+from django.core.cache import cache
+from django.conf import settings
+from django.urls import reverse
 
 
 class ProductCategoryTest(TestCase):
@@ -17,3 +20,31 @@ class ProductCategoryTest(TestCase):
         self.assertEquals(category.count(), 3)
         category.filter(name="parent").delete()
         self.assertEquals(category.count(), 0)
+
+
+class ProductCategoryCacheCleanTest(TestCase):
+    fixtures = ["product_category.json", "manufacturer.json", "product.json"]
+    _model = ProductCategory
+    _cache_key = settings.CACHE_KEY_PRODUCT_CATEGORY
+
+    @classmethod
+    def _create_object(cls):
+        cls._model.objects.create(name="new")
+
+    @classmethod
+    def _update_object(cls):
+        obj = cls._model.objects.first()
+        obj.name = "new"
+        obj.save()
+
+    @classmethod
+    def _delete_object(cls):
+        cls._model.objects.first().delete()
+
+    def test_cache_clean_model(self):
+        funcs = (self._create_object, self._update_object, self._delete_object)
+        for func in funcs:
+            self.client.get(reverse("main-page"))
+            self.assertTrue(cache.get(self._cache_key))
+            func()
+            self.assertFalse(cache.get(self._cache_key))
