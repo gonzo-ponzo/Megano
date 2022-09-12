@@ -12,7 +12,7 @@ class UserLoginView(LoginView):
     """Страница входа"""
 
     form_class = AuthenticationForm
-    template_name = 'login.html'
+    template_name = 'user/login.html'
 
     def get_success_url(self):
         return reverse("main-page")
@@ -23,7 +23,7 @@ class UserRegistrationView(View):
 
     def get(self, request, *args, **kwargs):
         context = {'form': UserRegistrationForm}
-        return render(request, 'register.html', context=context)
+        return render(request, 'user/register.html', context=context)
 
     def post(self, request, *args, **kwargs):
         form = UserRegistrationForm(request.POST, request.FILES)
@@ -41,4 +41,4 @@ class UserRegistrationView(View):
             return redirect(reverse('main-page'))
         else:
             context = {"form": form}
-            return render(request, 'register.html', context=context)
+            return render(request, 'user/register.html', context=context)

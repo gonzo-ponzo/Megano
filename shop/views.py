@@ -21,7 +21,3 @@ class ShopListView(ListView):
     model = Shop
     template_name = 'shop/shop_list.html'
     paginate_by = 20
-
-
-class ContactsPage(View):
-    pass

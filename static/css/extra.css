@@ -294,6 +294,12 @@
 .Product .Tabs-block .pict img {
   margin-top: 0;
 }
+.Comment-column.Comment-column_pict {
+  max-width: 99px;
+  max-height: 99px;
+  border-radius: 100px;
+  border: #0063d1 1px solid;
+}
 .Article p,
 .Product .Tabs-block p {
   letter-spacing: -0.2px;

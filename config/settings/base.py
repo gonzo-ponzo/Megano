@@ -15,6 +15,7 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+PROJ_DIR = Path(BASE_DIR).resolve().parent
 
 
 env = Env()
@@ -92,7 +93,7 @@ TEMPLATES = [
     },
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ["static", "templates"],
+        "DIRS": ["static", "templates", PROJ_DIR, BASE_DIR],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -113,6 +114,8 @@ CACHES = {
 
 CACHE_TIMEOUT_PRODUCT_CATEGORY = 24 * 60 * 60
 CACHE_NAME_PRODUCT_CATEGORY = "product_category"
+CART_SESSION_ID = 'cart'
+SESSION_COOKIE_AGE = 24 * 60 * 60
 
 WSGI_APPLICATION = "config.wsgi.application"
 
