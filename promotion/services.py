@@ -1,9 +1,32 @@
-class Banners:
+import random
+from django.core.cache import cache
+from django.conf import settings
+from .models import Banner
+
+
+class BannerMain:
     """Баннеры на главной странице"""
 
-    def get_banners(self):
+    _count = 3
+
+    @classmethod
+    def get_active_banners(cls):
         """Получить баннеры"""
-        pass
+        return Banner.objects.filter(is_active=True).only("pk", "name", "description", "product", "image")
+
+    @classmethod
+    def _get_count_active_banners(cls):
+        """Получить нужное количество баннеров"""
+        return random.sample(list(cls.get_active_banners()), cls._count)
+
+    @classmethod
+    def get_cache_banners(cls):
+        """Получить кэш"""
+        return cache.get_or_set(
+            settings.CACHE_KEY_BANNER,
+            cls._get_count_active_banners,
+            settings.CACHE_TIMEOUT.get(settings.CACHE_KEY_BANNER),
+        )
 
 
 class LimitedProduct:
