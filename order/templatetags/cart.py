@@ -1,16 +1,14 @@
 from django import template
-from order.cart import *
+from order.cart import Cart
 
 register = template.Library()
 
 
 @register.simple_tag()
 def get_cart_len(request):
-    cart = Cart(request)
-    return len(cart)
+    return len(Cart(request))
 
 
 @register.simple_tag()
 def get_cart_price(request):
-    cart = Cart(request)
-    return cart.get_total_price()
+    return Cart(request).get_total_price()
