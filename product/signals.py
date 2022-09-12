@@ -6,5 +6,5 @@ from .models import ProductCategory
 
 
 @receiver([post_save, post_delete], sender=ProductCategory)
-def clear_cache_product_category_post_save_or_delete_handler(sender, **kwargs):
+def clear_cache_product_category_handler(sender, **kwargs):
     cache.delete(settings.CACHE_KEY_PRODUCT_CATEGORY)

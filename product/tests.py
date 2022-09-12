@@ -23,7 +23,7 @@ class ProductCategoryTest(TestCase):
 
 
 class ProductCategoryCacheCleanTest(TestCase):
-    fixtures = ["product_category.json", "manufacturer.json", "product.json"]
+    fixtures = ["product_category.json", "manufacturer.json", "product.json", "banner.json"]
     _model = ProductCategory
     _cache_key = settings.CACHE_KEY_PRODUCT_CATEGORY
 
