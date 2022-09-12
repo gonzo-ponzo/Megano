@@ -17,7 +17,11 @@ class BannerMain:
     @classmethod
     def _get_count_active_banners(cls):
         """Получить нужное количество баннеров"""
-        return random.sample(list(cls.get_active_banners()), cls._count)
+        banners = cls.get_active_banners()
+        count_banners = len(banners)
+        if count_banners >= cls._count:
+            count_banners = cls._count
+        return random.sample(list(banners), count_banners)
 
     @classmethod
     def get_cache_banners(cls):
