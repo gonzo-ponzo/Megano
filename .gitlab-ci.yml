@@ -9,7 +9,6 @@ flake8:
     - flake8 --verbose .
 
 build:
-  when: manual
   image: docker:20.10.16
   services:
     - docker:20.10.16-dind
