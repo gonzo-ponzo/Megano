@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import redirect
 from product.forms import ProductForm, ReviewForm
-from product.models import Product, Review
+from product.models import Product
 from django.views.generic import CreateView
 from django.views.generic import TemplateView, DetailView
 from .utils import get_main_pic, get_secondary_pics, get_min_price, \
