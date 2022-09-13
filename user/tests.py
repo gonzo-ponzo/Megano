@@ -27,7 +27,7 @@ class UserRegisterViewTest(TestCase):
         url = reverse("registration-page")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "register.html")
+        self.assertTemplateUsed(response, "user/register.html")
 
     def test_registration_successful(self):
         url = reverse("registration-page")
@@ -112,7 +112,7 @@ class UserLoginViewTest(TestCase):
         url = reverse("login-page")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "login.html")
+        self.assertTemplateUsed(response, "user/login.html")
 
     def test_login_successful(self):
         url = reverse("login-page")
