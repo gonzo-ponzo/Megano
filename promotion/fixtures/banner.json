@@ -1,0 +1,80 @@
+[
+  {
+    "model": "promotion.banner",
+    "pk": 1,
+    "fields": {
+      "created_at": "2022-09-10T20:35:52.606Z",
+      "updated_at": "2022-09-10T20:39:39.168Z",
+      "product": 1,
+      "name": "iPhone 13",
+      "description": "iPhone 13 – это новинка для пользователей с оптимальной производительностью и высоким качеством дисплея.",
+      "image": "banner/2022/09/10/iphone-13-pro.png",
+      "is_active": true
+    }
+  },
+  {
+    "model": "promotion.banner",
+    "pk": 2,
+    "fields": {
+      "created_at": "2022-09-10T20:39:02.629Z",
+      "updated_at": "2022-09-10T20:39:02.629Z",
+      "product": 3,
+      "name": "Macbook Air 13",
+      "description": "Apple M1, в которой четыре ядра высокопроизводительные, а четыре других — энергосберегающие.",
+      "image": "banner/2022/09/10/apple-macbook-air.png",
+      "is_active": true
+    }
+  },
+  {
+    "model": "promotion.banner",
+    "pk": 3,
+    "fields": {
+      "created_at": "2022-09-10T20:41:44.880Z",
+      "updated_at": "2022-09-10T20:41:44.880Z",
+      "product": 2,
+      "name": "Samsung",
+      "description": "Samsung T5300 – это серия базовых IPS-телевизоров 1080p (Full HD) с приличным качеством изображения.",
+      "image": "banner/2022/09/10/samsung_TV.png",
+      "is_active": true
+    }
+  },
+  {
+    "model": "promotion.banner",
+    "pk": 4,
+    "fields": {
+      "created_at": "2022-09-10T20:43:19.995Z",
+      "updated_at": "2022-09-10T20:43:19.995Z",
+      "product": 4,
+      "name": "Huawei MateBook",
+      "description": "Диагональ 15,6 дюйма с очень тонкими рамками шикарно смотрится",
+      "image": "banner/2022/09/10/laptop-huawei.png",
+      "is_active": false
+    }
+  },
+  {
+    "model": "promotion.banner",
+    "pk": 5,
+    "fields": {
+      "created_at": "2022-09-10T20:44:29.152Z",
+      "updated_at": "2022-09-10T20:44:29.152Z",
+      "product": 5,
+      "name": "Xiaomi Pad 5",
+      "description": "Xiaomi Pad 5: подробный обзор лучшего планшета для мультимедиа и игр. Новый царь горы!",
+      "image": "banner/2022/09/10/tablet-xiaomi-pad-5.png",
+      "is_active": false
+    }
+  },
+  {
+    "model": "promotion.banner",
+    "pk": 6,
+    "fields": {
+      "created_at": "2022-09-10T20:45:44.427Z",
+      "updated_at": "2022-09-10T20:45:44.427Z",
+      "product": 6,
+      "name": "LG Side by Side",
+      "description": "Технология DoorCooling + Зона свежести Fresh Balancer",
+      "image": "banner/2022/09/10/fridge_lg.png",
+      "is_active": true
+    }
+  }
+]

@@ -3,8 +3,8 @@ from django.core.cache import cache
 from django.shortcuts import redirect
 from product.forms import ProductForm, ReviewForm
 from product.models import Product
-from django.views.generic import CreateView
-from django.views.generic import TemplateView, DetailView
+from promotion.services import BannerMain
+from django.views.generic import TemplateView, DetailView, CreateView
 from .utils import get_main_pic, get_secondary_pics, get_min_price, \
     get_top_price, get_discount, get_description, \
     get_property_dict, get_offer_list, get_review
@@ -18,6 +18,11 @@ class CreateProductView(CreateView):
 class MainPage(TemplateView):
     template_name = 'product/index.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["banners"] = BannerMain.get_cache_banners()
+        return context
+
 
 class CompareView(TemplateView):
     template_name = 'product/compare.html'
@@ -30,7 +35,7 @@ class CatalogView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['list'] = Product.objects.all()
+        context["list"] = Product.objects.all()
         return context
 
 
