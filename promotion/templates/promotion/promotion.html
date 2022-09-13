@@ -1,8 +1,5 @@
 {% load static %}
-<head>
-  <title>Megano</title>
-    {% include 'base.html' %}
-</head>
+{% include 'base.html' with title="Promotion" %}
 <body class="Site">
   {% include 'header.html' %}
   <div class="Middle Middle_top">
@@ -12,7 +9,7 @@
           <h1 class="Middle-title">Megano Blog
           </h1>
           <ul class="breadcrumbs Middle-breadcrumbs">
-            <li class="breadcrumbs-item"><a href="/">home</a>
+            <li class="breadcrumbs-item"><a href="/static">home</a>
             </li>
             <li class="breadcrumbs-item breadcrumbs-item_current"><span>Promotion</span>
             </li>
