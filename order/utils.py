@@ -19,7 +19,8 @@ def get_main_pic_by_product(product_id: int):
     """
     try:
         main_pic = ProductImage.objects.all().filter(
-            id=product_id)[0].image
+            product_id=product_id
+        )[0].image
     except ProductImage.DoesNotExist:
         main_pic = None
     return main_pic
