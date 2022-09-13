@@ -116,11 +116,11 @@ class Cart(object):
         """
         Удаление продукта из корзины.
         """
-        product_id = product.id
+        product_id = str(product.id)
         cart = self.cart
 
         if str(shop_id) in cart[product_id]['offers']:
-            del cart[product_id]['offers'][shop_id]
+            del cart[product_id]['offers'][str(shop_id)]
             self.save()
 
     def clear(self):

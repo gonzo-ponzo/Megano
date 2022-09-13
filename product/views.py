@@ -71,9 +71,9 @@ class ProductView(DetailView):
 
     def post(self, request, pk, *args, **kwargs):
         form = ReviewForm(request.POST)
-        if form.is_valid():
-            form.cleaned_data['product'] = Product.objects.get(id=pk)
-            form.cleaned_data['user'] = request.user
-            Review.objects.create(**form.cleaned_data)
-            return redirect(request.META.get('HTTP_REFERER',
-                                             'redirect_if_referer_not_found'))
+        new_review = form.save(commit=False)
+        new_review.product = Product.objects.get(id=pk)
+        new_review.user = request.user
+        new_review.save()
+        return redirect(request.META.get('HTTP_REFERER',
+                                         'redirect_if_referer_not_found'))
