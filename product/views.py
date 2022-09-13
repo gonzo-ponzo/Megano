@@ -47,28 +47,28 @@ class ProductView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(ProductView, self).get_context_data(**kwargs)
         context['main_pic'] = cache.get_or_set(
-            'main_pic', get_main_pic(self.object)
+            f'main_pic{self.object.id}', get_main_pic(self.object)
         )
         context['pics'] = cache.get_or_set(
-            'pics', get_secondary_pics(self.object)
+            f'pics{self.object.id}', get_secondary_pics(self.object)
         )
         context['low_price'] = cache.get_or_set(
-            'low_price', get_min_price(self.object)
+            f'low_price{self.object.id}', get_min_price(self.object)
         )
         context['top_price'] = cache.get_or_set(
-            'top_price', get_top_price(self.object)
+            f'top_price{self.object.id}', get_top_price(self.object)
         )
         context['discount'] = cache.get_or_set(
-            'discount', get_discount(self.object)
+            f'discount{self.object.id}', get_discount(self.object)
         )
         context['product_description'] = cache.get_or_set(
-            'product_description', get_description(self.object)
+            f'product_description{self.object.id}', get_description(self.object)
         )
         context['property_dict'] = cache.get_or_set(
-            'property_dict', get_property_dict(self.object)
+            f'property_dict{self.object.id}', get_property_dict(self.object)
         )
         context['offer_list'] = cache.get_or_set(
-            'offer_list', get_offer_list(self.object)
+            f'offer_list{self.object.id}', get_offer_list(self.object)
         )
         context['reviews'] = get_review(self.object)
         context['form'] = ReviewForm
