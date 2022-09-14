@@ -1,8 +1,10 @@
+from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
-from django.contrib.auth.models import User
 from django.core.validators import validate_email
 from timestamps.models import models, Model, Timestampable
+
+User = get_user_model()
 
 
 class Shop(Model):

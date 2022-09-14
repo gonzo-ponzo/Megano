@@ -6,7 +6,7 @@ from .models import Promotion
 
 class PromotionView(TemplateView):
     model = Promotion
-    template_name = 'promotion.html'
+    template_name = 'promotion/promotion.html'
     context_objects_name = 'promotion_list'
 
     def get_context_data(self, **kwargs):

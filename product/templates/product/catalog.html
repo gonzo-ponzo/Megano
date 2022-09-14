@@ -1,10 +1,7 @@
 {% load static %}
-<head>
-  <title>Megano</title>
-  {% include 'base.html' %}
-</head>
+{% include 'templates/base.html' with title="Catalog" %}
 <body class="Site">
-  {% include 'header.html' %}
+  {% include 'templates/header.html' %}
   <div class="Middle Middle_top">
     <div class="Middle-top">
       <div class="wrap">
@@ -12,7 +9,7 @@
           <h1 class="Middle-title">Catalog Megano
           </h1>
           <ul class="breadcrumbs Middle-breadcrumbs">
-            <li class="breadcrumbs-item"><a href="/">home</a>
+            <li class="breadcrumbs-item"><a href="/static">home</a>
             </li>
             <li class="breadcrumbs-item breadcrumbs-item_current"><span>Catalog</span>
             </li>
@@ -90,7 +87,7 @@
           <div class="Cards">
             <div class="Card"><a class="Card-picture" href="#"><img src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/></a>
               <div class="Card-content">
-                <strong class="Card-title"><a href="product.html">Corsair Carbide Series Arctic White Steel</a>
+                <strong class="Card-title"><a href="../../../templates/product.html">Corsair Carbide Series Arctic White Steel</a>
                 </strong>
                 <div class="Card-description">
                   <div class="Card-cost"><span class="Card-priceOld">$115.00</span><span class="Card-price">$85.00</span>
@@ -106,7 +103,7 @@
             </div>
             <div class="Card"><a class="Card-picture" href="#"><img src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/></a>
               <div class="Card-content">
-                <strong class="Card-title"><a href="product.html">Barand New Phone Smart Business</a>
+                <strong class="Card-title"><a href="../../../templates/product.html">Barand New Phone Smart Business</a>
                 </strong>
                 <div class="Card-description">
                   <div class="Card-cost"><span class="Card-priceOld">$115.00</span><span class="Card-price">$85.00</span>
@@ -122,7 +119,7 @@
             </div>
             <div class="Card"><a class="Card-picture" href="#"><img src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/></a>
               <div class="Card-content">
-                <strong class="Card-title"><a href="product.html">Mavic PRO Mini Drones Hobby RC Quadcopter</a>
+                <strong class="Card-title"><a href="../../../templates/product.html">Mavic PRO Mini Drones Hobby RC Quadcopter</a>
                 </strong>
                 <div class="Card-description">
                   <div class="Card-cost"><span class="Card-priceOld">$115.00</span><span class="Card-price">$185.00</span>
@@ -138,7 +135,7 @@
             </div>
             <div class="Card"><a class="Card-picture" href="#"><img src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/></a>
               <div class="Card-content">
-                <strong class="Card-title"><a href="product.html">Corsair Carbide Series Arctic White Steel</a>
+                <strong class="Card-title"><a href="../../../templates/product.html">Corsair Carbide Series Arctic White Steel</a>
                 </strong>
                 <div class="Card-description">
                   <div class="Card-cost"><span class="Card-price">$210.00</span>
@@ -154,7 +151,7 @@
             </div>
             <div class="Card hide_md"><a class="Card-picture" href="#"><img src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/></a>
               <div class="Card-content">
-                <strong class="Card-title"><a href="product.html">Corsair Carbide Series Arctic White Steel</a>
+                <strong class="Card-title"><a href="../../../templates/product.html">Corsair Carbide Series Arctic White Steel</a>
                 </strong>
                 <div class="Card-description">
                   <div class="Card-cost"><span class="Card-priceOld">$115.00</span><span class="Card-price">$85.00</span>
@@ -170,7 +167,7 @@
             </div>
             <div class="Card hide_md"><a class="Card-picture" href="#"><img src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/></a>
               <div class="Card-content">
-                <strong class="Card-title"><a href="product.html">Barand New Phone Smart Business</a>
+                <strong class="Card-title"><a href="../../../templates/product.html">Barand New Phone Smart Business</a>
                 </strong>
                 <div class="Card-description">
                   <div class="Card-cost"><span class="Card-priceOld">$115.00</span><span class="Card-price">$85.00</span>
@@ -186,7 +183,7 @@
             </div>
             <div class="Card hide_md hide_1450"><a class="Card-picture" href="#"><img src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/></a>
               <div class="Card-content">
-                <strong class="Card-title"><a href="product.html">Mavic PRO Mini Drones Hobby RC Quadcopter</a>
+                <strong class="Card-title"><a href="../../../templates/product.html">Mavic PRO Mini Drones Hobby RC Quadcopter</a>
                 </strong>
                 <div class="Card-description">
                   <div class="Card-cost"><span class="Card-priceOld">$115.00</span><span class="Card-price">$185.00</span>
@@ -202,7 +199,7 @@
             </div>
             <div class="Card hide_md hide_1450"><a class="Card-picture" href="#"><img src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/></a>
               <div class="Card-content">
-                <strong class="Card-title"><a href="product.html">Corsair Carbide Series Arctic White Steel</a>
+                <strong class="Card-title"><a href="../../../templates/product.html">Corsair Carbide Series Arctic White Steel</a>
                 </strong>
                 <div class="Card-description">
                   <div class="Card-cost"><span class="Card-price">$210.00</span>
@@ -218,14 +215,14 @@
             </div>
           </div>
           <div class="Pagination">
-            <div class="Pagination-ins"><a class="Pagination-element Pagination-element_prev" href="#"><img src="assets/img/icons/prevPagination.svg" alt="prevPagination.svg"/></a><a class="Pagination-element Pagination-element_current" href="#"><span class="Pagination-text">1</span></a><a class="Pagination-element" href="#"><span class="Pagination-text">2</span></a><a class="Pagination-element" href="#"><span class="Pagination-text">3</span></a><a class="Pagination-element Pagination-element_prev" href="#"><img src="assets/img/icons/nextPagination.svg" alt="nextPagination.svg"/></a>
+            <div class="Pagination-ins"><a class="Pagination-element Pagination-element_prev" href="#"><img src="{% static 'img/icons/prevPagination.svg' %}" alt="prevPagination.svg"/></a><a class="Pagination-element Pagination-element_current" href="#"><span class="Pagination-text">1</span></a><a class="Pagination-element" href="#"><span class="Pagination-text">2</span></a><a class="Pagination-element" href="#"><span class="Pagination-text">3</span></a><a class="Pagination-element Pagination-element_prev" href="#"><img src="{% static 'img/icons/nextPagination.svg' %}" alt="nextPagination.svg"/></a>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  {% include 'footer.html' %}
+  {% include 'templates/footer.html' %}
   <script src="{% static 'plg/jQuery/jquery-3.5.0.slim.min.js' %}"></script>
   <script src="{% static 'plg/form/jquery.form.js' %}"></script>
   <script src="{% static 'plg/form/jquery.maskedinput.min.js' %}"></script>

@@ -853,6 +853,22 @@ select + select {
   background-color: #f9fafc;
   line-height: 1.2em;
 }
+.form-textarea textarea{
+  width: 100%;
+  height: 112px;
+  box-sizing: border-box;
+  padding: 5px 25px;
+  padding-top: 18px;
+  padding-bottom: 18px;
+  border-radius: 0px;
+  border: 1px solid #e0e0e0;
+  font-size: 18px;
+  background-color: #f9fafc;
+  line-height: 1.2em;
+}
+.form-textarea textarea:focus {
+  outline: none;
+}
 .form .form-textarea:focus {
   outline: none;
 }
@@ -874,6 +890,23 @@ select + select {
   line-height: 1.2em;
 }
 .form .form-select:focus {
+  outline: none;
+}
+.form-textarea select {
+  width: 100%;
+  height: 56px;
+  box-sizing: border-box;
+  padding: 5px 21px;
+  border-radius: 0px;
+  border: 1px solid #e0e0e0;
+  background: #f9fafc;
+  background: transparent;
+  box-shadow: none !important;
+  background-image: none;
+  font-size: 18px;
+  line-height: 1.2em;
+}
+.form-textarea select:focus {
   outline: none;
 }
 .form .form-selectWrap {
@@ -2535,4 +2568,19 @@ button.link {
 }
 .wrap-content {
   margin: 0 auto;
+}
+
+.login-form-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-form-container th {
+  text-align: center;
+  font-size: larger;
+}
+
+.login-form .btn {
+  width: 100%;
 }

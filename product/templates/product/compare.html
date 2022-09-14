@@ -1,8 +1,5 @@
 {% load static %}
-<head>
-  <title>Megano</title>
-  {% include 'base.html' %}
-</head>
+{% include 'base.html' with title="Compare" %}
 <body class="Site">
   {% include 'header.html' %}
   <div class="Middle Middle_top">
@@ -12,7 +9,7 @@
           <h1 class="Middle-title">Сравнение товаров
           </h1>
           <ul class="breadcrumbs Middle-breadcrumbs">
-            <li class="breadcrumbs-item"><a href="/">home</a>
+            <li class="breadcrumbs-item"><a href="/static">home</a>
             </li>
             <li class="breadcrumbs-item breadcrumbs-item_current"><span>Сравнение товаров</span>
             </li>
@@ -69,25 +66,25 @@
               <div class="Compare-product">
                 <div class="Compare-nameProduct">Ноутбук SE40302
                 </div>
-                <div class="Compare-feature"><a class="Compare-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Compare-btn" href="#"><img src="assets/img/icons/card/delete.svg" alt="delete.svg"/></a>
+                <div class="Compare-feature"><a class="Compare-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Compare-btn" href="#"><img src="{%  static 'img/icons/card/delete.svg' %}" alt="delete.svg"/></a>
                 </div>
               </div>
               <div class="Compare-product">
                 <div class="Compare-nameProduct">Планшет Windows A848sls
                 </div>
-                <div class="Compare-feature"><a class="Compare-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Compare-btn" href="#"><img src="assets/img/icons/card/delete.svg" alt="delete.svg"/></a>
+                <div class="Compare-feature"><a class="Compare-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Compare-btn" href="#"><img src="{%  static 'img/icons/card/delete.svg' %}" alt="delete.svg"/></a>
                 </div>
               </div>
               <div class="Compare-product">
                 <div class="Compare-nameProduct">Планшет Windows A848sls
                 </div>
-                <div class="Compare-feature"><a class="Compare-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Compare-btn" href="#"><img src="assets/img/icons/card/delete.svg" alt="delete.svg"/></a>
+                <div class="Compare-feature"><a class="Compare-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Compare-btn" href="#"><img src="{%  static 'img/icons/card/delete.svg' %}" alt="delete.svg"/></a>
                 </div>
               </div>
               <div class="Compare-product">
                 <div class="Compare-nameProduct">Планшет Windows A848sls
                 </div>
-                <div class="Compare-feature"><a class="Compare-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Compare-btn" href="#"><img src="assets/img/icons/card/delete.svg" alt="delete.svg"/></a>
+                <div class="Compare-feature"><a class="Compare-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Compare-btn" href="#"><img src="{%  static 'img/icons/card/delete.svg' %}" alt="delete.svg"/></a>
                 </div>
               </div>
             </div>

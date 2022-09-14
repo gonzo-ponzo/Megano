@@ -1,0 +1,40 @@
+{% load static %}
+{% load i18n %}
+<head>
+    <title>Megano</title>
+    {% include 'base.html' %}
+</head>
+<body class="Site">
+    <div class="login-form-container">
+        <form class="login-form" method="post">
+            {% csrf_token %}
+            <table class="login-form-table">
+                <thead>
+                    <th colspan="2">{% translate "Форма входа" %}</th>
+                </thead>
+                {% if form.errors %}
+                    <tr>
+                        <td colspan="2" class="form-error">{% translate "Данные не корректны. Пожалуйста, попробуйте еще раз." %}</td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td>{{ form.username.label_tag }}</td>
+                    <td>{{ form.username }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.password.label_tag }}</td>
+                    <td>{{ form.password }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="login-form-button"><button class="btn btn_primary" type="submit">Войти</button></td>
+                </tr>
+                </td>
+                    <td colspan="2">
+                        <a href="{% url "registration-page" %}" class="btn btn_primary">Зарегистрироваться</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</body>
+</html>

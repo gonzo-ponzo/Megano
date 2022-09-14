@@ -1,8 +1,25 @@
 stages:
   - linting
+  - test
 
 flake8:
   stage: linting
   image: registry.gitlab.com/pipeline-components/flake8:latest
   script:
     - flake8 --verbose .
+
+build:
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - docker info
+    - docker-compose version
+  stage: test
+  script:
+    - docker-compose up -d
+    - docker exec python_django_team-web python manage.py makemigrations
+    - docker exec python_django_team-web python manage.py test

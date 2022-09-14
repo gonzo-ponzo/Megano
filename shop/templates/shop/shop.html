@@ -1,8 +1,5 @@
 {% load static %}
-<head>
-  <title>Megano</title>
-    {% include 'base.html' %}
-</head>
+{% include 'base.html' with title="Megano" %}
 <body class="Site">
   {% include 'header.html' %}
   <div class="Middle Middle_top">
@@ -172,13 +169,9 @@
                 </div>
             {% endif %}
         </div>
-
-
       </div>
     </div>
   </div>
-
-
   {% include 'footer.html' %}
   <script src="{% static 'plg/jQuery/jquery-3.5.0.slim.min.js' %}"></script>
   <script src="{% static 'plg/form/jquery.form.js' %}"></script>

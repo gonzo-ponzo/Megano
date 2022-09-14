@@ -34,5 +34,6 @@ except Exception:
 # setting for debug_toolbar to use docker
 if DEBUG:
     import socket
+
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
     INTERNAL_IPS += [ip[: ip.rfind(".")] + ".1" for ip in ips]
