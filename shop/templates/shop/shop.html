@@ -122,25 +122,35 @@
         </div>
 
 
+
+
+
         <div class="Section-content">
-          <div class="row row_verticalCenter row_maxHalf">
-            <div class="row-block">
-              <div class="pict">
-                  {% if shop_description.image %}
-                      <img src="{{ shop_description.image.url }}" alt="logo {{ shop_description.name }}"/>
-                  {% else %}
-                      <img src="{% static 'img/default_logo_shop.png' %}" alt="logo {{ shop_description.name }}"/>
-                  {% endif %}
-              </div>
+            <div class="row row_verticalCenter row_maxHalf">
+                <div class="row-block">
+                    <div class="pict">
+                        {% if shop_description.image %}
+                            <img src="{{ shop_description.image.url }}" alt="logo {{ shop_description.name }}"/>
+                        {% else %}
+                            <img src="{% static 'img/default_logo_shop.png' %}" alt="logo {{ shop_description.name }}"/>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row-block">
+
+                    <h2>{{ shop_description.name }}</h2>
+                    <p>{{ shop_description.description }}</p>
+                    <p>{{ shop_description.address }}</p>
+                    <a href="{{ shop_description.email }}">{{ shop_description.email }}</a>
+                    <br><a href="tel:{{ shop_description.phone }}">{{ shop_description.phone }}</a>
+                </div>
             </div>
-            <div class="row-block">
-                <h2>{{ shop_description.name }}</h2>
-                <p>{{ shop_description.description }}</p>
-                <p>{{ shop_description.address }}</p>
-                <a href="{{ shop_description.email }}">{{ shop_description.email }}</a>
-                <br><a href="tel:{{ shop_description.phone }}">{{ shop_description.phone }}</a>
-            </div>
-          </div>
+        </div>
+
+
+
+
+
             {% if top_products|length == 0 %}
                 <header class="Section-header">
                     <h2 class="Section-title">У магазина нет предложений
