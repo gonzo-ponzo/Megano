@@ -137,7 +137,11 @@
                         <td>
                             <div class="pict">
                                 <a href="{{ shop.id }}">
-                                    <img src="{{ shop.image.url }}" height="50" alt="logo {{ shop.name }}"/>
+                                    {% if shop.image %}
+                                        <img src="{{ shop.image.url }}" height="50" alt="logo {{ shop.name }}"/>
+                                    {% else %}
+                                        <img src="{% static 'img/default_logo_shop.png' %}" height="50" alt="logo {{ shop.name }}"/>
+                                    {% endif %}
                                 </a>
                             </div>
                         </td>

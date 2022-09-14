@@ -125,7 +125,12 @@
         <div class="Section-content">
           <div class="row row_verticalCenter row_maxHalf">
             <div class="row-block">
-              <div class="pict"><img src="{{ shop_description.image.url }}" alt="logo {{ shop_description.name }}"/>
+              <div class="pict">
+                  {% if shop_description.image %}
+                      <img src="{{ shop_description.image.url }}" alt="logo {{ shop_description.name }}"/>
+                  {% else %}
+                      <img src="{% static 'img/default_logo_shop.png' %}" alt="logo {{ shop_description.name }}"/>
+                  {% endif %}
               </div>
             </div>
             <div class="row-block">
