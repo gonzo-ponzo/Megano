@@ -15,6 +15,7 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+PROJ_DIR = Path(BASE_DIR).resolve().parent
 
 
 env = Env()
@@ -35,7 +36,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -50,12 +50,14 @@ INSTALLED_APPS = [
     "timestamps",
     "mptt",
     "product",
-    "shop",
+    "shop.apps.ShopConfig",
     "promotion",
     "user",
     "order",
     "payment",
 ]
+
+AUTH_USER_MODEL = "user.CustomUser"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -90,7 +92,7 @@ TEMPLATES = [
     },
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ["static", "templates"],
+        "DIRS": ["static", "templates", PROJ_DIR, BASE_DIR],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -102,6 +104,21 @@ TEMPLATES = [
         },
     },
 ]
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    }
+}
+
+CACHE_KEY_PRODUCT_CATEGORY = "product_category"
+CACHE_KEY_BANNER = "banner"
+CACHE_TIMEOUT = {
+    CACHE_KEY_PRODUCT_CATEGORY: 60 * 60 * 24,
+    CACHE_KEY_BANNER: 60 * 10,
+}
+CART_SESSION_ID = 'cart'
+SESSION_COOKIE_AGE = 24 * 60 * 60
 
 WSGI_APPLICATION = "config.wsgi.application"
 
@@ -169,3 +186,5 @@ MEDIA_URL = "/media/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MPTT_ADMIN_LEVEL_INDENT = 20
+
+COUNT_ELEMENTS_BEST_OFFER_SHOP = 6

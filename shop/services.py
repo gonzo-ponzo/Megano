@@ -1,6 +1,6 @@
 from shop.models import Shop
 from product.models import Offer
-from config.settings.dev import COUNT_ELEMENTS_BEST_OFFER_SHOP
+from config.settings.base import COUNT_ELEMENTS_BEST_OFFER_SHOP
 
 
 class ShopDetail:
