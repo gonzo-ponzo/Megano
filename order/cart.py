@@ -46,15 +46,7 @@ class Cart(object):
                 price = cart[product]['current'][shop]['price']
                 quantity = cart[product]['current'][shop]['quantity']
                 cart[product]['current'][shop]['total_price'] = price * quantity
-                yield (
-                    cart[product]['current'][shop]['price'],
-                    str(cart[product]['current'][shop]['quantity']),
-                    cart[product]['current'][shop]['shop'],
-                    cart[product]['current'][shop]['name'],
-                    cart[product]['current'][shop]['image'],
-                    cart[product]['current'][shop]['product_id'],
-                    cart[product]['current'][shop]['shop_id']
-                )
+                yield cart[product]['current'][shop]
 
     def __len__(self):
         """

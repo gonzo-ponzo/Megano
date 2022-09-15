@@ -73,9 +73,10 @@ class DetailedProductView(DetailView):
         )
         context['reviews'] = get_review(self.object)
         context['form'] = ReviewForm
-        product_view = ProductView(product_id=self.object.id,
-                                   user_id=self.request.user.id)
-        product_view.save()
+        if self.request.user.id:
+            product_view = ProductView(product_id=self.object.id,
+                                       user_id=self.request.user.id)
+            product_view.save()
         return context
 
     def post(self, request, pk, *args, **kwargs):
