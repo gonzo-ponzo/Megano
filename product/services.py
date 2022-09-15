@@ -9,15 +9,34 @@ class ReviewForItem:
 
     def add_review(self, rating: int, text: str, user):
         """Добавить отзыв"""
-        Review.objects.create(rating=rating, text=text, product=self._product, user=user)
+        review = self.get_review(product=self._product, user=user, rating=rating, text=text)
+        if not review:
+            Review.objects.create(rating=rating, text=text, product=self._product, user=user)
 
-    def get_reviews(self):
-        return Review.objects.filter(product=self._product).select_related("user").\
-            only("pk", "created_at", "text", "rating", "user__avatar", "user__first_name").order_by("-created_at")
+    @classmethod
+    def delete_review(cls, pk):
+        """Удалить отзыв"""
+        review = cls.get_review(pk=pk)
+        if review:
+            review.delete()
 
-    def get_count_reviews(self):
+    @classmethod
+    def get_review(cls, **kwargs):
+        return Review.objects.filter(**kwargs)
+
+    def get_reviews_product(self):
+        """Получить отзывы продукта"""
+
+        return (
+            Review.objects.filter(product=self._product)
+            .select_related("user")
+            .only("pk", "created_at", "text", "rating", "user__avatar", "user__first_name")
+            .order_by("-created_at")
+        )
+
+    def get_count_reviews_product(self):
         """Редактировать отзыв"""
-        return self.get_reviews().count()
+        return self.get_reviews_product().count()
 
     @classmethod
     def get_stars_order_by(cls):

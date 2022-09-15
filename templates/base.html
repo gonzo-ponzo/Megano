@@ -19,3 +19,12 @@
     <link rel="stylesheet" href="{% static 'css/custom.css' %}" type="text/css">
     <script src="{% static 'plg/CountDown/countdown.js' %}"></script>
 </head>
+<body>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+</body>

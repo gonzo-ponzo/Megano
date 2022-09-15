@@ -16,19 +16,20 @@
                     </div>
                 {% endif %}
             </div>
-            <div class="Comment-column">
-                <header class="Comment-header">
-                    <div>
-                        <div class="Rating">
-                            <div class="Rating-stars">
-                                {% for i in stars_rating_users %}
-                                    {% if review.rating >= i %}
-                                        <span class="Rating-star Rating-star_view">
-                                    {% else %}
-                                        <span class="rating-star--fill">
-                                    {% endif %}
-                                <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                     viewBox="0 0 19 18">
+            <div class="Comment-column comment-column--flex-grow">
+                <div class="comment--flex">
+                    <header class="Comment-header">
+                        <div>
+                            <div class="Rating">
+                                <div class="Rating-stars">
+                                    {% for i in stars_rating_users %}
+                                        {% if review.rating >= i %}
+                                            <span class="Rating-star Rating-star_view">
+                                        {% else %}
+                                            <span class="rating-star--fill">
+                                        {% endif %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                         viewBox="0 0 19 18">
                                               <g>
                                                 <g>
                                                   <path fill="#ffc000"
@@ -36,17 +37,28 @@
                                                 </g>
                                               </g>
                                             </svg>
-                                </span>
-                                {% endfor %}
+                                    </span>
+                                    {% endfor %}
+                                </div>
+                                <div class="Rating-title">
+                                </div>
                             </div>
-                            <div class="Rating-title">
-                            </div>
-                        </div>
 
-                        <strong class="Comment-title">{{ review.user.first_name }}</strong>
-                        <span class="Comment-date">{{ review.created_at }}</span>
-                    </div>
-                </header>
+
+                            <strong class="Comment-title">{{ review.user.first_name }}</strong>
+                            <span class="Comment-date">{{ review.created_at }}</span>
+                        </div>
+                    </header>
+                    {% if user == review.user %}
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <input type="number" name="review_id" value="{{ review.pk }}" hidden>
+                            <button class="btn btn_muted btn-remove" type="submit" name="delete">
+                                —
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
                 <div class="Comment-content">
                     {{ review.text }}
                 </div>
@@ -64,12 +76,13 @@
         <form class="form" action="" method="post">
             {% csrf_token %}
             {{ reviews_form.non_field_errors }}
-
             <div class="form-group">
                 <div class="rate">
                     {% for star in stars_rating %}
-                        <input class="rate__input" type="radio" name="{{ reviews_form.rating.html_name }}" id="{{ reviews_form.rating.id_for_label }}{{ star }}" value="{{ star }}" required>
-                        <label class="rate__label rating-star--fill" for="{{ reviews_form.rating.id_for_label }}{{ star }}" title="{{ star }}">
+                        <input class="rate__input" type="radio" name="{{ reviews_form.rating.html_name }}"
+                               id="{{ reviews_form.rating.id_for_label }}{{ star }}" value="{{ star }}" required>
+                        <label class="rate__label rating-star--fill"
+                               for="{{ reviews_form.rating.id_for_label }}{{ star }}" title="{{ star }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                                 <g>
                                     <g>
@@ -85,11 +98,12 @@
             </div>
             <div class="form-group">
                 <label for="{{ reviews_form.text.id_for_label }}"></label>
-                <textarea class="form-textarea" name="{{ reviews_form.text.html_name }}" id="{{ reviews_form.text.id_for_label }}" placeholder={% trans "Отзыв" %} required></textarea>
+                <textarea class="form-textarea" name="{{ reviews_form.text.html_name }}"
+                          id="{{ reviews_form.text.id_for_label }}" placeholder={% trans "Отзыв" %} required></textarea>
                 {{ reviews_form.text.errors }}
             </div>
             <div class="form-group">
-                <button class="btn btn_muted" type="submit">
+                <button class="btn btn_muted" id="btn_review" type="submit">
                     {% trans "Добавить отзыв" %}
                 </button>
             </div>
@@ -97,8 +111,7 @@
     </div>
 {% else %}
     <h4 class="Section-title">
-        {% trans "Вы должны " %}
-        <a href="{% url "login-page" %}">{% trans "войти" %}</a>
-        {% trans ", чтобы оставить отзыв." %}
+        {% trans "Чтобы оставить отзыв, Вы должны " %}
+        <a href="{% url "login-page" %}">{% trans "авторизоваться" %}</a>
     </h4>
 {% endif %}
