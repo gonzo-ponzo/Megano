@@ -1,13 +1,14 @@
 from django.conf import settings
 from django.core.cache import cache
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from product.forms import ProductForm, ReviewForm
 from product.models import Product
 from promotion.services import BannerMain
+from .services import ReviewForItem
 from django.views.generic import TemplateView, DetailView, CreateView
 from .utils import get_main_pic, get_secondary_pics, get_min_price, \
     get_top_price, get_discount, get_description, \
-    get_property_dict, get_offer_list, get_review
+    get_property_dict, get_offer_list
 
 
 class CreateProductView(CreateView):
@@ -70,15 +71,27 @@ class ProductView(DetailView):
         context['offer_list'] = cache.get_or_set(
             f'offer_list{self.object.id}', get_offer_list(self.object)
         )
-        context['reviews'] = get_review(self.object)
-        context['form'] = ReviewForm
+
+        reviews = ReviewForItem(self.object)
+        stars_order_by = reviews.get_stars_order_by()
+        context["reviews"] = reviews.get_reviews()
+        context["count_reviews"] = reviews.get_count_reviews()
+        context["stars_rating_users"] = stars_order_by
+        context["stars_rating"] = stars_order_by[::-1]
+        context["reviews_form"] = ReviewForm()
         return context
 
-    def post(self, request, pk, *args, **kwargs):
-        form = ReviewForm(request.POST)
-        new_review = form.save(commit=False)
-        new_review.product = Product.objects.get(id=pk)
-        new_review.user = request.user
-        new_review.save()
-        return redirect(request.META.get('HTTP_REFERER',
-                                         'redirect_if_referer_not_found'))
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        reviews_form = ReviewForm(request.POST)
+
+        if reviews_form.is_valid():
+            data = reviews_form.cleaned_data
+            user = request.user
+            review = ReviewForItem(self.object)
+            review.add_review(user=user, **data)
+            return redirect("product-page", self.object.pk)
+
+        context = self.get_context_data()
+        context["reviews_form"] = reviews_form
+        return render(request, "product/product.html", context=context)

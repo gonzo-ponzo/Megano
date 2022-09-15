@@ -150,7 +150,7 @@ class Review(Model):
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, verbose_name=_("продукт"))
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name=_("пользователь"))
     text = models.TextField(verbose_name=_("текст"))
-    rating = models.IntegerField(choices=GRADE_CHOICES, verbose_name=_("рейтинг"))
+    rating = models.PositiveSmallIntegerField(choices=GRADE_CHOICES, verbose_name=_("рейтинг"))
 
     class Meta:
         verbose_name = _("отзыв")
@@ -166,3 +166,4 @@ class ProductView(Model):
     class Meta:
         verbose_name = _("просмотренный продукт")
         verbose_name_plural = _("просмотренные продукты")
+        ordering = ["-created_at"]

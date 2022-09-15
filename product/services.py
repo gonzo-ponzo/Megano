@@ -1,15 +1,27 @@
+from .models import Review
+
+
 class ReviewForItem:
-    """
-    Отзывы к товарам
-    """
+    """Отзывы к товарам"""
 
-    def add_review(self):
+    def __init__(self, product):
+        self._product = product
+
+    def add_review(self, rating: int, text: str, user):
         """Добавить отзыв"""
-        pass
+        Review.objects.create(rating=rating, text=text, product=self._product, user=user)
 
-    def edit_review(self):
+    def get_reviews(self):
+        return Review.objects.filter(product=self._product).select_related("user").\
+            only("pk", "created_at", "text", "rating", "user__avatar", "user__first_name").order_by("-created_at")
+
+    def get_count_reviews(self):
         """Редактировать отзыв"""
-        pass
+        return self.get_reviews().count()
+
+    @classmethod
+    def get_stars_order_by(cls):
+        return [star for star in range(Review.MIN_GRADE, Review.MAX_GRADE + 1)]
 
 
 class ComparisonList:
