@@ -143,52 +143,7 @@
                 </div>
               </div>
               <div class="Tabs-block" id="reviews">
-                <header class="Section-header">
-                  <h3 class="Section-title"> Отзывы:
-                  </h3>
-                </header>
-                <div class="Comments">
-                  {% for review, reviewer in reviews %}
-                    <div class="Comment">
-                        <img class="Comment-column Comment-column_pict" src=/media/{{ request.user.avatar }}>
-                      <div class="Comment-column">
-                        <header class="Comment-header">
-                          <div>
-                            <strong class="Comment-title">{{ reviewer.first_name }} {{ reviewer.last_name }}
-
-                            </strong><span class="Comment-date">{{ review.created_at }}</span>
-                          </div>
-                        </header>
-                        <div class="Comment-content">{{ review.text }}
-                        </div>
-                      </div>
-                    </div>
-                  {% endfor %}
-                </div>
-                {% if request.user.is_authenticated %}
-                    <header class="Section-header Section-header_product">
-                      <h3 class="Section-title">Добавить отзыв
-                      </h3>
-                    </header>
-                    <form method="post">
-                        {%csrf_token%}
-                        {% for field in form %}
-                                <div class="form-textarea">
-                                    {{ field.label_tag }}
-                                    {{ field }}
-                                </div>
-                        {% endfor %}
-                        <div class="form-group">
-                          <button class="btn btn_muted" type="submit">Добавить отзыв
-                          </button>
-                        </div>
-                    </form>
-                {% else %}
-                    <header class="Section-header Section-header_product">
-                      <h3 class="Section-title">Добавлять отзывы могут только авторизованные пользователи
-                      </h3>
-                    </header>
-                {% endif %}
+                  {% include "product/inc/_review.html" %}
               </div>
             </div>
           </div>

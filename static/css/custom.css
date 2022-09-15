@@ -1,0 +1,37 @@
+/*Comment Avatar*/
+.Comment-avatar-user {
+    margin-top: 0 !important;
+    width: 99px;
+    height: 99px;
+    border-radius: 100px;
+}
+
+/*Comment Rating*/
+.rating-star--fill svg path {
+    fill: #A9A9A9;
+}
+
+.rate__input {
+    display: none;
+}
+
+.rate {
+    display: inline-block;
+    border: 0;
+}
+
+.rate__label {
+    margin: 0;
+    float: right;
+}
+
+.rate__label svg {
+    width: 30px;
+    height: 30px;
+}
+
+.rate__input:checked ~ .rate__label svg path,
+.rate__label:hover ~ .rate__label svg path,
+.rate__label:hover svg path {
+    fill: #ffc000;
+}

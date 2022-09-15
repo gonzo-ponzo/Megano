@@ -1,0 +1,104 @@
+{% load i18n %}
+{% if count_reviews %}
+    <header class="Section-header">
+        <h3 class="Section-title"> {% trans "Отзывы" %}
+        </h3>
+    </header>
+{% endif %}
+<div class="Comments">
+    {% for review in reviews %}
+        <div class="Comment">
+            <div class="Comment-column Comment-column_pict">
+                {% if review.user.avatar %}
+                    <img class="Comment-avatar-user" src="{{ review.user.avatar.url }}" alt="avatar">
+                {% else %}
+                    <div class="Comment-avatar">
+                    </div>
+                {% endif %}
+            </div>
+            <div class="Comment-column">
+                <header class="Comment-header">
+                    <div>
+                        <div class="Rating">
+                            <div class="Rating-stars">
+                                {% for i in stars_rating_users %}
+                                    {% if review.rating >= i %}
+                                        <span class="Rating-star Rating-star_view">
+                                    {% else %}
+                                        <span class="rating-star--fill">
+                                    {% endif %}
+                                <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                     viewBox="0 0 19 18">
+                                              <g>
+                                                <g>
+                                                  <path fill="#ffc000"
+                                                        d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
+                                                </g>
+                                              </g>
+                                            </svg>
+                                </span>
+                                {% endfor %}
+                            </div>
+                            <div class="Rating-title">
+                            </div>
+                        </div>
+
+                        <strong class="Comment-title">{{ review.user.first_name }}</strong>
+                        <span class="Comment-date">{{ review.created_at }}</span>
+                    </div>
+                </header>
+                <div class="Comment-content">
+                    {{ review.text }}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% if user.is_authenticated %}
+    <header class="Section-header Section-header_product">
+        <h3 class="Section-title"> {% trans "Добавить отзыв" %}
+        </h3>
+    </header>
+    <div class="Tabs-addComment">
+        <form class="form" action="" method="post">
+            {% csrf_token %}
+            {{ reviews_form.non_field_errors }}
+
+            <div class="form-group">
+                <div class="rate">
+                    {% for star in stars_rating %}
+                        <input class="rate__input" type="radio" name="{{ reviews_form.rating.html_name }}" id="{{ reviews_form.rating.id_for_label }}{{ star }}" value="{{ star }}" required>
+                        <label class="rate__label rating-star--fill" for="{{ reviews_form.rating.id_for_label }}{{ star }}" title="{{ star }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
+                                <g>
+                                    <g>
+                                        <path fill=""
+                                              d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
+                                    </g>
+                                </g>
+                            </svg>
+                        </label>
+                    {% endfor %}
+                </div>
+                {{ reviews_form.rating.errors }}
+            </div>
+            <div class="form-group">
+                <label for="{{ reviews_form.text.id_for_label }}"></label>
+                <textarea class="form-textarea" name="{{ reviews_form.text.html_name }}" id="{{ reviews_form.text.id_for_label }}" placeholder={% trans "Отзыв" %} required></textarea>
+                {{ reviews_form.text.errors }}
+            </div>
+            <div class="form-group">
+                <button class="btn btn_muted" type="submit">
+                    {% trans "Добавить отзыв" %}
+                </button>
+            </div>
+        </form>
+    </div>
+{% else %}
+    <h4 class="Section-title">
+        {% trans "Вы должны " %}
+        <a href="{% url "login-page" %}">{% trans "войти" %}</a>
+        {% trans ", чтобы оставить отзыв." %}
+    </h4>
+{% endif %}
