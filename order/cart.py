@@ -91,7 +91,9 @@ class Cart(object):
         self.save()
 
     def lower(self, product: Product, shop_id: int):
-
+        """
+        Уменьшение кол-ва товара в корзине
+        """
         product_id = str(product.id)
         cart = self.cart
         if cart[product_id]['offers'][str(shop_id)] > 0:
