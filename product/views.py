@@ -73,6 +73,8 @@ class DetailedProductView(DetailView):
         context['reviews'] = get_review(self.object)
         context['form'] = ReviewForm
         if self.request.user.id:
+            # предлагаю создавать просмотр на админа(id=1),
+            # если пользователь не авторизован
             product_view = ProductView(product=self.object,
                                        user=self.request.user)
             product_view.save()
