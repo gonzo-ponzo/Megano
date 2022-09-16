@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import redirect
 from product.forms import ProductForm, ReviewForm
-from product.models import Product
+from product.models import Product, ProductView
 from promotion.services import BannerMain
 from django.views.generic import TemplateView, DetailView, CreateView
 from .utils import get_main_pic, get_secondary_pics, get_min_price, \
@@ -39,13 +39,13 @@ class CatalogView(TemplateView):
         return context
 
 
-class ProductView(DetailView):
+class DetailedProductView(DetailView):
     model = Product
     template_name = 'product/product.html'
     TIMEOUT = settings.SESSION_COOKIE_AGE
 
     def get_context_data(self, **kwargs):
-        context = super(ProductView, self).get_context_data(**kwargs)
+        context = super(DetailedProductView, self).get_context_data(**kwargs)
         context['main_pic'] = cache.get_or_set(
             f'main_pic{self.object.id}', get_main_pic(self.object)
         )
@@ -72,6 +72,12 @@ class ProductView(DetailView):
         )
         context['reviews'] = get_review(self.object)
         context['form'] = ReviewForm
+        if self.request.user.id:
+            # предлагаю создавать просмотр на админа(id=1),
+            # если пользователь не авторизован
+            product_view = ProductView(product=self.object,
+                                       user=self.request.user)
+            product_view.save()
         return context
 
     def post(self, request, pk, *args, **kwargs):
