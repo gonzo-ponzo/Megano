@@ -130,32 +130,34 @@
                 <h2 class="Section-title">Магазины
                 </h2>
             </header>
+            <div class="shops-list">
                 {% for shop in object_list %}
-                    <table>
+                    <div class="shops-list-li">
 
-                    <tr>
-                        <td>
-                            <div class="pict">
-                                <a href="{{ shop.id }}">
-                                    {% if shop.image %}
-                                        <img src="{{ shop.image.url }}" height="50" alt="logo {{ shop.name }}"/>
-                                    {% else %}
-                                        <img src="{% static 'img/default_logo_shop.png' %}" height="50" alt="logo {{ shop.name }}"/>
-                                    {% endif %}
-                                </a>
-                            </div>
-                        </td>
-                        <td>
+                        <div class="shops-list-li-logo">
+
+                            <a href="{{ shop.id }}">
+                                {% if shop.image %}
+                                    <img src="{{ shop.image.url }}" height="50" alt="logo {{ shop.name }}"/>
+                                {% else %}
+                                    <img src="{% static 'img/default_logo_shop.png' %}" height="50" alt="logo {{ shop.name }}"/>
+                                {% endif %}
+                            </a>
+
+                        </div>
+                        <div class="shops-list-li-text">
+
                             <a href="{{ shop.id }}">
                                 {{ shop.name }}
                             </a>
-                        </td>
-                    </tr>
 
-                    </table>
+                        </div>
+
+                    </div>
+
+
                 {% endfor %}
-
-
+            </div>
         </div>
 
 
