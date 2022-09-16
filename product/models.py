@@ -1,5 +1,6 @@
 from timestamps.models import models, Model, Timestampable
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 from shop.models import Shop
@@ -17,6 +18,9 @@ class Product(Model):
     category = TreeForeignKey("ProductCategory", on_delete=models.DO_NOTHING, verbose_name=_("категория"))
     property = models.ManyToManyField("Property", through="ProductProperty", verbose_name=_("характеристики"))
     shop = models.ManyToManyField(Shop, through="Offer", verbose_name=_("магазины"))
+
+    def get_absolute_url(self):
+        return reverse("product-page", kwargs={"pk": self.pk})
 
     def __str__(self):
         return self.name
