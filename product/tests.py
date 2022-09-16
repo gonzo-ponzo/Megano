@@ -1,5 +1,6 @@
 from django.test import TestCase
-from product.models import ProductCategory
+from product.models import ProductCategory, Review, Product
+from user.models import CustomUser
 from django.core.cache import cache
 from django.conf import settings
 from django.urls import reverse
@@ -48,3 +49,26 @@ class ProductCategoryCacheCleanTest(TestCase):
             self.assertTrue(cache.get(self._cache_key))
             func()
             self.assertFalse(cache.get(self._cache_key))
+
+
+class ReviewTest(TestCase):
+    fixtures = ["product_category.json", "manufacturer.json", "product.json"]
+
+    @classmethod
+    def setUpTestData(cls):
+        email = "user{}@test.com"
+        password = "password12345"
+
+        for i in range(2):
+            CustomUser.objects.create(email=email.format(i), password=password)
+
+    def setUp(self) -> None:
+        self.product = Product.objects.first()
+        self.user = CustomUser.objects.first()
+
+        for i in range(1, 3):
+            Review.objects.create(user=self.user, product=self.product, rating=i, text=f"text{i}")
+
+    def test_check_login(self):
+        login = self.client.login(email=self.user.email, password=self.user.password)
+        self.assertTrue(login)
