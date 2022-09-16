@@ -5,6 +5,7 @@ from product.forms import ProductForm, ReviewForm
 from product.models import Product
 from promotion.services import BannerMain
 from .services import ReviewForItem
+from django.core.paginator import Paginator
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import TemplateView, DetailView, CreateView
@@ -53,6 +54,7 @@ class ProductView(DetailView):
     model = Product
     template_name = "product/product.html"
     TIMEOUT = settings.SESSION_COOKIE_AGE
+    _paginate_by = 3
 
     def get_context_data(self, **kwargs):
         context = super(ProductView, self).get_context_data(**kwargs)
@@ -76,6 +78,15 @@ class ProductView(DetailView):
         context["reviews_form"] = ReviewForm()
         return context
 
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(**kwargs)
+        paginator = Paginator(context.pop("reviews", []), self._paginate_by)
+        page_number = request.GET.get("page", 1)
+        page_obj = paginator.get_page(page_number)
+        context["page_obj"] = page_obj
+        return render(request, self.template_name, context=context)
+
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         data = request.POST
@@ -88,12 +99,11 @@ class ProductView(DetailView):
 
             if reviews_form.is_valid():
                 review_data = reviews_form.cleaned_data
-                user = request.user
                 review = ReviewForItem(self.object)
-                review.add_review(user=user, **review_data)
+                review.add_review(user=request.user, **review_data)
                 messages.success(request, _("Отзыв добавлен."))
             else:
-                context = self.get_context_data()
+                context = self.get_context_data(**kwargs)
                 context["reviews_form"] = reviews_form
                 messages.error(request, _("Отзыв не добавлен, проверьте корректность ввода."))
                 return render(request, self.template_name, context=context)

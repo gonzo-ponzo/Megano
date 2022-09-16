@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load static %}
 {% if count_reviews %}
     <header class="Section-header">
         <h3 class="Section-title"> {% trans "Отзывы" %}
@@ -6,7 +7,7 @@
     </header>
 {% endif %}
 <div class="Comments">
-    {% for review in reviews %}
+    {% for review in page_obj.object_list %}
         <div class="Comment">
             <div class="Comment-column Comment-column_pict">
                 {% if review.user.avatar %}
@@ -43,8 +44,6 @@
                                 <div class="Rating-title">
                                 </div>
                             </div>
-
-
                             <strong class="Comment-title">{{ review.user.first_name }}</strong>
                             <span class="Comment-date">{{ review.created_at }}</span>
                         </div>
@@ -65,6 +64,39 @@
             </div>
         </div>
     {% endfor %}
+    {% if page_obj.has_other_pages %}
+        <div class="Pagination">
+            <div class="Pagination-ins">
+                {% if page_obj.has_previous %}
+                    <a class="Pagination-element Pagination-element_prev"
+                       href="?page={{ page_obj.previous_page_number }}">
+                        <img class="paginate--margin" src="{% static "img/icons/prevPagination.svg" %}"
+                             alt="prevPagination.svg">
+                    </a>
+                {% endif %}
+
+                {% for p in page_obj.paginator.page_range %}
+                    {% if page_obj.number == p %}
+                        <a class="Pagination-element Pagination-element_current" href="?page={{ p }}">
+                            <span class="Pagination-text">{{ p }}</span>
+                        </a>
+                    {% elif p > page_obj.number|add:-3 and p < page_obj.number|add:3 %}
+                        <a class="Pagination-element" href="?page={{ p }}">
+                            <span class="Pagination-text">{{ p }}</span>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a class="Pagination-element Pagination-element_prev .paginate--margin"
+                       href="?page={{ page_obj.next_page_number }}">
+                        <img class="paginate--margin" src="{% static "img/icons/nextPagination.svg" %}"
+                             alt="nextPagination.svg">
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
 </div>
 
 {% if user.is_authenticated %}

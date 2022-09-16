@@ -21,6 +21,15 @@
     min-height: 10px;
 }
 
+.paginate--margin {
+    margin-top: 0 !important;
+}
+
+.paginate-span--margin {
+    margin-left: 12px;
+    margin-right: 12px;
+}
+
 /*Comment Rating*/
 .rating-star--fill svg path {
     fill: #A9A9A9;

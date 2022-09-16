@@ -14,7 +14,7 @@ class ReviewForItem:
             Review.objects.create(rating=rating, text=text, product=self._product, user=user)
 
     @classmethod
-    def delete_review(cls, pk):
+    def delete_review(cls, pk: int):
         """Удалить отзыв"""
         review = cls.get_review(pk=pk)
         if review:
