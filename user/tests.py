@@ -155,4 +155,3 @@ class UserLoginViewTest(TestCase):
         self.assertContains(response, _("Данные не корректны. Пожалуйста, попробуйте еще раз."))
         user = auth.get_user(self.client)
         self.assertFalse(user.is_authenticated)
-
