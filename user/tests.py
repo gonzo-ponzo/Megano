@@ -4,6 +4,25 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+
+class UserTestLoginExample(TestCase):
+    """Примеры создания пользователей для использования в тестах"""
+
+    def test_check_normal_registration(self):
+        get_user_model().objects.create_user(email="test@e.mail", password="test_password")
+        login = self.client.login(email="test@e.mail", password="test_password")
+
+        self.assertTrue(login)
+
+    def test_check_registration_with_raw_password(self):
+        test_user = get_user_model().objects.create(email="test@e.mail", password="test_password")
+        self.client.force_login(test_user)
+
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        self.assertEqual(user.email, "test@e.mail")
+
+
 User = get_user_model()
 
 
@@ -82,7 +101,7 @@ class UserRegisterViewTest(TestCase):
             }
         )
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, _("Пользователь с таким емеилом уже зарегистрирован"))
+        self.assertContains(response, _("Пользователь с таким емейлом уже зарегистрирован"))
 
         # неверный формат номера телефона
         response = self.client.post(
@@ -121,10 +140,19 @@ class UserLoginViewTest(TestCase):
         user = auth.get_user(self.client)
         self.assertTrue(user.is_authenticated)
 
-    def test_login_failed(self):
+    def test_login_failed_wrong_password(self):
         url = reverse("login-page")
         response = self.client.post(url, {"username": "test@test.com", "password": "incorrect_test_password"})
         self.assertTrue(response.status_code, 200)
         self.assertContains(response, _("Данные не корректны. Пожалуйста, попробуйте еще раз."))
         user = auth.get_user(self.client)
         self.assertFalse(user.is_authenticated)
+
+    def test_login_failed_unregistered(self):
+        url = reverse("login-page")
+        response = self.client.post(url, {"username": "guest@test.com", "password": "test_password"})
+        self.assertTrue(response.status_code, 200)
+        self.assertContains(response, _("Данные не корректны. Пожалуйста, попробуйте еще раз."))
+        user = auth.get_user(self.client)
+        self.assertFalse(user.is_authenticated)
+

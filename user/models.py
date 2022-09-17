@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password, is_active=True, is_staff=False, is_admin=False):
         if not email:
-            raise ValueError(_("Емеил должен быть указан."))
+            raise ValueError(_("Емейл должен быть указан."))
         if not password:
             raise ValueError(_("Должен быть указан пароль"))
         user_obj = self.model(
@@ -52,7 +52,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     phone_regex_validator = RegexValidator(regex=r'\d{3}-\d{3}-\d{2}-\d{2}',
                                            message=_('Номер телефона должен быть в формате  123-456-78-90'))
 
-    email = models.EmailField(max_length=125, unique=True, verbose_name=_("емеил"))
+    email = models.EmailField(max_length=125, unique=True, verbose_name=_("емейл"))
     first_name = models.CharField(max_length=30, verbose_name=_("имя"))
     last_name = models.CharField(max_length=150, verbose_name=_("фамилия"))
     middle_name = models.CharField(max_length=150, blank=True, null=True, verbose_name=_("отчество"))

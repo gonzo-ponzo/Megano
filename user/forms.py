@@ -36,7 +36,7 @@ class UserAdminCreationForm(UserCreationForm):
         password = cleaner_data.get("password1")
         password_2 = cleaner_data.get("password2")
         if password is not None and password != password_2:
-            self.add_error("password2", _("Веденные пароли должны совпадать"))
+            self.add_error("password2", _("Введенные пароли должны совпадать"))
         return cleaner_data
 
     def save(self, commit=True):
@@ -84,14 +84,14 @@ class UserLoginForm(AuthenticationForm):
         "invalid_login": _(
             "Введенные данные некоректны. Попробуйте еще раз."
         ),
-        "inactive": _("Пользоаватель неактивен."),
+        "inactive": _("Пользователь неактивен."),
     }
 
 
 class UserRegistrationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["email"].error_messages = {"unique": _("Пользователь с таким емеилом уже зарегистрирован")}
+        self.fields["email"].error_messages = {"unique": _("Пользователь с таким емейлом уже зарегистрирован")}
         self.fields["phone"].widget.attrs["placeholder"] = "123-456-78-90"
     password1 = forms.CharField(
         label=_("Пароль"),
@@ -103,7 +103,7 @@ class UserRegistrationForm(UserCreationForm):
         label=_("Подтвердите пароль"),
         widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
         strip=False,
-        help_text=_("Для верификации введите такой же пароль как раннее."),
+        help_text=_("Для верификации введите такой же пароль как ранее."),
     )
 
     error_messages = {
