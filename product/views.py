@@ -71,7 +71,10 @@ class ProductView(DetailView):
 
         reviews = ReviewForItem(self.object)
         stars_order_by = reviews.get_stars_order_by()
-        context["reviews"] = reviews.get_reviews_product()
+        paginator = Paginator(reviews.get_reviews_product(), self._paginate_by)
+        page_obj = paginator.get_page(kwargs.get("page_number", 1))
+
+        context["page_obj"] = page_obj
         context["count_reviews"] = reviews.get_count_reviews_product()
         context["stars_rating_users"] = stars_order_by
         context["stars_rating"] = stars_order_by[::-1]
@@ -80,11 +83,8 @@ class ProductView(DetailView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        context = self.get_context_data(**kwargs)
-        paginator = Paginator(context.pop("reviews", []), self._paginate_by)
         page_number = request.GET.get("page", 1)
-        page_obj = paginator.get_page(page_number)
-        context["page_obj"] = page_obj
+        context = self.get_context_data(page_number=page_number, **kwargs)
         return render(request, self.template_name, context=context)
 
     def post(self, request, *args, **kwargs):
@@ -103,7 +103,8 @@ class ProductView(DetailView):
                 review.add_review(user=request.user, **review_data)
                 messages.success(request, _("Отзыв добавлен."))
             else:
-                context = self.get_context_data(**kwargs)
+                page_number = request.POST.get("page", 1)
+                context = self.get_context_data(page_number=page_number, **kwargs)
                 context["reviews_form"] = reviews_form
                 messages.error(request, _("Отзыв не добавлен, проверьте корректность ввода."))
                 return render(request, self.template_name, context=context)
