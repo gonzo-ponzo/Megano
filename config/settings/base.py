@@ -117,7 +117,7 @@ CACHE_TIMEOUT = {
     CACHE_KEY_PRODUCT_CATEGORY: 60 * 60 * 24,
     CACHE_KEY_BANNER: 60 * 10,
 }
-CART_SESSION_ID = 'cart'
+CART_SESSION_ID = "cart"
 SESSION_COOKIE_AGE = 24 * 60 * 60
 
 WSGI_APPLICATION = "config.wsgi.application"
@@ -159,7 +159,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+# LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "ru"
 
 TIME_ZONE = "UTC"
 
@@ -177,7 +178,7 @@ STATICFILES_DIRS = ["static"]
 
 STATIC_ROOT = os.path.join("", "staticfiles")
 
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = BASE_DIR.parent / "media"
 MEDIA_URL = "/media/"
 
 # Default primary key field type
