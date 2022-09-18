@@ -5,12 +5,13 @@ from django.urls import reverse
 from django.views.generic import View
 from django.contrib.auth.views import LoginView
 
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm  # , UserLoginForm
 
 
 class UserLoginView(LoginView):
     """Страница входа"""
 
+    # form_class = UserLoginForm  # AuthenticationForm
     form_class = AuthenticationForm
     template_name = 'user/login.html'
 

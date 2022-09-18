@@ -1,4 +1,5 @@
 from django.core.validators import RegexValidator
+from phonenumber_field.modelfields import PhoneNumberField
 from timestamps.models import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
@@ -49,14 +50,16 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    phone_regex_validator = RegexValidator(regex=r'\d{3}-\d{3}-\d{2}-\d{2}',
-                                           message=_('Номер телефона должен быть в формате  123-456-78-90'))
-
-    email = models.EmailField(max_length=125, unique=True, verbose_name=_("емейл"))
+    email = models.EmailField(max_length=125, unique=True, verbose_name=_("электронная почта"))
     first_name = models.CharField(max_length=30, verbose_name=_("имя"))
     last_name = models.CharField(max_length=150, verbose_name=_("фамилия"))
     middle_name = models.CharField(max_length=150, blank=True, null=True, verbose_name=_("отчество"))
-    phone = models.CharField(max_length=20, validators=[phone_regex_validator], verbose_name=_("телефон"))
+    phone = PhoneNumberField(
+        null=False,
+        blank=False,
+        unique=True,
+        verbose_name=_("телефон")
+    )
     avatar = models.ImageField(blank=True, upload_to="avatar/%Y/%m/%d", verbose_name=_("фото"))
     role = models.CharField(choices=ROLES, default="Buyer", max_length=10, verbose_name=_("роль"))
 

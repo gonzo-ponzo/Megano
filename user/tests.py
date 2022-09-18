@@ -60,7 +60,7 @@ class UserRegisterViewTest(TestCase):
                 "first_name": "test_first_name",
                 "last_name": "test_last_name",
                 "middle_name": "test_middle_name",
-                "phone": "111-111-11-11"
+                "phone": "+7(926)111-11-11"
             }
         )
         self.assertRedirects(response, reverse("main-page"))
@@ -81,7 +81,7 @@ class UserRegisterViewTest(TestCase):
                 "first_name": "test_first_name",
                 "last_name": "test_last_name",
                 "middle_name": "test_middle_name",
-                "phone": "111-111-11-11"
+                "phone": "+7(926)111-11-11"
             }
         )
         self.assertEqual(response.status_code, 200)
@@ -97,7 +97,7 @@ class UserRegisterViewTest(TestCase):
                 "first_name": "test_first_name",
                 "last_name": "test_last_name",
                 "middle_name": "test_middle_name",
-                "phone": "111-111-11-11"
+                "phone": "+7(926)111-11-11"
             }
         )
         self.assertEqual(response.status_code, 200)
@@ -117,7 +117,7 @@ class UserRegisterViewTest(TestCase):
             }
         )
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, _("Номер телефона должен быть в формате  123-456-78-90"))
+        self.assertContains(response, _("Enter a valid phone number"))
 
 
 class UserLoginViewTest(TestCase):

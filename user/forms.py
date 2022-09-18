@@ -72,7 +72,7 @@ class UserAdminChangeForm(forms.ModelForm):
         return user
 
 
-class UserLoginForm(AuthenticationForm):
+class UserLoginFForm(AuthenticationForm):
     username = UsernameField(widget=forms.TextInput(attrs={"autofocus": True}))
     password = forms.CharField(
         label=_("Пароль"),
@@ -92,7 +92,8 @@ class UserRegistrationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["email"].error_messages = {"unique": _("Пользователь с таким емейлом уже зарегистрирован")}
-        self.fields["phone"].widget.attrs["placeholder"] = "123-456-78-90"
+        self.fields["phone"].widget.attrs["placeholder"] = "+7(926)111-11-11"
+
     password1 = forms.CharField(
         label=_("Пароль"),
         strip=False,

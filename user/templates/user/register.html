@@ -1,27 +1,25 @@
 {% load static %}
 {% load i18n %}
 <head>
-    <title>Megano</title>
-    {% include 'base.html' %}
+    <title>{% translate "Регистрация" %}</title>
 </head>
+{% include 'base.html' %}
 <body class="Site">
 <div class="login-form-container">
     <form class="registration-form" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <table class="login-form-table">
             <thead>
-                <th colspan="2">Регистрация</th>
+            <tr>
+                <th colspan="2">{% translate "Регистрация" %}</th>
+            </tr>
             </thead>
-            {% if form.errors %}
-                {% for field in form %}
-                   {% for error in field.errors %}
-                       <tr>
-                           <td class="form-error" colspan="2">{{ error|escape }}</td>
-                       </tr>
-                    {% endfor %}
+            {% for field in form %}
+            {% if field.errors %}
+                {% for error in field.errors %}
+                    <tr><td class="form-error" colspan="2">{{ error|escape }}</td></tr>
                 {% endfor %}
             {% endif %}
-            {% for field in form %}
             <tr>
                 <td>{{ field.label_tag }}</td>
                 <td>{{ field }}</td>
