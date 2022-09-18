@@ -22,6 +22,7 @@ class ReviewForItem:
 
     @classmethod
     def get_review(cls, **kwargs):
+        """Получить отзыв"""
         return Review.objects.filter(**kwargs)
 
     def get_reviews_product(self):
@@ -35,11 +36,12 @@ class ReviewForItem:
         )
 
     def get_count_reviews_product(self):
-        """Редактировать отзыв"""
+        """Получить кол-во отзывов"""
         return self.get_reviews_product().count()
 
-    @classmethod
-    def get_stars_order_by(cls):
+    @staticmethod
+    def get_stars_order_by():
+        """Список оценок"""
         return [star for star in range(Review.MIN_GRADE, Review.MAX_GRADE + 1)]
 
 
