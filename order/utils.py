@@ -8,8 +8,7 @@ def get_product_price_by_shop(shop_id: int, product_id: int):
     """
     Получение цены за ед. продукта
     """
-    price = Decimal(Offer.objects.get(shop_id=shop_id,
-                                      product_id=product_id).price)
+    price = Decimal(Offer.objects.get(shop_id=shop_id, product_id=product_id).price)
     return price
 
 
@@ -18,9 +17,7 @@ def get_main_pic_by_product(product_id: int):
     Получение главного изображения продукта
     """
     try:
-        main_pic = ProductImage.objects.all().filter(
-            product_id=product_id
-        )[0].image
+        main_pic = ProductImage.objects.all().filter(product_id=product_id)[0].image
     except ProductImage.DoesNotExist:
         main_pic = None
     return main_pic

@@ -1,5 +1,4 @@
-from .models import Product, ProductImage, Offer, ProductProperty, Property, \
-    Review
+from .models import Product, ProductImage, Offer, ProductProperty, Property, Review
 from shop.models import Shop
 from user.models import CustomUser
 from django.shortcuts import get_object_or_404
@@ -70,8 +69,7 @@ def get_discount(obj: Product):
     try:
         if get_top_price(obj) == get_min_price(obj):
             return None
-        discount = int(((get_top_price(obj) - get_min_price(obj)) /
-                        get_top_price(obj)) * 100)
+        discount = int(((get_top_price(obj) - get_min_price(obj)) / get_top_price(obj)) * 100)
     except Exception:
         return None
     return discount
@@ -82,8 +80,7 @@ def get_description(obj: Product):
     Получение описания продукта
     """
     try:
-        description = get_object_or_404(Product, id=obj.id
-                                        ).description
+        description = get_object_or_404(Product, id=obj.id).description
     except Product.DoesNotExist:
         description = None
     return description
@@ -94,9 +91,7 @@ def get_property_values(obj: Product):
     Получение значений свойств продукта
     """
     try:
-        property_values = ProductProperty.objects.all().filter(
-            product_id=obj
-        )
+        property_values = ProductProperty.objects.all().filter(product_id=obj)
     except Property.DoesNotExist:
         property_values = None
     return property_values
@@ -106,8 +101,7 @@ def get_property_idx(obj: Product):
     """
     Получение значений id свойств продукта
     """
-    property_idx = [value.property_id for value in
-                    get_property_values(obj)]
+    property_idx = [value.property_id for value in get_property_values(obj)]
     return property_idx
 
 
@@ -116,10 +110,7 @@ def get_property_names(obj: Product):
     Получение наименований свойств продукта
     """
     try:
-        property_names = [
-            get_object_or_404(Property, id=idx).name
-            for idx in get_property_idx(obj)
-        ]
+        property_names = [get_object_or_404(Property, id=idx).name for idx in get_property_idx(obj)]
     except Property.DoesNotExist:
         property_names = None
     return property_names
@@ -129,8 +120,7 @@ def get_property_dict(obj: Product):
     """
     Получение словаря свойств-значений продукта
     """
-    property_dict = zip(get_property_names(obj),
-                        get_property_values(obj))
+    property_dict = zip(get_property_names(obj), get_property_values(obj))
     return property_dict
 
 
@@ -142,9 +132,7 @@ def get_offer_list(obj: Product):
         offers = Offer.objects.all().filter(product_id=obj)
     except Offer.DoesNotExist:
         offers = None
-    offer_list = [(get_object_or_404(
-        Shop, id=offer.shop_id
-    ), offer.price, offer.amount) for offer in offers]
+    offer_list = [(get_object_or_404(Shop, id=offer.shop_id), offer.price, offer.amount) for offer in offers]
     return offer_list
 
 
@@ -154,8 +142,7 @@ def get_review(obj: Product):
     """
     try:
         reviews_list = Review.objects.all().filter(product_id=obj.id)
-        reviews = [(review, get_object_or_404(CustomUser, id=review.user_id))
-                   for review in reviews_list]
+        reviews = [(review, get_object_or_404(CustomUser, id=review.user_id)) for review in reviews_list]
     except Review.DoesNotExist:
         reviews = None
     return reviews

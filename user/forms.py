@@ -21,7 +21,7 @@ class UserAdminCreationForm(UserCreationForm):
     """Форма создания пользователей через админку"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['phone'].widget.attrs['placeholder'] = '123-456-78-90'
+        self.fields["phone"].widget.attrs["placeholder"] = "123-456-78-90"
 
     password1 = forms.CharField(label=_("Пароль"), widget=forms.PasswordInput)
     password2 = forms.CharField(label=_("Подтвердите пароль"), widget=forms.PasswordInput)
@@ -54,14 +54,25 @@ class UserAdminChangeForm(forms.ModelForm):
     """Форма для изменения пользователя через админку"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['phone'].widget.attrs['placeholder'] = '123-456-78-90'
+        self.fields["phone"].widget.attrs["placeholder"] = "123-456-78-90"
 
     password = ReadOnlyPasswordHashField()
 
     class Meta:
         model = User
-        fields = ["email", "password", "role", "first_name", "last_name", "middle_name", "phone", "avatar", "staff",
-                  "admin", "is_active"]
+        fields = [
+            "email",
+            "password",
+            "role",
+            "first_name",
+            "last_name",
+            "middle_name",
+            "phone",
+            "avatar",
+            "staff",
+            "admin",
+            "is_active",
+        ]
 
     def save(self, commit=True):
         user = super().save(commit=False)

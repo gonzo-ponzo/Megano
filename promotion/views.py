@@ -6,10 +6,10 @@ from .models import Promotion
 
 class PromotionView(TemplateView):
     model = Promotion
-    template_name = 'promotion/promotion.html'
-    context_objects_name = 'promotion_list'
+    template_name = "promotion/promotion.html"
+    context_objects_name = "promotion_list"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['list'] = Promotion.objects.all()
+        context["list"] = Promotion.objects.all()
         return context

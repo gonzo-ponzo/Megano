@@ -99,9 +99,9 @@
                 <div class="Categories Categories_product">
                   {% for shop, price, amounth in offer_list %}
                     <div class="Categories-row">
-                      <div class="Categories-block Categories-block_info">
-                          <img src=/media/{{ shop.image }} alt="product-img">
-                        <div class="Categories-info">
+                      <div class="Categories-block Categories-block_shop_img">
+                          <img src={{ shop.image.url }} alt="shop-img">
+                        <div class="Categories-shop_name">
                           <strong>{{ shop.name }}
                           </strong>
                         </div>

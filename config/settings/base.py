@@ -15,7 +15,6 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-PROJ_DIR = Path(BASE_DIR).resolve().parent
 
 
 env = Env()
@@ -77,7 +76,7 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.jinja2.Jinja2",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": ["templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "environment": "config.jinja2.environment",
@@ -92,7 +91,7 @@ TEMPLATES = [
     },
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ["static", "templates", PROJ_DIR, BASE_DIR],
+        "DIRS": ["static", "templates", BASE_DIR],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

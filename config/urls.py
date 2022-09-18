@@ -26,11 +26,10 @@ urlpatterns = [
     path("", MainPage.as_view(), name="main-page"),
     path("login/", UserLoginView.as_view(), name="login-page"),
     path("register/", UserRegistrationView.as_view(), name="registration-page"),
-    path("product/", include("product.urls"), name='product'),
-    path("shop/", include("shop.urls"), name='shop'),
-    path("order/", include(("order.urls", 'order'), namespace='order'),
-         name='order'),
-    path("promotion/", include("promotion.urls"), name='promotion')
+    path("product/", include("product.urls"), name="product"),
+    path("shop/", include("shop.urls"), name="shop"),
+    path("order/", include(("order.urls", "order"), namespace="order"), name="order"),
+    path("promotion/", include("promotion.urls"), name="promotion"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

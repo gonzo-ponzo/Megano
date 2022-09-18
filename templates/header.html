@@ -27,7 +27,7 @@
           <nav class="row-block">
             <div class="row ControlPanel-rowSplit">
               {% if request.user.is_authenticated %}
-                <div class="row-block"><a class="ControlPanel-title" href="/user/account">Добро пожаловать, {{ request.user.email }}</a>
+                <div class="row-block"><a class="ControlPanel-title" href="/user/account">Добро пожаловать, {{ request.user.first_name }}</a>
               {% else %}
                 <div class="row-block"><a class="ControlPanel-title" href="/login">Login / Register</a>
               {% endif %}
