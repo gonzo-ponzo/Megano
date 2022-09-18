@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.core.cache import cache
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from product.forms import ProductForm, ReviewForm
-from product.models import Product, ProductView
+from product.models import Product, ProductView, ProductCategory
 from promotion.services import BannerMain
 from .services import ReviewForItem
 from django.core.paginator import Paginator
@@ -45,8 +45,14 @@ class CatalogView(ListView):
     context_objects_name = 'product_list'
 
     def get_queryset(self):
+
+        category = self.kwargs.get('category', None)
+
         queryset = Product.objects.all().prefetch_related('productimage_set')
         queryset = queryset.select_related('category')
+        if category:
+            category = get_object_or_404(ProductCategory, slug=category)
+            queryset = queryset.filter(category__in=category.get_descendants(include_self=True))
         return queryset
 
     # def get_context_data(self, **kwargs):

@@ -1,0 +1,102 @@
+[
+{
+    "model": "product.productimage",
+    "pk": 1,
+    "fields": {
+        "created_at": "2022-09-17T13:50:37.557Z",
+        "updated_at": "2022-09-17T13:50:37.557Z",
+        "product": 5,
+        "image": "product/2022/09/17/16.jpg"
+    }
+},
+{
+    "model": "product.productimage",
+    "pk": 2,
+    "fields": {
+        "created_at": "2022-09-18T16:50:02.606Z",
+        "updated_at": "2022-09-18T16:50:02.606Z",
+        "product": 6,
+        "image": "product/2022/09/18/lg.jpg"
+    }
+},
+{
+    "model": "product.productimage",
+    "pk": 3,
+    "fields": {
+        "created_at": "2022-09-18T16:50:02.730Z",
+        "updated_at": "2022-09-18T16:50:02.730Z",
+        "product": 6,
+        "image": "product/2022/09/18/lg2.jpg"
+    }
+},
+{
+    "model": "product.productimage",
+    "pk": 4,
+    "fields": {
+        "created_at": "2022-09-18T16:50:02.733Z",
+        "updated_at": "2022-09-18T16:50:02.733Z",
+        "product": 6,
+        "image": "product/2022/09/18/lg3.jpg"
+    }
+},
+{
+    "model": "product.productimage",
+    "pk": 5,
+    "fields": {
+        "created_at": "2022-09-18T16:52:23.298Z",
+        "updated_at": "2022-09-18T16:52:23.298Z",
+        "product": 4,
+        "image": "product/2022/09/18/huawei1.jpg"
+    }
+},
+{
+    "model": "product.productimage",
+    "pk": 6,
+    "fields": {
+        "created_at": "2022-09-18T16:52:23.301Z",
+        "updated_at": "2022-09-18T16:52:23.301Z",
+        "product": 4,
+        "image": "product/2022/09/18/huawei2.jpg"
+    }
+},
+{
+    "model": "product.productimage",
+    "pk": 7,
+    "fields": {
+        "created_at": "2022-09-18T16:52:23.304Z",
+        "updated_at": "2022-09-18T16:52:23.304Z",
+        "product": 4,
+        "image": "product/2022/09/18/huawei3.jpg"
+    }
+},
+{
+    "model": "product.productimage",
+    "pk": 8,
+    "fields": {
+        "created_at": "2022-09-18T16:55:06.078Z",
+        "updated_at": "2022-09-18T16:55:06.078Z",
+        "product": 3,
+        "image": "product/2022/09/18/apple1.png"
+    }
+},
+{
+    "model": "product.productimage",
+    "pk": 9,
+    "fields": {
+        "created_at": "2022-09-18T16:55:06.081Z",
+        "updated_at": "2022-09-18T16:55:06.081Z",
+        "product": 3,
+        "image": "product/2022/09/18/apple2.jpeg"
+    }
+},
+{
+    "model": "product.productimage",
+    "pk": 10,
+    "fields": {
+        "created_at": "2022-09-18T16:55:06.084Z",
+        "updated_at": "2022-09-18T16:55:06.084Z",
+        "product": 3,
+        "image": "product/2022/09/18/apple3.jpg"
+    }
+}
+]
