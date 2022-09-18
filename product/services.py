@@ -1,15 +1,48 @@
+from .models import Review
+
+
 class ReviewForItem:
-    """
-    Отзывы к товарам
-    """
+    """Отзывы к товарам"""
 
-    def add_review(self):
+    def __init__(self, product):
+        self._product = product
+
+    def add_review(self, rating: int, text: str, user):
         """Добавить отзыв"""
-        pass
+        review = self.get_review(product=self._product, user=user, rating=rating, text=text)
+        if not review:
+            Review.objects.create(rating=rating, text=text, product=self._product, user=user)
 
-    def edit_review(self):
-        """Редактировать отзыв"""
-        pass
+    @classmethod
+    def delete_review(cls, pk: int):
+        """Удалить отзыв"""
+        review = cls.get_review(pk=pk)
+        if review:
+            review.delete()
+
+    @classmethod
+    def get_review(cls, **kwargs):
+        """Получить отзыв"""
+        return Review.objects.filter(**kwargs)
+
+    def get_reviews_product(self):
+        """Получить отзывы продукта"""
+
+        return (
+            Review.objects.filter(product=self._product)
+            .select_related("user")
+            .only("pk", "created_at", "text", "rating", "user__avatar", "user__first_name")
+            .order_by("-created_at")
+        )
+
+    def get_count_reviews_product(self):
+        """Получить кол-во отзывов"""
+        return self.get_reviews_product().count()
+
+    @staticmethod
+    def get_stars_order_by():
+        """Список оценок"""
+        return [star for star in range(Review.MIN_GRADE, Review.MAX_GRADE + 1)]
 
 
 class ComparisonList:

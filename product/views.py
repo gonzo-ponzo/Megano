@@ -1,13 +1,24 @@
 from django.conf import settings
 from django.core.cache import cache
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from product.forms import ProductForm, ReviewForm
 from product.models import Product, ProductView
 from promotion.services import BannerMain
+from .services import ReviewForItem
+from django.core.paginator import Paginator
+from django.contrib import messages
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import TemplateView, DetailView, CreateView, ListView
-from .utils import get_main_pic, get_secondary_pics, get_min_price, \
-    get_top_price, get_discount, get_description, \
-    get_property_dict, get_offer_list, get_review
+from .utils import (
+    get_main_pic,
+    get_secondary_pics,
+    get_min_price,
+    get_top_price,
+    get_discount,
+    get_description,
+    get_property_dict,
+    get_offer_list,
+)
 
 
 class CreateProductView(CreateView):
@@ -16,7 +27,7 @@ class CreateProductView(CreateView):
 
 
 class MainPage(TemplateView):
-    template_name = 'product/index.html'
+    template_name = "product/index.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -25,7 +36,7 @@ class MainPage(TemplateView):
 
 
 class CompareView(TemplateView):
-    template_name = 'product/compare.html'
+    template_name = "product/compare.html"
 
 
 class CatalogView(ListView):
@@ -46,37 +57,48 @@ class CatalogView(ListView):
 
 class DetailedProductView(DetailView):
     model = Product
-    template_name = 'product/product.html'
+    template_name = "product/product.html"
     TIMEOUT = settings.SESSION_COOKIE_AGE
+    _paginate_by = 3
 
     def get_context_data(self, **kwargs):
         context = super(DetailedProductView, self).get_context_data(**kwargs)
-        context['main_pic'] = cache.get_or_set(
-            f'main_pic{self.object.id}', get_main_pic(self.object)
+        context["main_pic"] = cache.get_or_set(
+            f"main_pic{self.object.id}", get_main_pic(self.object)
         )
-        context['pics'] = cache.get_or_set(
-            f'pics{self.object.id}', get_secondary_pics(self.object)
+        context["pics"] = cache.get_or_set(
+            f"pics{self.object.id}", get_secondary_pics(self.object)
         )
-        context['low_price'] = cache.get_or_set(
-            f'low_price{self.object.id}', get_min_price(self.object)
+        context["low_price"] = cache.get_or_set(
+            f"low_price{self.object.id}", get_min_price(self.object)
         )
-        context['top_price'] = cache.get_or_set(
-            f'top_price{self.object.id}', get_top_price(self.object)
+        context["top_price"] = cache.get_or_set(
+            f"top_price{self.object.id}", get_top_price(self.object)
         )
-        context['discount'] = cache.get_or_set(
-            f'discount{self.object.id}', get_discount(self.object)
+        context["discount"] = cache.get_or_set(
+            f"discount{self.object.id}", get_discount(self.object)
         )
-        context['product_description'] = cache.get_or_set(
-            f'product_description{self.object.id}', get_description(self.object)
+        context["product_description"] = cache.get_or_set(
+            f"product_description{self.object.id}", get_description(self.object)
         )
-        context['property_dict'] = cache.get_or_set(
-            f'property_dict{self.object.id}', get_property_dict(self.object)
+        context["property_dict"] = cache.get_or_set(
+            f"property_dict{self.object.id}", get_property_dict(self.object)
         )
-        context['offer_list'] = cache.get_or_set(
-            f'offer_list{self.object.id}', get_offer_list(self.object)
+        context["offer_list"] = cache.get_or_set(
+            f"offer_list{self.object.id}", get_offer_list(self.object)
         )
-        context['reviews'] = get_review(self.object)
-        context['form'] = ReviewForm
+
+        reviews = ReviewForItem(self.object)
+        stars_order_by = reviews.get_stars_order_by()
+        paginator = Paginator(reviews.get_reviews_product(), self._paginate_by)
+        page_obj = paginator.get_page(kwargs.get("page_number", 1))
+
+        context["page_obj"] = page_obj
+        context["count_reviews"] = reviews.get_count_reviews_product()
+        context["stars_rating_users"] = stars_order_by
+        context["stars_rating"] = stars_order_by[::-1]
+        context["reviews_form"] = ReviewForm()
+
         if self.request.user.id:
             # предлагаю создавать просмотр на админа(id=1),
             # если пользователь не авторизован
@@ -85,11 +107,32 @@ class DetailedProductView(DetailView):
             product_view.save()
         return context
 
-    def post(self, request, pk, *args, **kwargs):
-        form = ReviewForm(request.POST)
-        new_review = form.save(commit=False)
-        new_review.product = Product.objects.get(id=pk)
-        new_review.user = request.user
-        new_review.save()
-        return redirect(request.META.get('HTTP_REFERER',
-                                         'redirect_if_referer_not_found'))
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        page_number = request.GET.get("page", 1)
+        context = self.get_context_data(page_number=page_number, **kwargs)
+        return render(request, self.template_name, context=context)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        data = request.POST
+
+        if "delete" in data:
+            ReviewForItem.delete_review(data["review_id"])
+            messages.success(request, _("Отзыв удален."))
+        else:
+            reviews_form = ReviewForm(data)
+
+            if reviews_form.is_valid():
+                review_data = reviews_form.cleaned_data
+                review = ReviewForItem(self.object)
+                review.add_review(user=request.user, **review_data)
+                messages.success(request, _("Отзыв добавлен."))
+            else:
+                page_number = request.POST.get("page", 1)
+                context = self.get_context_data(page_number=page_number, **kwargs)
+                context["reviews_form"] = reviews_form
+                messages.error(request, _("Отзыв не добавлен, проверьте корректность ввода."))
+                return render(request, self.template_name, context=context)
+
+        return redirect("product-page", self.object.pk)

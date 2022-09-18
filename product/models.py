@@ -1,6 +1,7 @@
 from django.urls import reverse
 from timestamps.models import models, Model, Timestampable
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 from shop.models import Shop
@@ -18,6 +19,9 @@ class Product(Model):
     category = TreeForeignKey("ProductCategory", on_delete=models.DO_NOTHING, verbose_name=_("категория"))
     property = models.ManyToManyField("Property", through="ProductProperty", verbose_name=_("характеристики"))
     shop = models.ManyToManyField(Shop, through="Offer", verbose_name=_("магазины"))
+
+    def get_absolute_url(self):
+        return reverse("product-page", kwargs={"pk": self.pk})
 
     def __str__(self):
         return self.name
@@ -154,7 +158,7 @@ class Review(Model):
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, verbose_name=_("продукт"))
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name=_("пользователь"))
     text = models.TextField(verbose_name=_("текст"))
-    rating = models.IntegerField(choices=GRADE_CHOICES, verbose_name=_("рейтинг"))
+    rating = models.PositiveSmallIntegerField(choices=GRADE_CHOICES, verbose_name=_("рейтинг"))
 
     class Meta:
         verbose_name = _("отзыв")
@@ -170,3 +174,4 @@ class ProductView(Model):
     class Meta:
         verbose_name = _("просмотренный продукт")
         verbose_name_plural = _("просмотренные продукты")
+        ordering = ["-created_at"]
