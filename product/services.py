@@ -1,3 +1,7 @@
+from django.core.cache import cache
+from django.conf import settings
+
+
 class ReviewForItem:
     """
     Отзывы к товарам
@@ -17,17 +21,30 @@ class ComparisonList:
     Список сравниваемых товаров
     """
 
-    def add_item(self):
-        """Добавить товар к сравнению"""
-        pass
-
-    def remove_item(self):
-        """Удалить товар из списка сравнения"""
-        pass
-
     def get_compare_list(self):
         """Получить список сравниваемых товаров"""
-        pass
+        compare_list = cache.get(settings.CACHE_KEY_COMPARISON)
+        return compare_list
+
+    def add_item(self, product):
+        """Добавить товар в список сравнения"""
+        compare_list = cache.get(settings.CACHE_KEY_COMPARISON)
+        if not compare_list:
+            compare_list = set()
+        compare_list.add(product)
+        cache.set(settings.CACHE_KEY_COMPARISON, compare_list, settings.CACHE_TIMEOUT.get(settings.CACHE_KEY_COMPARISON))
+
+    def remove_item(self, product):
+        """Удалить товар из списка сравнения"""
+        compare_list = cache.get(settings.CACHE_KEY_COMPARISON)
+        if product in compare_list:
+            compare_list.discard(product)
+            cache.set(settings.CACHE_KEY_COMPARISON, compare_list,
+                      settings.CACHE_TIMEOUT.get(settings.CACHE_KEY_COMPARISON))
+
+    def clear_compare_list(self):
+        """Удалить весь список сравнениваемых товаров"""
+        cache.delete(settings.CACHE_KEY_COMPARISON)
 
 
 class ProductsFilter:

@@ -197,7 +197,11 @@
                                 </div>
                                 <div class="Card-category">достать категорию
                                 </div>
-                                <div class="Card-hover"><a class="Card-btn" href="#"><img src="{% static 'img/icons/card/bookmark.svg' %}" alt="bookmark.svg"/></a><a class="Card-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Card-btn" href="#"><img src="{% static 'img/icons/card/change.svg' %}" alt="change.svg"/></a>
+                                <div class="Card-hover"><a class="Card-btn" href="#">
+                                    <img src="{% static 'img/icons/card/bookmark.svg' %}" alt="bookmark.svg"/></a>
+                                    <a class="Card-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a>
+                                    <a class="Card-btn" href="{% url 'compare_add' i.product_id %}" target="_blank">
+                                        <img src="{% static 'img/icons/card/change.svg' %}" alt="change.svg"/></a>
                                 </div>
                             </div>
                         </div>

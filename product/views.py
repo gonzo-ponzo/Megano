@@ -1,10 +1,13 @@
 from django.conf import settings
 from django.core.cache import cache
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
+from django.views import View
 from product.forms import ProductForm, ReviewForm
 from product.models import Product
 from promotion.services import BannerMain
 from django.views.generic import TemplateView, DetailView, CreateView
+
+from .services import ComparisonList
 from .utils import get_main_pic, get_secondary_pics, get_min_price, \
     get_top_price, get_discount, get_description, \
     get_property_dict, get_offer_list, get_review
@@ -24,9 +27,32 @@ class MainPage(TemplateView):
         return context
 
 
-class CompareView(TemplateView):
-    template_name = 'product/compare.html'
+class CompareView(View):
 
+    def get(self, request, *args, **kwargs):
+        compare_list = ComparisonList().get_compare_list()
+        return render(request, 'product/compare.html', {'compare_list': compare_list})
+
+
+class CompareAdd(View):
+
+    def get(self, request, *args, **kwargs):
+        ComparisonList().add_item(kwargs['pk'])
+        return render(request, 'product/compare_change.html', {'message': 'объект добавлен'})
+
+
+class CompareRemove(View):
+
+    def get(self, request, *args, **kwargs):
+        ComparisonList().remove_item(kwargs['pk'])
+        return render(request, 'product/compare_change.html', {'message': 'объект удален'})
+
+
+class CompareClear(View):
+
+    def get(self, request, *args, **kwargs):
+        ComparisonList().remove_item(kwargs['pk'])
+        return render(request, 'product/compare_change.html', {'message': 'список очищен'})
 
 class CatalogView(TemplateView):
     model = Product
