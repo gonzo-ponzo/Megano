@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from product.forms import ProductForm, ReviewForm
 from product.models import Product, ProductView
 from promotion.services import BannerMain
-from django.views.generic import TemplateView, DetailView, CreateView
+from django.views.generic import TemplateView, DetailView, CreateView, ListView
 from .utils import get_main_pic, get_secondary_pics, get_min_price, \
     get_top_price, get_discount, get_description, \
     get_property_dict, get_offer_list, get_review
@@ -28,15 +28,20 @@ class CompareView(TemplateView):
     template_name = 'product/compare.html'
 
 
-class CatalogView(TemplateView):
-    model = Product
+class CatalogView(ListView):
+    # model = Product
     template_name = 'product/catalog.html'
     context_objects_name = 'product_list'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["list"] = Product.objects.all()
-        return context
+    def get_queryset(self):
+        queryset = Product.objects.all().prefetch_related('productimage_set')
+        queryset = queryset.select_related('category')
+        return queryset
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context["list"] = Product.objects.all()
+    #     return context
 
 
 class DetailedProductView(DetailView):

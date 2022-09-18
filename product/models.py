@@ -1,3 +1,4 @@
+from django.urls import reverse
 from timestamps.models import models, Model, Timestampable
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
@@ -24,6 +25,9 @@ class Product(Model):
     class Meta:
         verbose_name = _("продукт")
         verbose_name_plural = _("продукты")
+
+    def get_absolute_url(self):
+        return reverse('product-page', args=[self.pk])
 
 
 class Offer(Model):
