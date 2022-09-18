@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.core.cache import cache
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from product.forms import ProductForm, ReviewForm
 from product.models import Product, ProductView
 from promotion.services import BannerMain
@@ -18,7 +18,6 @@ from .utils import (
     get_description,
     get_property_dict,
     get_offer_list,
-    get_review,
 )
 
 

@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 {% include 'base.html' with title='Product' %}
 <body class="Site">
 {% include 'header.html' %}
@@ -6,12 +7,12 @@
     <div class="Middle-top">
       <div class="wrap">
         <div class="Middle-header">
-          <h1 class="Middle-title">Product details
+          <h1 class="Middle-title">{% trans "О продукте" %}
           </h1>
           <ul class="breadcrumbs Middle-breadcrumbs">
-            <li class="breadcrumbs-item"><a href="/static">home</a>
+            <li class="breadcrumbs-item"><a href="/static">{% trans "На главную" %}</a>
             </li>
-            <li class="breadcrumbs-item breadcrumbs-item_current"><span>Product</span>
+            <li class="breadcrumbs-item breadcrumbs-item_current"><span>{% trans "Продукт" %}</span>
             </li>
           </ul>
         </div>
@@ -59,14 +60,14 @@
               </div>
               <div class="ProductCard-footer">
                 <div class="ProductCard-tags">
-                  <strong class="ProductCard-tagsTitle">Tags:
+                  <strong class="ProductCard-tagsTitle">{% trans "Тэги" %}:
                   </strong><a href="#">Accesories</a>,<a href="#">Creative</a>,<a href="#">Design</a>,<a href="#">Gaming</a>
                 </div>
               </div>
             </div>
           </div>
           <div class="Tabs Tabs_default">
-            <div class="Tabs-links" id="tabs"><a class="Tabs-link_ACTIVE Tabs-link" href="#description"><span>Описание</span></a><a class="Tabs-link" href="#sellers"><span>Продавцы</span></a><a class="Tabs-link" href="#reviews"><span>Отзывы ({{ count_reviews }})</span></a>
+            <div class="Tabs-links" id="tabs"><a class="Tabs-link_ACTIVE Tabs-link" href="#description"><span>{% trans "Описание" %}</span></a><a class="Tabs-link" href="#sellers"><span>Продавцы</span></a><a class="Tabs-link" href="#reviews"><span>Отзывы ({{ count_reviews }})</span></a>
             </div>
             <div class="Tabs-wrap">
               <div class="Tabs-block" id="description">
@@ -79,9 +80,9 @@
                 <div class="table">
                   <table>
                     <tr>
-                      <th>Характеристика
+                      <th>{% trans "Характеристика" %}
                       </th>
-                      <th>Значение
+                      <th>{% trans "Значение" %}
                       </th>
                     </tr>
                     {% for property, property_value in property_dict %}
