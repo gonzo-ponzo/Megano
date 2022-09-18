@@ -1,6 +1,5 @@
 from django.urls import path
-from .views import CreateProductView, CatalogView, CompareView, \
-    DetailedProductView
+from .views import CreateProductView, CompareView, DetailedProductView
 
 
 urlpatterns = [

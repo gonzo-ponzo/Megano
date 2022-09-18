@@ -65,7 +65,8 @@ class CatalogViewTest(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertTemplateUsed(resp, 'product/catalog.html')
 
-class CatalogByCategryViewTest(TestCase):
+
+class CatalogByCategoryViewTest(TestCase):
 
     category = 'category'
 
