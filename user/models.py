@@ -1,4 +1,3 @@
-from django.core.validators import RegexValidator
 from phonenumber_field.modelfields import PhoneNumberField
 from timestamps.models import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
