@@ -21,8 +21,27 @@ class Banner(Timestampable):
         verbose_name_plural = _("баннеры")
 
 
-class Promotion(Model):
-    name = models.CharField(max_length=255, verbose_name=_("название"))
+class DiscountType(Timestampable):
+    description = models.CharField(max_length=512, verbose_name=_("описание"))
 
     class Meta:
-        managed = False
+        verbose_name = _("Тип акции")
+        verbose_name_plural = _("Типы акции")
+        managed = True
+
+
+class PromotionOffer(Timestampable):
+    name = models.CharField(max_length=255, verbose_name=_("название"))
+    discount_type_value = models.PositiveIntegerField(verbose_name=_("Значение правила акции"))
+    discount_decimals = models.PositiveIntegerField(default=0, verbose_name=_("Фиксированная скидка"))
+    discount_percentage = models.PositiveIntegerField(default=0, verbose_name=_("Скидка в процентах"))
+    is_active = models.BooleanField(default=False, verbose_name=_("активная"))
+    discount_type_id = models.ForeignKey(DiscountType, on_delete=models.DO_NOTHING, verbose_name=_("Тип акции"))
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("акция")
+        verbose_name_plural = _("акции")
+        managed = True
