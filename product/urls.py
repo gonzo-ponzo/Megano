@@ -5,11 +5,9 @@ from .views import CreateProductView, CatalogView, CompareView, ProductView, Com
 urlpatterns = [
     path('create/', CreateProductView.as_view(), name='product-create'),
     path('catalog/', CatalogView.as_view(), name='catalog-page'),
-
     path('compare/', CompareView.as_view(), name='compare-page'),
     path('compare_add/<int:pk>', CompareAdd.as_view(), name='compare_add'),
     path('compare_remove/<int:pk>', CompareRemove.as_view(), name='compare_remove'),
     path('compare_clear/', CompareClear.as_view(), name='compare_clear'),
-
     path('<int:pk>/', ProductView.as_view(), name='product-page')
 ]

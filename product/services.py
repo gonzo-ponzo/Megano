@@ -1,5 +1,6 @@
 from django.core.cache import cache
 from django.conf import settings
+from .models import ProductProperty, Property
 
 
 class ReviewForItem:
@@ -21,10 +22,21 @@ class ComparisonList:
     Список сравниваемых товаров
     """
 
-    def get_compare_list(self):
+    def get_list(self):
         """Получить список сравниваемых товаров"""
         compare_list = cache.get(settings.CACHE_KEY_COMPARISON)
-        return compare_list
+        attributes = dict()
+        if compare_list:
+            for product in compare_list:
+                attributes_product = ProductProperty.objects.filter(product=product).values('property', 'value')
+                for i_attribute in attributes_product:
+                    attribute = Property.objects.get(id=i_attribute['property'])
+                    value = i_attribute['value']
+                    if attribute not in attributes:
+                        attributes[attribute] = dict()
+
+                    attributes[attribute][product] = value
+        return attributes, compare_list
 
     def add_item(self, product):
         """Добавить товар в список сравнения"""
@@ -42,7 +54,7 @@ class ComparisonList:
             cache.set(settings.CACHE_KEY_COMPARISON, compare_list,
                       settings.CACHE_TIMEOUT.get(settings.CACHE_KEY_COMPARISON))
 
-    def clear_compare_list(self):
+    def clear_list(self):
         """Удалить весь список сравнениваемых товаров"""
         cache.delete(settings.CACHE_KEY_COMPARISON)
 

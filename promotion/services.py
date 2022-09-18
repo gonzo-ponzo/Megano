@@ -1,6 +1,8 @@
 import random
 
 from django.conf import settings
+from django.core.cache import cache
+
 from .models import Banner
 
 

@@ -30,29 +30,29 @@ class MainPage(TemplateView):
 class CompareView(View):
 
     def get(self, request, *args, **kwargs):
-        compare_list = ComparisonList().get_compare_list()
-        return render(request, 'product/compare.html', {'compare_list': compare_list})
+        attributes, compare_list = ComparisonList().get_list()
+        return render(request, 'product/compare.html', {'compare_list': compare_list, 'attributes': attributes})
 
 
 class CompareAdd(View):
 
     def get(self, request, *args, **kwargs):
-        ComparisonList().add_item(kwargs['pk'])
+        ComparisonList().add_item(Product.objects.get(id=kwargs['pk']))
         return render(request, 'product/compare_change.html', {'message': 'объект добавлен'})
 
 
 class CompareRemove(View):
 
     def get(self, request, *args, **kwargs):
-        ComparisonList().remove_item(kwargs['pk'])
-        return render(request, 'product/compare_change.html', {'message': 'объект удален'})
+        ComparisonList().remove_item(Product.objects.get(id=kwargs['pk']))
+        return redirect('/product/compare/')
 
 
 class CompareClear(View):
 
     def get(self, request, *args, **kwargs):
-        ComparisonList().remove_item(kwargs['pk'])
-        return render(request, 'product/compare_change.html', {'message': 'список очищен'})
+        ComparisonList().clear_list()
+        return redirect('/')
 
 class CatalogView(TemplateView):
     model = Product
