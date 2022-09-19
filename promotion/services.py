@@ -14,7 +14,11 @@ class BannerMain:
     @classmethod
     def get_active_banners(cls):
         """Получить баннеры"""
-        return Banner.objects.filter(is_active=True).only("pk", "name", "description", "product", "image")
+        return (
+            Banner.objects.filter(is_active=True)
+            .only("pk", "name", "description", "product", "image", "product__id")
+            .select_related("product")
+        )
 
     @classmethod
     def _get_count_active_banners(cls):

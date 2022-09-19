@@ -46,7 +46,7 @@
             <ul class="menu menu_main">
               <li class="menu-item"><a class="menu-link" href="/">Home</a></li>
               <li class="menu-item"><span class="menu-label menu-label_danger">New</span><a class="menu-link" href="/shop">Shop</a></li>
-              <li class="menu-item"><a class="menu-link" href="/product/catalog">Catalog</a></li>
+              <li class="menu-item"><a class="menu-link" href="{% url 'catalog-page' %}">Catalog</a></li>
               <li class="menu-item"><span class="menu-label menu-label_success">Hot</span><a class="menu-link" href="/promotion">Promotion</a></li>
               {% if request.user.is_authenticated %}
                   <li class="menu-item"><a class="menu-link" href="/user/account">Profile</a></li>

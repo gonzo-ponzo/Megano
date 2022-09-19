@@ -94,11 +94,12 @@ class ManufacturerAdmin(admin.ModelAdmin):
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ("id", "product", "rating", "text_short", "user")
+    list_display = ("id", "product", "rating", "text_short", "user", "created_at")
     list_display_links = ("id", "product")
     search_fields = ("product__name",)
-    fields = ("product", "rating", "text", "user")
-    readonly_fields = ("created_at", "updated_at")
+    fields = ("product", "rating", "text", "user", "created_at")
+    readonly_fields = ("created_at",)
+    save_as = True
 
     @staticmethod
     def text_short(obj):

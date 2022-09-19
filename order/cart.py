@@ -46,15 +46,7 @@ class Cart(object):
                 price = cart[product]['current'][shop]['price']
                 quantity = cart[product]['current'][shop]['quantity']
                 cart[product]['current'][shop]['total_price'] = price * quantity
-                yield (
-                    cart[product]['current'][shop]['price'],
-                    str(cart[product]['current'][shop]['quantity']),
-                    cart[product]['current'][shop]['shop'],
-                    cart[product]['current'][shop]['name'],
-                    cart[product]['current'][shop]['image'],
-                    cart[product]['current'][shop]['product_id'],
-                    cart[product]['current'][shop]['shop_id']
-                )
+                yield cart[product]['current'][shop]
 
     def __len__(self):
         """
@@ -99,7 +91,9 @@ class Cart(object):
         self.save()
 
     def lower(self, product: Product, shop_id: int):
-
+        """
+        Уменьшение кол-ва товара в корзине
+        """
         product_id = str(product.id)
         cart = self.cart
         if cart[product_id]['offers'][str(shop_id)] > 0:

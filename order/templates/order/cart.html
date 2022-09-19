@@ -20,42 +20,37 @@
     <div class="Section">
       <div class="wrap">
         <form class="form Cart" action="#" method="post">
-
-          {% for price, quantity, shop, name, image, product_id, shop_id in cart %}
+          {% for item in cart %}
           <div class="Cart-product">
             <div class="Cart-block Cart-block_row">
-              <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img class="Cart-img" src=/media/{{ image }} alt="card.jpg"/></a>
+              <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img class="Cart-img" src=/media/{{ item.image }} alt="card.jpg"/></a>
               </div>
-              <div class="Cart-block Cart-block_info"><a class="Cart-title" href="/product/{{ product_id }}">{{ name }}</a>
-                <div class="Cart-desc">{{ shop }}
+              <div class="Cart-block Cart-block_info"><a class="Cart-title" href="/product/{{ item.product_id }}">{{ item.name }}</a>
+                <div class="Cart-desc">{{ item.shop }}
                 </div>
               </div>
               <div class="Cart-block Cart-block_price">
-                <div class="Cart-price">{{ price }}$
+                <div class="Cart-price">{{ item.price }}$
                 </div>
               </div>
             </div>
             <div class="Cart-block Cart-block_row">
-
               <div class="Cart-block Cart-block_amount">
                 <div class="Cart-amount">
                   <div class="Amount">
-                    <button class="Amount-remove" type="button" onclick="location.href='{% url 'order:cart-lower' product_id shop_id %}'">
+                    <button class="Amount-remove" type="button" onclick="location.href='{% url 'order:cart-lower' item.product_id item.shop_id %}'">
                     </button>
-                    <input class="Amount-input form-input" name="amount" type="text" value={{ quantity }}>
-                    <button class="Amount-add" type="button" onclick="location.href='{% url 'order:cart-add' product_id shop_id %}'">
+                    <input class="Amount-input form-input" name="amount" type="text" value={{ item.quantity }}>
+                    <button class="Amount-add" type="button" onclick="location.href='{% url 'order:cart-add' item.product_id item.shop_id %}'">
                     </button>
                   </div>
                 </div>
               </div>
-              <div class="Cart-block Cart-block_delete"><a class="Cart-delete" href="{% url 'order:cart-remove' product_id shop_id %}"><img src="{% static 'img/icons/card/delete.svg' %}" alt="delete.svg"/></a>
+              <div class="Cart-block Cart-block_delete"><a class="Cart-delete" href="{% url 'order:cart-remove' item.product_id item.shop_id %}"><img src="{% static 'img/icons/card/delete.svg' %}" alt="delete.svg"/></a>
               </div>
             </div>
           </div>
           {% endfor %}
-
-
-
           <div class="Cart-total">
             <div class="Cart-block Cart-block_total">
               <strong class="Cart-title">Итого:

@@ -27,6 +27,7 @@ urlpatterns = [
     path("login/", UserLoginView.as_view(), name="login-page"),
     path("register/", UserRegistrationView.as_view(), name="registration-page"),
     path("product/", include("product.urls"), name='product'),
+    path("catalog/", include("product.urls_catalog")),
     path("shop/", include("shop.urls"), name='shop'),
     path("order/", include(("order.urls", 'order'), namespace='order'),
          name='order'),
