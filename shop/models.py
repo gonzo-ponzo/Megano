@@ -53,6 +53,9 @@ class Shop(Model):
         return self.name
 
     def get_absolute_url(self):
+        """
+        Получение УРЛа магазина
+        """
         return reverse("shop-detail", kwargs={"pk": self.pk})
 
     class Meta:

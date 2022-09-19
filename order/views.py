@@ -1,4 +1,4 @@
-from order.cart import Cart
+from order.services import Cart
 from django.shortcuts import render, redirect, get_object_or_404
 from product.models import Product
 

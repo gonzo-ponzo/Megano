@@ -10,7 +10,7 @@
           <h1 class="Middle-title">{% trans "О продукте" %}
           </h1>
           <ul class="breadcrumbs Middle-breadcrumbs">
-            <li class="breadcrumbs-item"><a href="/static">{% trans "На главную" %}</a>
+            <li class="breadcrumbs-item"><a href="/">{% trans "На главную" %}</a>
             </li>
             <li class="breadcrumbs-item breadcrumbs-item_current"><span>{% trans "Продукт" %}</span>
             </li>
@@ -24,23 +24,22 @@
           <div class="ProductCard">
             <div class="ProductCard-look">
               <div class="ProductCard-photo">
-                  <img src=/media/{{ main_pic }} alt="product-img"/>
+                    <img src="{{ detailed_product.get_main_pic.url }}" alt="product-img"/>
               </div>
-
-              <div class="ProductCard-picts"><a class="ProductCard-pict ProductCard-pict_ACTIVE" href="/media/{{ main_pic }}"><img src=/media/{{ main_pic }} alt='product-img'/></a>
-                  {% for pic in pics %}
-                        <a class="ProductCard-pict" href=/media/{{ pic.image }}><img src=/media/{{ pic.image }} alt="product-img"/></a>
+              <div class="ProductCard-picts"><a class="ProductCard-pict ProductCard-pict_ACTIVE" href="/media/{{ main_pic }}"><img src="{{ detailed_product.get_main_pic.url }}" alt='product-img'/></a>
+                  {% for pic in detailed_product.get_secondary_pics %}
+                        <a class="ProductCard-pict" href="{{ pic.image.url }}"><img src="{{ pic.image.url }}" alt="product-img"/></a>
                   {% endfor %}
               </div>
             </div>
             <div class="ProductCard-desc">
               <div class="ProductCard-header">
-                <h2 class="ProductCard-title">{{ product.name }}
+                <h2 class="ProductCard-title">{{ object.name }}
                 </h2>
                 <div class="ProductCard-info">
                   <div class="ProductCard-cost">
-                      {% if low_price %}
-                        <div class="ProductCard-price">${{ low_price }} - ${{ top_price }}
+                      {% if detailed_product.get_min_price %}
+                        <div class="ProductCard-price">${{ detailed_product.get_min_price }} - ${{ detailed_product.get_top_price }}
                       {% else %}
                         <div class="ProductCard-price">Нет в продаже
                       {% endif %}
@@ -77,8 +76,8 @@
               <div class="Tabs-block" id="description">
                 <h2>{{ object.name }}
                 </h2>
-                <p>{{ product_description }}
-                </p><img class="pict pict_right" src=/media/{{ main_pic }} alt="product-img"/>
+                <p>{{ object.description }}
+                </p><img class="pict pict_right" src="{{ detailed_product.get_main_pic.url }}" alt="product-img"/>
                 <div class="clearfix">
                 </div>
                 <div class="table">
@@ -89,7 +88,7 @@
                       <th>{% trans "Значение" %}
                       </th>
                     </tr>
-                    {% for property, property_value in property_dict %}
+                    {% for property, property_value in detailed_product.get_property_dict %}
                       <tr>
                         <td>{{ property }}
                         </td>
@@ -102,7 +101,7 @@
               </div>
               <div class="Tabs-block" id="sellers">
                 <div class="Categories Categories_product">
-                  {% for shop, price, amounth in offer_list %}
+                  {% for shop, price, amounth in detailed_product.get_offer_list %}
                     <div class="Categories-row">
                       <div class="Categories-block Categories-block_shop_img">
                           <img src={{ shop.image.url }} alt="shop-img">
