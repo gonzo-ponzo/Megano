@@ -15,7 +15,7 @@
             {% get_product_categories as categories %}
             {% recursetree categories %}
                 <div class="CategoriesButton-link">
-                    <a href={{ node.slug }}>
+                    <a href={% url 'category-catalog-page' node.slug %}>
                         <div class="CategoriesButton-icon">
                             <img src="{% static 'img/icons/departments/1.svg' %}" alt="1.svg"/>
                         </div>
