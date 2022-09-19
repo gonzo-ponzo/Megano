@@ -39,7 +39,11 @@
                 </h2>
                 <div class="ProductCard-info">
                   <div class="ProductCard-cost">
-                    <div class="ProductCard-price">${{ low_price }} - ${{ top_price }}
+                      {% if low_price %}
+                        <div class="ProductCard-price">${{ low_price }} - ${{ top_price }}
+                      {% else %}
+                        <div class="ProductCard-price">Нет в продаже
+                      {% endif %}
                     </div>
                   </div>
                   <div class="ProductCard-compare"><a class="btn btn_default" href="#"><img class="btn-icon" src="{% static 'img/icons/card/change.svg' %}" alt="change.svg"/></a>

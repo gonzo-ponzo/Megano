@@ -1,0 +1,66 @@
+[
+  {
+    "model": "shop.shop",
+    "pk": 1,
+    "fields": {
+      "created_at": "2022-09-10T20:35:52.606Z",
+      "updated_at": "2022-09-10T20:39:39.168Z",
+      "deleted_at": null,
+      "name": "Restore",
+      "description": "Оффициальная продукция Apple",
+      "phone": "123456789",
+      "email": "test1@test.com",
+      "address": "somestreet, 221",
+      "image": "1/1",
+      "user_id": 1
+    }
+  },
+  {
+    "model": "shop.shop",
+    "pk": 2,
+    "fields": {
+      "created_at": "2022-09-10T20:35:52.606Z",
+      "updated_at": "2022-09-10T20:39:39.168Z",
+      "deleted_at": null,
+      "name": "М видео",
+      "description": "Магазин электроники и бытовой техники",
+      "phone": "123456788",
+      "email": "test2@test.com",
+      "address": "somestreet, 222",
+      "image": "2/2",
+      "user_id": 1
+    }
+  },
+  {
+    "model": "shop.shop",
+    "pk": 3,
+    "fields": {
+      "created_at": "2022-09-10T20:35:52.606Z",
+      "updated_at": "2022-09-10T20:39:39.168Z",
+      "deleted_at": null,
+      "name": "Унция",
+      "description": "Чай и кофе для каждого",
+      "phone": "123456787",
+      "email": "test3@test.com",
+      "address": "somestreet, 223",
+      "image": "3/3",
+      "user_id": 1
+    }
+  },
+  {
+    "model": "shop.shop",
+    "pk": 4,
+    "fields": {
+      "created_at": "2022-09-10T20:35:52.606Z",
+      "updated_at": "2022-09-10T20:39:39.168Z",
+      "deleted_at": null,
+      "name": "Аптека",
+      "description": "Все для здоровья",
+      "phone": "123456786",
+      "email": "test4@test.com",
+      "address": "somestreet, 224",
+      "image": "4/4",
+      "user_id": 1
+    }
+  }
+]
