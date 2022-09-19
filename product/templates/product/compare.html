@@ -45,7 +45,8 @@
                           <div class="Compare-nameProduct Compare-nameProduct_main">
                               <a href="/product/{{ product.id }}">{{ product.name }}</a>
                           </div>
-                          <div class="Compare-feature"><img class="Compare-pict" src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/></div>
+                          <div class="Compare-feature">
+                              <img class="Compare-pict" src="{{ product.productimage_set.first.image.url }}" alt="card.jpg"/></div>
                           <div class="Compare-feature">
                           <a class="Compare-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a>
                           <a class="Compare-btn" href="{% url 'compare_remove' product.id %}">
@@ -72,8 +73,6 @@
             <div class="Compare-products">
 
                 {% for product in compare_list %}
-
-
               <div class="Compare-product">
                 <div class="Compare-feature">
                   <div class="Rating">
@@ -137,12 +136,10 @@
 
                 <div class="Compare-title">{{ attribute.name }}</div>
                 <div class="Compare-products">
-
                 {% for product in compare_list %}
                     <div class="Compare-product">
-{#                        <div class="Compare-feature">{{ values }}</div>#}
                     {% for k, i in values.items %}
-                        {% if k == product %}
+                        {% if k == product.id %}
                             {{ i }}
                         {% endif %}
                     {% endfor %}
@@ -150,27 +147,42 @@
                 {% endfor %}
                 </div>
                 </div>
-
-
-
-
-
-{#              <div class="Compare-product">#}
-{#                <div class="Compare-nameProduct">Планшет Windows A848sls#}
-{#                </div>#}
-{#                <div class="Compare-feature">#}
-{#                  <strong class="Compare-priceOld">$85.00#}
-{#                  </strong>#}
-{#                  <strong class="Compare-price">$50.00#}
-{#                  </strong>#}
-{#                </div>#}
-{#              </div>#}
-{#            </div>#}
-{#          </div>#}
-
-
-
         {% endfor %}
+
+
+
+
+
+
+
+
+
+        <div class="Compare-row">
+            <div class="Compare-title">Цена от
+            </div>
+            <div class="Compare-products">
+
+                {% for product in compare_list %}
+              <div class="Compare-product">
+                <div class="Compare-feature">
+                  <strong class="Compare-price">{{ product.offer_set.first.price }}</strong>
+                </div>
+              </div>
+
+                {% endfor %}
+
+
+            </div>
+          </div>
+
+
+
+
+
+
+
+
+
 
 
         </div>

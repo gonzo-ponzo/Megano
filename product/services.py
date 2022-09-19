@@ -27,15 +27,19 @@ class ComparisonList:
         compare_list = cache.get(settings.CACHE_KEY_COMPARISON)
         attributes = dict()
         if compare_list:
+
             for product in compare_list:
+
                 attributes_product = ProductProperty.objects.filter(product=product).values('property', 'value')
+
                 for i_attribute in attributes_product:
+
                     attribute = Property.objects.get(id=i_attribute['property'])
                     value = i_attribute['value']
                     if attribute not in attributes:
                         attributes[attribute] = dict()
+                    attributes[attribute][product.id] = value
 
-                    attributes[attribute][product] = value
         return attributes, compare_list
 
     def add_item(self, product):
