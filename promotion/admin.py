@@ -31,18 +31,19 @@ class BannerAdmin(admin.ModelAdmin):
 
 @admin.register(PromotionOffer)
 class PromotionOfferAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "discount_type_value", "discount_decimals", "discount_percentage", "is_active", "created_at", "updated_at")
+    list_display = ("id", "name", "discount_type_value", "discount_decimals", "discount_percentage", "is_active", "updated_at")
     list_display_links = ("id", "name")
-    search_fields = ("name", )
-    fields = ("id", "name", "discount_type_value", "discount_decimals", "discount_percentage", "is_active", "discount_type_id", "created_at", "updated_at")
+    search_fields = ("name",)
+    filter_horizontal = ("offer", )
+    fields = ("name", "discount_type_value", "discount_decimals", "discount_percentage", "is_active", "discount_type_id", "offer")
     readonly_fields = ("created_at", "updated_at")
     actions = ["make_active", "make_inactive"]
 
-    @admin.action(description=_("сделать активным(и)"))
+    @admin.action(description=_("Активировать"))
     def make_active(self, request, queryset):
         queryset.update(is_active=True)
 
-    @admin.action(description=_("сделать неактивным(и)"))
+    @admin.action(description=_("Деактивировать"))
     def make_inactive(self, request, queryset):
         queryset.update(is_active=False)
 
@@ -52,5 +53,5 @@ class DiscountTypeAdmin(admin.ModelAdmin):
     list_display = ("id", "description", "created_at", "updated_at")
     list_display_links = ("id", "description")
     search_fields = ("id", "description")
-    fields = ("id", "description", "created_at", "updated_at")
+    fields = ("description", "created_at", "updated_at")
     readonly_fields = ("created_at", "updated_at")

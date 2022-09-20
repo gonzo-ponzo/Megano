@@ -9,16 +9,6 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import TemplateView, DetailView, CreateView, ListView
-# from .services import (
-#     get_main_pic,
-#     get_secondary_pics,
-#     get_min_price,
-#     get_top_price,
-#     get_discount,
-#     get_description,
-#     get_property_dict,
-#     get_offer_list,
-# )
 
 
 class CreateProductView(CreateView):

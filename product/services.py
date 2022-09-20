@@ -269,7 +269,6 @@ class DetailedProduct:
         offer_list = [(get_object_or_404(Shop, id=offer.shop_id), offer.price, offer.amount) for offer in offers]
         return offer_list
 
-
     def get_review(self):
         """
         Получение всех отзывов о продукте

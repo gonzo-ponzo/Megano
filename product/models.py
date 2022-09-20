@@ -32,11 +32,13 @@ class Product(Model):
 
 class Offer(Model):
     """Предложение магазина"""
-
+    # from promotion.models import PromotionOffer
     shop = models.ForeignKey(Shop, on_delete=models.DO_NOTHING, verbose_name=_("магазин"))
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, verbose_name=_("продукт"))
     price = models.DecimalField(max_digits=11, decimal_places=2, verbose_name=_("цена"))
     amount = models.PositiveIntegerField(verbose_name=_("количество"))
+    # promotion = models.ForeignKey(PromotionOffer, on_delete=models.DO_NOTHING, blank=True, null=True, default=None, verbose_name=_("Акция"))
+    # promotion = models.ManyToManyField(PromotionOffer)
 
     def __str__(self):
         return f"{self.shop} - {self.product}"
