@@ -7,21 +7,11 @@ from django.utils.translation import gettext_lazy as _
 User = get_user_model()
 
 
-def set_status_depending_on_role(user, role):
-    if role == "Admin":
-        user.staff = True
-        user.admin = True
-    else:
-        user.staff = False
-        user.admin = False
-    return user
-
-
 class UserAdminCreationForm(UserCreationForm):
     """Форма создания пользователей через админку"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['phone'].widget.attrs['placeholder'] = '123-456-78-90'
+        self.fields['phone'].widget.attrs['placeholder'] = '+12125552368'
 
     password1 = forms.CharField(label=_("Пароль"), widget=forms.PasswordInput)
     password2 = forms.CharField(label=_("Подтвердите пароль"), widget=forms.PasswordInput)
@@ -43,8 +33,6 @@ class UserAdminCreationForm(UserCreationForm):
         """Сохранение паролей в формате хеша"""
         user = super().save(commit=False)
         user.set_password(self.cleaned_data.get("password1"))
-        role = self.cleaned_data.get("role")
-        set_status_depending_on_role(user, role)
         if commit:
             user.save()
         return user
@@ -54,25 +42,17 @@ class UserAdminChangeForm(forms.ModelForm):
     """Форма для изменения пользователя через админку"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['phone'].widget.attrs['placeholder'] = '123-456-78-90'
+        self.fields['phone'].widget.attrs['placeholder'] = '+7(926)111-11-11'
 
     password = ReadOnlyPasswordHashField()
 
     class Meta:
         model = User
-        fields = ["email", "password", "role", "first_name", "last_name", "middle_name", "phone", "avatar", "staff",
-                  "admin", "is_active"]
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        role = self.cleaned_data.get("role")
-        set_status_depending_on_role(user, role)
-        if commit:
-            user.save()
-        return user
+        fields = ["email", "password", "first_name", "last_name", "middle_name",
+                  "phone", "avatar", "is_active", "groups"]
 
 
-class UserLoginFForm(AuthenticationForm):
+class UserLoginForm(AuthenticationForm):
     username = UsernameField(widget=forms.TextInput(attrs={"autofocus": True}))
     password = forms.CharField(
         label=_("Пароль"),

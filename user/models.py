@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, password, is_active=True, is_staff=False, is_admin=False):
+    def create_user(self, email, password, is_active=True, is_staff=False, is_superuser=False):
         if not email:
             raise ValueError(_("Емейл должен быть указан."))
         if not password:
@@ -14,26 +14,18 @@ class CustomUserManager(BaseUserManager):
             email=self.normalize_email(email),
         )
         user_obj.is_active = is_active
-        user_obj.staff = is_staff
-        user_obj.admin = is_admin
+        user_obj.is_staff = is_staff
+        user_obj.is_superuser = is_superuser
         user_obj.set_password(password)
         user_obj.save(using=self._db)
         return user_obj
-
-    def create_staffuser(self, email, password):
-        user = self.create_user(
-            email=email,
-            password=password,
-            is_staff=True
-        )
-        return user
 
     def create_superuser(self, email, password):
         user = self.create_user(
             email=email,
             password=password,
             is_staff=True,
-            is_admin=True
+            is_superuser=True
         )
         return user
 
@@ -41,12 +33,7 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     """Кастомизированная модель пользователя"""
 
-    ROLES = (
-        ("Admin", "Admin"),
-        ("Buyer", "Buyer")
-    )
-
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
     email = models.EmailField(max_length=125, unique=True, verbose_name=_("электронная почта"))
@@ -54,17 +41,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=150, verbose_name=_("фамилия"))
     middle_name = models.CharField(max_length=150, blank=True, null=True, verbose_name=_("отчество"))
     phone = PhoneNumberField(
-        null=False,
-        blank=False,
-        unique=True,
+        null=True,
+        blank=True,
         verbose_name=_("телефон")
     )
     avatar = models.ImageField(blank=True, upload_to="avatar/%Y/%m/%d", verbose_name=_("фото"))
-    role = models.CharField(choices=ROLES, default="Buyer", max_length=10, verbose_name=_("роль"))
 
     is_active = models.BooleanField(default=True)
-    staff = models.BooleanField(default=False)
-    admin = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     objects = CustomUserManager()
 
@@ -74,19 +59,19 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def get_full_name(self):
         return f'{self.first_name} {self.last_name}'
 
-    def has_perm(self, perm, obj=None):
-        return True
-
-    def has_module_perms(self, app_label):
-        return True
-
-    @property
-    def is_staff(self):
-        return self.staff
-
-    @property
-    def is_admin(self):
-        return self.admin
+    def check_groups_staff(self):
+        """если пользователя добавили хотя бы в одну группу, где есть какие-то права, пускаем пользователя в админку"""
+        if self.pk and not self.is_superuser:
+            groups = self.groups
+            if groups.count() == 0:
+                self.is_staff = False
+            else:
+                self.is_staff = False
+                for group in groups.all():
+                    if group.permissions.count() > 0:
+                        self.is_staff = True
+                        break
+            self.save()
 
     class Meta:
         verbose_name = _("пользователь")

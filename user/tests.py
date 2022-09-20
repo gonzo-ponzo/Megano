@@ -31,8 +31,9 @@ def user_create(email="test@test.com"):
     test_user = User.objects.create(
         email=email,
         first_name="test_f",
-        last_name="test_l",
-        role="Buyer"
+        last_name="test_l"
+        # phone="+79261234567"
+        # role="Buyer"
     )
     return test_user
 
