@@ -32,8 +32,6 @@ def user_create(email="test@test.com"):
         email=email,
         first_name="test_f",
         last_name="test_l"
-        # phone="+79261234567"
-        # role="Buyer"
     )
     return test_user
 
@@ -120,6 +118,21 @@ class UserRegisterViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, _("Enter a valid phone number"))
 
+
+        # телефон не указан
+        response = self.client.post(
+            url,
+            {
+                "email": "test_email@test.com",
+                "password1": "test_password",
+                "password2": "test_password",
+                "first_name": "test_first_name",
+                "last_name": "test_last_name",
+                "middle_name": "test_middle_name"
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, _("required"))
 
 class UserLoginViewTest(TestCase):
     @classmethod

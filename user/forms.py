@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model, password_validation
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
 from django.utils.translation import gettext_lazy as _
+from phonenumber_field.formfields import PhoneNumberField
 
 User = get_user_model()
 
@@ -73,6 +74,7 @@ class UserRegistrationForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         self.fields["email"].error_messages = {"unique": _("Пользователь с таким емейлом уже зарегистрирован")}
         self.fields["phone"].widget.attrs["placeholder"] = "+7(926)111-11-11"
+        # self.fields["phone"].widget.attrs["required"] = "required"
 
     password1 = forms.CharField(
         label=_("Пароль"),
@@ -86,11 +88,13 @@ class UserRegistrationForm(UserCreationForm):
         strip=False,
         help_text=_("Для верификации введите такой же пароль как ранее."),
     )
+    
+    phone = PhoneNumberField()
 
     error_messages = {
         "password_mismatch": _("Пароли не совпадают"),
     }
-
+    
     class Meta:
         model = User
         fields = ["email", "password1", "password2", "first_name", "last_name", "middle_name", "phone", "avatar"]
