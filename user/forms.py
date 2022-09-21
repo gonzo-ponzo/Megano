@@ -88,13 +88,13 @@ class UserRegistrationForm(UserCreationForm):
         strip=False,
         help_text=_("Для верификации введите такой же пароль как ранее."),
     )
-    
+
     phone = PhoneNumberField()
 
     error_messages = {
         "password_mismatch": _("Пароли не совпадают"),
     }
-    
+
     class Meta:
         model = User
         fields = ["email", "password1", "password2", "first_name", "last_name", "middle_name", "phone", "avatar"]

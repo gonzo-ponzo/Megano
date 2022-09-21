@@ -30,7 +30,7 @@ class UserAdmin(BaseUserAdmin):
 
     ordering = ["email"]
     search_fields = ["email"]
-    
+
     def list_groups(self, obj):
         if obj.is_superuser:
             return "(superuser)"

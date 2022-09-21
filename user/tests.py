@@ -118,7 +118,6 @@ class UserRegisterViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, _("Enter a valid phone number"))
 
-
         # телефон не указан
         response = self.client.post(
             url,
@@ -133,6 +132,7 @@ class UserRegisterViewTest(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, _("required"))
+
 
 class UserLoginViewTest(TestCase):
     @classmethod
