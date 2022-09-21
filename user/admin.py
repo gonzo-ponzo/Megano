@@ -14,7 +14,7 @@ class UserAdmin(BaseUserAdmin):
     form = UserAdminChangeForm
     add_form = UserAdminCreationForm
 
-    list_display = ["email", "is_staff"]
+    list_display = ["email", "is_staff", "list_groups"]
     list_filter = []
 
     fieldsets = ((None, {"fields": ("email", "password")}),
@@ -30,3 +30,11 @@ class UserAdmin(BaseUserAdmin):
 
     ordering = ["email"]
     search_fields = ["email"]
+    
+    def list_groups(self, obj):
+        if obj.is_superuser:
+            return "(superuser)"
+        groups = obj.groups.all()
+        if groups.count() == 0:
+            return "-"
+        return ", ".join([group.name for group in groups])
