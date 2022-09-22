@@ -22,6 +22,9 @@ class Product(Model):
     def get_absolute_url(self):
         return reverse("product-page", kwargs={"pk": self.pk})
 
+    def get_attributes(self):
+        return {k.property: k for k in self.productproperty_set.all()}
+
     def __str__(self):
         return self.name
 

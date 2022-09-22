@@ -31,6 +31,11 @@ def get_item_dict(dictionary, key):
     return '-'
 
 
+@register.filter
+def get_min_item(items):
+    return min(i.price for i in items)
+
+
 class CreateProductView(CreateView):
     model = Product
     form_class = ProductForm
