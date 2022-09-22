@@ -32,17 +32,18 @@
         {% for product in compare_list.product_set.values %}
         <td>
             {{ product.name }}
-            <img class="Compare-pict" src="{{ product.pic.url }}" alt="card.jpg"/>
-            {{ product.price }}
+            <img class="Compare-pict" src="{{ product.get_first_pic.url }}" alt="card.jpg"/>
+            {{ product.get_min_price }}
         </td>
         {% endfor %}
     </tr>
-            {% for attribute in a.get_property_list %}
+
+            {% for attribute in compare_list.get_property_list %}
     <tr>
                 <td>{{ attribute.name }}</td>
-                {% for product in a.product_set.values %}
+                {% for product in compare_list.product_set.values %}
         <td>
-                {{ product.attributes|get_item_dict:attribute }}
+                {{ product.get_attributes|get_item_dict:attribute }}
 
         </td>
 {% endfor %}
