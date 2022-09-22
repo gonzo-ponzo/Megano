@@ -1,16 +1,18 @@
 {% load static %}
 {% load i18n %}
 <head>
-    <title>Megano</title>
-    {% include 'base.html' %}
+    <title>{% translate "Вход" %}</title>
 </head>
+{% include 'base.html' %}
 <body class="Site">
     <div class="login-form-container">
         <form class="login-form" method="post">
             {% csrf_token %}
             <table class="login-form-table">
                 <thead>
-                    <th colspan="2">{% translate "Форма входа" %}</th>
+                <tr>
+                    <th colspan="2">{% translate "Вход" %}</th>
+                </tr>
                 </thead>
                 {% if form.errors %}
                     <tr>
@@ -26,11 +28,11 @@
                     <td>{{ form.password }}</td>
                 </tr>
                 <tr>
-                    <td colspan="2" class="login-form-button"><button class="btn btn_primary" type="submit">Войти</button></td>
+                    <td colspan="2" class="login-form-button"><button class="btn btn_primary" type="submit">{% translate "Войти" %}</button></td>
                 </tr>
-                </td>
+                <tr>
                     <td colspan="2">
-                        <a href="{% url "registration-page" %}" class="btn btn_primary">Зарегистрироваться</a>
+                        <a href="{% url "registration-page" %}" class="btn btn_primary">{% translate "Зарегистрироваться" %}</a>
                     </td>
                 </tr>
             </table>

@@ -1,17 +1,16 @@
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import View
 from django.contrib.auth.views import LoginView
 
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, UserLoginForm
 
 
 class UserLoginView(LoginView):
     """Страница входа"""
 
-    form_class = AuthenticationForm
+    form_class = UserLoginForm
     template_name = 'user/login.html'
 
     def get_success_url(self):
