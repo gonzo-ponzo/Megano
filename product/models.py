@@ -28,6 +28,19 @@ class Product(Model):
     def __str__(self):
         return self.name
 
+    def get_property_list(self):
+        attributes = self.get_attributes()
+        return attributes.keys()
+
+    def get_first_pic(self):
+        return self.productimage_set.first().image
+
+    def get_min_price(self):
+        return min(i.price for i in self.offer_set.all())
+
+    def get_attributes(self):
+        return {k.property: k for k in self.productproperty_set.all()}
+
     class Meta:
         verbose_name = _("продукт")
         verbose_name_plural = _("продукты")
