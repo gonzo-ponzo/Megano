@@ -25,155 +25,186 @@
         </article>
 
 
+<table>
 
-        <div class="Compare">
-            <div class="Compare-header">
-                <label class="toggle Compare-checkDifferent">
-                    <input type="checkbox" name="differentFeature" value="true" checked="checked"/><span class="toggle-box"></span><span class="toggle-text">Только различающиеся характеристики</span>
-                </label>
-            </div>
-
-
-
-          <div class="Compare-row">
-              {% for product in compare_list %}
-            <div class="Compare-title Compare-title_blank">
-            </div>
-              <div class="Compare-products">
-
-                      <div class="Compare-product">
-                          <div class="Compare-nameProduct Compare-nameProduct_main">
-                              <a href="/product/{{ product.id }}">{{ product.name }}</a>
-                          </div>
-                          <div class="Compare-feature">
-                              <img class="Compare-pict" src="{{ product.productimage_set.first.image.url }}" alt="card.jpg"/></div>
-                          <div class="Compare-feature">
-                          <a class="Compare-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a>
-                          <a class="Compare-btn" href="{% url 'compare_remove' product.id %}">
-                              <img src="{%  static 'img/icons/card/delete.svg' %}" alt="delete.svg"/>
-                          </a>
-                          </div>
-                      </div>
-
-              </div>
-
-                  {% endfor %}
-          </div>
-
-
-
-
-
-
-
-
-          <div class="Compare-row">
-            <div class="Compare-title">Рейтинг
-            </div>
-            <div class="Compare-products">
-
-                {% for product in compare_list %}
-              <div class="Compare-product">
-                <div class="Compare-feature">
-                  <div class="Rating">
-                    <div class="Rating-stars"><span class="Rating-star Rating-star_view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star Rating-star_view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star Rating-star_view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star Rating-star_view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span>
-                    </div>
-                    <div class="Rating-title">
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-                {% endfor %}
-
-
-            </div>
-          </div>
-
-
-
-
-
-            {% for attribute, values in attributes.items %}
-
-
-                <div class="Compare-row">
-
-                <div class="Compare-title">{{ attribute.name }}</div>
-                <div class="Compare-products">
-                {% for product in compare_list %}
-                    <div class="Compare-product">
-                    {% for k, i in values.items %}
-                        {% if k == product.id %}
-                            {{ i }}
-                        {% endif %}
-                    {% endfor %}
-                    </div>
-                {% endfor %}
-                </div>
-                </div>
+    <tr>
+    <td>Название</td>
+        {% for product in compare_list.product_set.values %}
+        <td>
+            {{ product.name }}
+            <img class="Compare-pict" src="{{ product.pic.url }}" alt="card.jpg"/>
+            {{ product.price }}
+        </td>
         {% endfor %}
+    </tr>
+            {% for attribute in a.get_property_list %}
+    <tr>
+                <td>{{ attribute.name }}</td>
+                {% for product in a.product_set.values %}
+        <td>
+                {{ product.attributes|get_item_dict:attribute }}
+
+        </td>
+{% endfor %}
+
+    </tr>
+{% endfor %}
+</table>
 
 
 
 
-
-
-
-
-
-        <div class="Compare-row">
-            <div class="Compare-title">Цена от
-            </div>
-            <div class="Compare-products">
-
-                {% for product in compare_list %}
-              <div class="Compare-product">
-                <div class="Compare-feature">
-                  <strong class="Compare-price">{{ product.offer_set.first.price }}</strong>
-                </div>
-              </div>
-
-                {% endfor %}
-
-
-            </div>
-          </div>
+{##}
+{##}
+{##}
+{#        <div class="Compare">#}
+{#            <div class="Compare-header">#}
+{#                <label class="toggle Compare-checkDifferent">#}
+{#                    <input type="checkbox" name="differentFeature" value="true" checked="checked"/><span class="toggle-box"></span><span class="toggle-text">Только различающиеся характеристики</span>#}
+{#                </label>#}
+{#            </div>#}
+{##}
+{##}
+{##}
+{#          <div class="Compare-row">#}
+{#              {% for product in compare_list %}#}
+{#            <div class="Compare-title Compare-title_blank">#}
+{#            </div>#}
+{#              <div class="Compare-products">#}
+{##}
+{#                      <div class="Compare-product">#}
+{#                          <div class="Compare-nameProduct Compare-nameProduct_main">#}
+{#                              <a href="/product/{{ product.id }}">{{ product.name }}</a>#}
+{#                          </div>#}
+{#                          <div class="Compare-feature">#}
+{#                              <img class="Compare-pict" src="{{ product.productimage_set.first.image.url }}" alt="card.jpg"/></div>#}
+{#                          <div class="Compare-feature">#}
+{#                          <a class="Compare-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a>#}
+{#                          <a class="Compare-btn" href="{% url 'compare_remove' product.id %}">#}
+{#                              <img src="{%  static 'img/icons/card/delete.svg' %}" alt="delete.svg"/>#}
+{#                          </a>#}
+{#                          </div>#}
+{#                      </div>#}
+{##}
+{#              </div>#}
+{##}
+{#                  {% endfor %}#}
+{#          </div>#}
+{##}
+{##}
+{##}
+{##}
+{##}
+{##}
+{##}
+{##}
+{#          <div class="Compare-row">#}
+{#            <div class="Compare-title">Рейтинг#}
+{#            </div>#}
+{#            <div class="Compare-products">#}
+{##}
+{#                {% for product in compare_list %}#}
+{#              <div class="Compare-product">#}
+{#                <div class="Compare-feature">#}
+{#                  <div class="Rating">#}
+{#                    <div class="Rating-stars"><span class="Rating-star Rating-star_view">#}
+{#                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">#}
+{#                          <g>#}
+{#                            <g>#}
+{#                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>#}
+{#                            </g>#}
+{#                          </g>#}
+{#                        </svg></span><span class="Rating-star Rating-star_view">#}
+{#                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">#}
+{#                          <g>#}
+{#                            <g>#}
+{#                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>#}
+{#                            </g>#}
+{#                          </g>#}
+{#                        </svg></span><span class="Rating-star Rating-star_view">#}
+{#                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">#}
+{#                          <g>#}
+{#                            <g>#}
+{#                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>#}
+{#                            </g>#}
+{#                          </g>#}
+{#                        </svg></span><span class="Rating-star Rating-star_view">#}
+{#                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">#}
+{#                          <g>#}
+{#                            <g>#}
+{#                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>#}
+{#                            </g>#}
+{#                          </g>#}
+{#                        </svg></span><span class="Rating-star">#}
+{#                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">#}
+{#                          <g>#}
+{#                            <g>#}
+{#                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>#}
+{#                            </g>#}
+{#                          </g>#}
+{#                        </svg></span>#}
+{#                    </div>#}
+{#                    <div class="Rating-title">#}
+{#                    </div>#}
+{#                  </div>#}
+{#                </div>#}
+{#              </div>#}
+{##}
+{#                {% endfor %}#}
+{##}
+{##}
+{#            </div>#}
+{#          </div>#}
+{##}
+{##}
+{##}
+{##}
+{##}
+{#            {% for attribute, values in attributes.items %}#}
+{##}
+{##}
+{#                <div class="Compare-row">#}
+{##}
+{#                <div class="Compare-title">{{ attribute.name }}</div>#}
+{#                <div class="Compare-products">#}
+{#                {% for product in compare_list %}#}
+{#                    <div class="Compare-product">#}
+{#                    {% for k, i in values.items %}#}
+{#                        {% if k == product.id %}#}
+{#                            {{ i }}#}
+{#                        {% endif %}#}
+{#                    {% endfor %}#}
+{#                    </div>#}
+{#                {% endfor %}#}
+{#                </div>#}
+{#                </div>#}
+{#        {% endfor %}#}
+{##}
+{##}
+{##}
+{##}
+{##}
+{##}
+{##}
+{##}
+{##}
+{#        <div class="Compare-row">#}
+{#            <div class="Compare-title">Цена от#}
+{#            </div>#}
+{#            <div class="Compare-products">#}
+{##}
+{#                {% for product in compare_list %}#}
+{#              <div class="Compare-product">#}
+{#                <div class="Compare-feature">#}
+{#                  <strong class="Compare-price">{{ product.offer_set.first.price }}</strong>#}
+{#                </div>#}
+{#              </div>#}
+{##}
+{#                {% endfor %}#}
+{##}
+{##}
+{#            </div>#}
+{#          </div>#}
 
 
 
