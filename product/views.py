@@ -5,8 +5,7 @@ from django.views import View
 from product.forms import ProductForm, ReviewForm
 from product.models import Product, ProductView, ProductCategory
 from promotion.services import BannerMain
-from .compare import ProductCompare
-from .services import ReviewForItem
+from .services import ReviewForItem, ProductCompare
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
@@ -31,11 +30,6 @@ def get_item_dict(dictionary, key):
     return '-'
 
 
-@register.filter
-def get_min_item(items):
-    return min(i.price for i in items)
-
-
 class CreateProductView(CreateView):
     model = Product
     form_class = ProductForm
@@ -54,7 +48,6 @@ class CompareView(View):
 
     def get(self, request, *args, **kwargs):
         compare_list = ProductCompare(request.session.get(settings.CACHE_KEY_COMPARISON))
-        # attributes, compare_list = ComparisonList().get_list()
         return render(request, 'product/compare.html', {'compare_list': compare_list})
 
 
@@ -69,8 +62,6 @@ class CompareAdd(View):
         elif product not in product_list:
             product_list.append(product)
         request.session[settings.CACHE_KEY_COMPARISON] = product_list
-
-        # ComparisonList().add_item(Product.objects.get(id=kwargs['pk']))
         return render(request, 'product/compare_change.html', {'message': 'объект добавлен'})
 
 
@@ -83,8 +74,6 @@ class CompareRemove(View):
         if product in product_list:
             product_list.remove(product)
             request.session[settings.CACHE_KEY_COMPARISON] = product_list
-
-        # ComparisonList().remove_item(Product.objects.get(id=kwargs['pk']))
         return redirect('/product/compare/')
 
 
@@ -94,8 +83,6 @@ class CompareClear(View):
         product_list = request.session.get(settings.CACHE_KEY_COMPARISON)
         product_list.clear()
         request.session[settings.CACHE_KEY_COMPARISON] = product_list
-
-        # ComparisonList().clear_list()
         return redirect('/')
 
 

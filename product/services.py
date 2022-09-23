@@ -1,6 +1,4 @@
-from django.core.cache import cache
-from django.conf import settings
-from .models import ProductProperty, Property, Review
+from .models import Review, Product
 
 
 class ReviewForItem:
@@ -47,50 +45,18 @@ class ReviewForItem:
         return [star for star in range(Review.MIN_GRADE, Review.MAX_GRADE + 1)]
 
 
-# class ComparisonList:
-#     """
-#     Список сравниваемых товаров
-#     """
-#
-#     def get_list(self):
-#         """Получить список сравниваемых товаров"""
-#         compare_list = cache.get(settings.CACHE_KEY_COMPARISON)
-#         attributes = dict()
-#         if compare_list:
-#
-#             for product in compare_list:
-#
-#                 attributes_product = ProductProperty.objects.filter(product=product).values('property', 'value')
-#
-#                 for i_attribute in attributes_product:
-#
-#                     attribute = Property.objects.get(id=i_attribute['property'])
-#                     value = i_attribute['value']
-#                     if attribute not in attributes:
-#                         attributes[attribute] = dict()
-#                     attributes[attribute][product.id] = value
-#
-#         return attributes, compare_list
-#
-#     def add_item(self, product):
-#         """Добавить товар в список сравнения"""
-#         compare_list = cache.get(settings.CACHE_KEY_COMPARISON)
-#         if not compare_list:
-#             compare_list = set()
-#         compare_list.add(product)
-#         cache.set(settings.CACHE_KEY_COMPARISON, compare_list, settings.CACHE_TIMEOUT.get(settings.CACHE_KEY_COMPARISON))
-#
-#     def remove_item(self, product):
-#         """Удалить товар из списка сравнения"""
-#         compare_list = cache.get(settings.CACHE_KEY_COMPARISON)
-#         if product in compare_list:
-#             compare_list.discard(product)
-#             cache.set(settings.CACHE_KEY_COMPARISON, compare_list,
-#                       settings.CACHE_TIMEOUT.get(settings.CACHE_KEY_COMPARISON))
-#
-#     def clear_list(self):
-#         """Удалить весь список сравнениваемых товаров"""
-#         cache.delete(settings.CACHE_KEY_COMPARISON)
+class ProductCompare:
+
+    def __init__(self, product_list):
+        self.product_set = dict()
+        for i in Product.objects.filter(id__in=product_list):
+            self.product_set[i.id] = i
+
+    def get_property_list(self):
+        property_list = list()
+        for i in self.product_set.values():
+            property_list += i.get_attributes().keys()
+        return set(property_list)
 
 
 class ProductsFilter:

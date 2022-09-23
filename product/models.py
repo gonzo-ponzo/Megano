@@ -1,3 +1,5 @@
+from statistics import mean
+
 from timestamps.models import models, Model, Timestampable
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -24,6 +26,25 @@ class Product(Model):
 
     def get_attributes(self):
         return {k.property: k for k in self.productproperty_set.all()}
+
+    def get_rating_list(self):
+        rating_list = self.review_set.all().values_list('rating', flat=True)
+        if rating_list:
+            avg_rating = mean(self.review_set.all().values_list('rating', flat=True))
+            star_list = list()
+            for i in range(5):
+                if avg_rating > 1:
+                    star_list.append(100)
+                    avg_rating -= 1
+                elif avg_rating == 0:
+                    star_list.append(0)
+                else:
+                    star_list.append(int(avg_rating * 100))
+                    avg_rating = 0
+            return star_list
+
+    def get_min_offer(self):
+        return min(self.offer_set.all().values_list('price', flat=True))
 
     def __str__(self):
         return self.name
