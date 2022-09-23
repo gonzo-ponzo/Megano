@@ -171,3 +171,14 @@ class UserLoginViewTest(TestCase):
         self.assertContains(response, _("Данные не корректны. Пожалуйста, попробуйте еще раз."))
         user = auth.get_user(self.client)
         self.assertFalse(user.is_authenticated)
+
+
+class UserLogoutViewTest(TestCase):
+    def test_success_logout(self):
+        get_user_model().objects.create_user(email="test@e.mail", password="test_password")
+        self.client.login(email="test@e.mail", password="test_password")
+        url = reverse("logout")
+        response = self.client.get(url)
+        self.assertRedirects(response, reverse("main-page"))
+        user = auth.get_user(self.client)
+        self.assertFalse(user.is_authenticated)
