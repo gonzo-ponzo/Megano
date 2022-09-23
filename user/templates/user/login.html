@@ -1,9 +1,6 @@
 {% load static %}
 {% load i18n %}
-<head>
-    <title>{% translate "Вход" %}</title>
-</head>
-{% include 'base.html' %}
+{% include 'base.html' with title="Вход" %}
 <body class="Site">
     <div class="login-form-container">
         <form class="login-form" method="post">

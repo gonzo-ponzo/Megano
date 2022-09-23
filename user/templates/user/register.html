@@ -1,9 +1,6 @@
 {% load static %}
 {% load i18n %}
-<head>
-    <title>{% translate "Регистрация" %}</title>
-</head>
-{% include 'base.html' %}
+{% include 'base.html' with title="Регистрация" %}
 <body class="Site">
 <div class="login-form-container">
     <form class="registration-form" method="post" enctype="multipart/form-data">
