@@ -1,5 +1,5 @@
 {% load static %}
-{% include 'base.html' with title="Login/Register" %}
+{% include 'base.html' with title="Личный кабинет" %}
 <body class="Site">
   {% include 'header.html' %}
   <div class="Middle Middle_top">
@@ -9,7 +9,7 @@
           <h1 class="Middle-title">Личный кабинет
           </h1>
           <ul class="breadcrumbs Middle-breadcrumbs">
-            <li class="breadcrumbs-item"><a href="../product/templates/product/index.html">home</a>
+            <li class="breadcrumbs-item"><a href="{% url 'main-page' %}">home</a>
             </li>
             <li class="breadcrumbs-item breadcrumbs-item_current"><span>Личный кабинет</span>
             </li>
@@ -19,28 +19,7 @@
     </div>
     <div class="Section Section_column Section_columnLeft">
       <div class="wrap">
-        <div class="Section-column">
-          <div class="Section-columnSection">
-            <header class="Section-header">
-              <strong class="Section-title">Навигация
-              </strong>
-            </header>
-            <div class="Section-columnContent">
-              <div class="NavigateProfile">
-                <ul class="menu menu_vt">
-                  <li class="menu-item_ACTIVE menu-item"><a class="menu-link" href="account.html">Личный кабинет</a>
-                  </li>
-                  <li class="menu-item"><a class="menu-link" href="profile.html">Профиль</a>
-                  </li>
-                  <li class="menu-item"><a class="menu-link" href="historyorder.html">История заказов</a>
-                  </li>
-                  <li class="menu-item"><a class="menu-link" href="historyview.html">История просмотра</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
+        {% include 'user/user_nav.html' with item="account" %}
         <div class="Section-content">
           <div class="Account">
             <div class="Account-group">
