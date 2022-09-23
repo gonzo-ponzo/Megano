@@ -9,12 +9,7 @@ User = get_user_model()
 
 def user_create(email="test@test.com"):
     email = email
-    test_user = User.objects.create(
-        email=email,
-        first_name="test_f",
-        last_name="test_l",
-        role="Buyer"
-    )
+    test_user = User.objects.create(email=email, first_name="test_f", last_name="test_l", role="Buyer")
     return test_user
 
 
@@ -41,8 +36,8 @@ class UserRegisterViewTest(TestCase):
                 "first_name": "test_first_name",
                 "last_name": "test_last_name",
                 "middle_name": "test_middle_name",
-                "phone": "111-111-11-11"
-            }
+                "phone": "111-111-11-11",
+            },
         )
         self.assertRedirects(response, reverse("main-page"))
         self.assertEqual(User.objects.filter(email=email).count(), 1)
@@ -62,8 +57,8 @@ class UserRegisterViewTest(TestCase):
                 "first_name": "test_first_name",
                 "last_name": "test_last_name",
                 "middle_name": "test_middle_name",
-                "phone": "111-111-11-11"
-            }
+                "phone": "111-111-11-11",
+            },
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, _("Пароли не совпадают"))
@@ -78,8 +73,8 @@ class UserRegisterViewTest(TestCase):
                 "first_name": "test_first_name",
                 "last_name": "test_last_name",
                 "middle_name": "test_middle_name",
-                "phone": "111-111-11-11"
-            }
+                "phone": "111-111-11-11",
+            },
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, _("Пользователь с таким емеилом уже зарегистрирован"))
@@ -94,8 +89,8 @@ class UserRegisterViewTest(TestCase):
                 "first_name": "test_first_name",
                 "last_name": "test_last_name",
                 "middle_name": "test_middle_name",
-                "phone": "1111"
-            }
+                "phone": "1111",
+            },
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, _("Номер телефона должен быть в формате  123-456-78-90"))

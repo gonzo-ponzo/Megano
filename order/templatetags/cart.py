@@ -6,9 +6,17 @@ register = template.Library()
 
 @register.simple_tag()
 def get_cart_len(request):
-    return len(Cart(request))
+    if request.user.is_authenticated:
+        cart = Cart(request=request, user_cart=request.user.cart)
+    else:
+        cart = Cart(request)
+    return len(cart)
 
 
 @register.simple_tag()
 def get_cart_price(request):
-    return Cart(request).get_total_price()
+    if request.user.is_authenticated:
+        cart = Cart(request=request, user_cart=request.user.cart)
+    else:
+        cart = Cart(request)
+    return cart.get_total_price()

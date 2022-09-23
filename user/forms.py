@@ -19,6 +19,7 @@ def set_status_depending_on_role(user, role):
 
 class UserAdminCreationForm(UserCreationForm):
     """Форма создания пользователей через админку"""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["phone"].widget.attrs["placeholder"] = "123-456-78-90"
@@ -52,6 +53,7 @@ class UserAdminCreationForm(UserCreationForm):
 
 class UserAdminChangeForm(forms.ModelForm):
     """Форма для изменения пользователя через админку"""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["phone"].widget.attrs["placeholder"] = "123-456-78-90"
@@ -92,9 +94,7 @@ class UserLoginForm(AuthenticationForm):
     )
 
     error_messages = {
-        "invalid_login": _(
-            "Введенные данные некоректны. Попробуйте еще раз."
-        ),
+        "invalid_login": _("Введенные данные некоректны. Попробуйте еще раз."),
         "inactive": _("Пользоаватель неактивен."),
     }
 
@@ -104,6 +104,7 @@ class UserRegistrationForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         self.fields["email"].error_messages = {"unique": _("Пользователь с таким емеилом уже зарегистрирован")}
         self.fields["phone"].widget.attrs["placeholder"] = "123-456-78-90"
+
     password1 = forms.CharField(
         label=_("Пароль"),
         strip=False,

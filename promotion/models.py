@@ -6,7 +6,9 @@ from shop.models import Shop
 
 class Banner(Timestampable):
     """Баннер"""
+
     from product.models import Product
+
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, verbose_name=_("продукт"))
     name = models.CharField(max_length=255, verbose_name=_("название"))
     description = models.TextField(blank=True, verbose_name=_("описание"))
@@ -23,6 +25,7 @@ class Banner(Timestampable):
 
 class DiscountType(Timestampable):
     """Тип акции"""
+
     description = models.CharField(max_length=512, verbose_name=_("описание"))
 
     class Meta:
@@ -36,7 +39,9 @@ class DiscountType(Timestampable):
 
 class PromotionOffer(Timestampable):
     """Акция"""
+
     from product.models import Offer
+
     name = models.CharField(max_length=255, verbose_name=_("название"))
     discount_type_value = models.PositiveIntegerField(verbose_name=_("Значение правила акции"))
     discount_decimals = models.PositiveIntegerField(default=0, verbose_name=_("Скидка"))

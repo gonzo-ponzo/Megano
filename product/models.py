@@ -32,6 +32,7 @@ class Product(Model):
 
 class Offer(Model):
     """Предложение магазина"""
+
     # from promotion.models import PromotionOffer
     shop = models.ForeignKey(Shop, on_delete=models.DO_NOTHING, verbose_name=_("магазин"))
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, verbose_name=_("продукт"))

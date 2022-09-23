@@ -26,9 +26,7 @@ class ShopDetail:
 
     def get_top_products(self):
         """Получить топ товаров продавца"""
-        top_products = Offer.objects.filter(
-            shop=self.shop
-        )[:COUNT_ELEMENTS_BEST_OFFER_SHOP]
+        top_products = Offer.objects.filter(shop=self.shop)[:COUNT_ELEMENTS_BEST_OFFER_SHOP]
         return top_products
 
 

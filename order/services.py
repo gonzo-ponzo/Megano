@@ -10,14 +10,17 @@ class Cart(object):
     Объект корзины
     """
 
-    def __init__(self, request):
+    def __init__(self, request, user_cart={}):
         """
         Инициализация корзины
         """
-        self.session = request.session
-        cart = self.session.get(settings.CART_SESSION_ID)
-        if not cart:
-            cart = self.session[settings.CART_SESSION_ID] = {}
+        if request.user.is_authenticated:
+            cart = user_cart
+        else:
+            self.session = request.session
+            cart = self.session.get(settings.CART_SESSION_ID)
+            if not cart:
+                cart = self.session[settings.CART_SESSION_ID] = {}
         self.cart = cart
 
     def __iter__(self):
@@ -63,13 +66,15 @@ class Cart(object):
         Подсчет стоимости товаров в корзине.
         """
         total_price = 0
-        cart = self.cart
-        for product in cart:
-            for shop in cart[product]["offers"].keys():
-                total_price += get_product_price_by_shop(int(shop), int(product)) * cart[product]["offers"][shop]
+        for product in self.cart:
+            for shop in self.cart[product]["offers"].keys():
+                price = get_product_price_by_shop(int(shop), int(product))
+                amount = self.cart[product]["offers"][shop]
+                total_price += price * amount
+
         return Decimal(total_price)
 
-    def add(self, product: Product, shop_id: int, quantity: int = 1, update_quantity: bool = False):
+    def add(self, request, product: Product, shop_id: int, quantity: int = 1, update_quantity: bool = False):
         """
         Добавление продукта в корзину
         """
@@ -81,11 +86,12 @@ class Cart(object):
         else:
             if self.cart[product_id]["offers"].get(str(shop_id)):
                 self.cart[product_id]["offers"][str(shop_id)] += quantity
+                print(quantity)
             else:
                 self.cart[product_id]["offers"][shop_id] = quantity
-        self.save()
+        self.save(request=request)
 
-    def lower(self, product: Product, shop_id: int):
+    def lower(self, request, product: Product, shop_id: int):
         """
         Уменьшение кол-ва товара в корзине
         """
@@ -95,13 +101,16 @@ class Cart(object):
             cart[product_id]["offers"][str(shop_id)] -= 1
         if cart[product_id]["offers"][str(shop_id)] == 0:
             del cart[product_id]["offers"][str(shop_id)]
-        self.save()
+        self.save(request)
 
-    def save(self):
-        self.session[settings.CART_SESSION_ID] = self.cart
-        self.session.modified = True
+    def save(self, request):
+        if request.user.is_authenticated:
+            request.user.save()
+        else:
+            self.session[settings.CART_SESSION_ID] = self.cart
+            self.session.modified = True
 
-    def remove(self, product: Product, shop_id: int):
+    def remove(self, request, product: Product, shop_id: int):
         """
         Удаление продукта из корзины.
         """
@@ -110,7 +119,7 @@ class Cart(object):
 
         if str(shop_id) in cart[product_id]["offers"]:
             del cart[product_id]["offers"][str(shop_id)]
-            self.save()
+            self.save(request)
 
     def clear(self):
         # Удаление корзины из сессии

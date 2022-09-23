@@ -31,15 +31,15 @@ class CompareView(TemplateView):
 
 class CatalogView(ListView):
     # model = Product
-    template_name = 'product/catalog.html'
-    context_objects_name = 'product_list'
+    template_name = "product/catalog.html"
+    context_objects_name = "product_list"
 
     def get_queryset(self):
 
-        category = self.kwargs.get('category', None)
+        category = self.kwargs.get("category", None)
 
-        queryset = Product.objects.all().prefetch_related('productimage_set')
-        queryset = queryset.select_related('category')
+        queryset = Product.objects.all().prefetch_related("productimage_set")
+        queryset = queryset.select_related("category")
         if category:
             category = get_object_or_404(ProductCategory, slug=category)
             queryset = queryset.filter(category__in=category.get_descendants(include_self=True))
@@ -59,7 +59,7 @@ class DetailedProductView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DetailedProductView, self).get_context_data(**kwargs)
-        context['detailed_product'] = cache.get_or_set(f"product-{self.object.id}", DetailedProduct(self.object))
+        context["detailed_product"] = cache.get_or_set(f"product-{self.object.id}", DetailedProduct(self.object))
 
         reviews = ReviewForItem(self.object)
         stars_order_by = reviews.get_stars_order_by()
