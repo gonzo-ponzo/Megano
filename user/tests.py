@@ -1,8 +1,10 @@
+import os
 from django.contrib import auth
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.core.files import File
 
 
 class UserTestLoginExample(TestCase):
@@ -210,7 +212,7 @@ class UserPagesTest(TestCase):
         self.assertTemplateUsed(response, "user/account.html")
         for name in names:
             self.assertContains(response, reverse(name))
-        # TODO проверить наличие аватары и фио, и остальных разделов
+        # TODO проверить наличие остальных разделов
 
     def test_userpage_update_get(self):
         names = ['account', 'orders_history', 'views_history']
@@ -221,3 +223,41 @@ class UserPagesTest(TestCase):
         for name in names:
             self.assertContains(response, reverse(name))
         # TODO аватар и данные в форме редактирования
+
+
+class AccountTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        get_user_model().objects.create(email="test@e.mail", first_name="Hassan",
+                                        last_name="Abdurahman", middle_name="ibn Hottab")
+        get_user_model().objects.create(email="test@em.ail", first_name="Name",
+                                        last_name="Family")
+        file_source = 'user/pics/test_avatar.jpg'
+        with open(file_source, 'rb') as fp:
+            get_user_model().objects.create(email="test@ema.il",
+                                            avatar=File(fp, name=os.path.basename(fp.name)))
+
+    @classmethod
+    def tearDownClass(cls):
+        avatar = get_user_model().objects.get(pk=3).avatar
+        if os.path.isfile(avatar.path):
+            os.remove(avatar.path)
+        super(AccountTest, cls).tearDownClass()  # Call parent last
+
+    def test_fio(self):
+        url = reverse('account')
+        user1 = get_user_model().objects.get(pk=1)
+        self.client.force_login(user1)
+        response = self.client.get(url)
+        self.assertContains(response, user1.get_fio)
+        user2 = get_user_model().objects.get(pk=2)
+        self.client.force_login(user2)
+        response = self.client.get(url)
+        self.assertContains(response, user2.get_fio)
+
+    def test_avatar(self):
+        url = reverse('account')
+        user3 = get_user_model().objects.get(pk=3)
+        self.client.force_login(user3)
+        response = self.client.get(url)
+        self.assertContains(response, user3.avatar.url)

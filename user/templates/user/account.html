@@ -23,15 +23,16 @@
         <div class="Section-content">
           <div class="Account">
             <div class="Account-group">
-              <div class="Account-column">
-                <div class="Account-avatar"><img src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/>
+              {% if request.user.avatar %}<div class="Account-column">
+                <div class="Account-avatar"><img src="{{ request.user.avatar.url }}" alt="avatar"/>
                 </div>
-              </div>
+              </div>{% endif %}
               <div class="Account-column">
-                <div class="Account-name">Иванов Иван Иванович
-                </div><a class="Account-editLink" href="profile.html">Редактировать профиль</a>
+                <div class="Account-name">{{ request.user.get_fio }}
+                </div><a class="Account-editLink" href="{% url 'profile' %}">Редактировать профиль</a>
               </div>
             </div>
+            
             <div class="Account-group">
               <div class="Account-column Account-column_full">
                 <div class="Order Order_anons">
