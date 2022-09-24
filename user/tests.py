@@ -182,3 +182,42 @@ class UserLogoutViewTest(TestCase):
         self.assertRedirects(response, reverse("main-page"))
         user = auth.get_user(self.client)
         self.assertFalse(user.is_authenticated)
+
+
+class UserPageNotAuthenticatedTest(TestCase):
+    def test_userpages_not_allowed(self):
+        names = ['account', 'profile', 'orders_history', 'views_history']
+        url_login = reverse('login-page')
+        for name in names:
+            url = reverse(name)
+            response = self.client.get(url)
+            self.assertRedirects(response, f'{url_login}?next={url}')
+
+
+class UserPagesTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        get_user_model().objects.create_user(email="test@e.mail", password="test_password")
+
+    def setUp(self):
+        self.client.login(email="test@e.mail", password="test_password")
+
+    def test_userpage(self):
+        names = ['profile', 'orders_history', 'views_history']
+        url = reverse('account')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "user/account.html")
+        for name in names:
+            self.assertContains(response, reverse(name))
+        # TODO проверить наличие аватары и фио, и остальных разделов
+
+    def test_userpage_update_get(self):
+        names = ['account', 'orders_history', 'views_history']
+        url = reverse('profile')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "user/profile.html")
+        for name in names:
+            self.assertContains(response, reverse(name))
+        # TODO аватар и данные в форме редактирования
