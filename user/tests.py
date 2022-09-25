@@ -261,3 +261,26 @@ class AccountTest(TestCase):
         self.client.force_login(user3)
         response = self.client.get(url)
         self.assertContains(response, user3.avatar.url)
+
+
+class UpdateProfileTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        get_user_model().objects.create(email="test@e.mail", first_name="Name",
+                                        last_name="Family")
+        #get_user_model().objects.create(email="test@em.ail", first_name="Name",
+        #                                last_name="Family")
+        # file_source = 'user/pics/test_avatar.jpg'
+        # with open(file_source, 'rb') as fp:
+        #    get_user_model().objects.create(email="test@ema.il",
+        #                                    avatar=File(fp, name=os.path.basename(fp.name)))
+
+    def setUp(self):
+        user = get_user_model().objects.get(pk=1)
+        self.client.force_login(user)
+
+    def test_post_simple_update(self):
+        pass  # только фамилию-имя, телефон, емейл
+    
+    def test_invalid_form(self):
+        pass  # невалидный номер телефона, невалидный емейл, меньше двух слов в поле фамилия-имя

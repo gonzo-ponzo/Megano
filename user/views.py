@@ -4,9 +4,10 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import View
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.http import HttpResponse
 
-from .forms import UserRegistrationForm, UserLoginForm
+from .forms import UserRegistrationForm, UserLoginForm, UserUpdateForm
 
 
 class UserLoginView(LoginView):
@@ -57,9 +58,42 @@ def user_page(request):
     return render(request, 'user/account.html')
 
 
-@login_required
-def user_update(request):  # get/post
-    return render(request, 'user/profile.html')
+class UserUpdateView(View):
+    """Страница редактирования личных данных"""
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(UserUpdateView, self).dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        context = {'form': UserUpdateForm(instance=request.user)}
+        return render(request, "user/profile.html", context=context)
+
+    def post(self, request, *args, **kwargs):
+        form = UserUpdateForm(request.POST, request.FILES, instance=request.user)
+        # form_data = form.data
+        print(form.data, "\nis_valid:", form.is_valid(), "\n", form.errors)
+        is_ok = False
+        if form.is_valid():
+            form_data = form.data
+            user = request.user
+            # обновить емейл, телефон
+            user.email = form_data.get("email")
+            user.phone = form_data.get("phone")
+            # спарсить фио на отдельные поля, обновить у юзера
+            fio = form_data.get("fio").split()
+            user.last_name = fio[0]
+            user.first_name = fio[1]
+            if len(fio) > 2:
+                user.middle_name = " ".join(fio[2:])
+            else:
+                user.middle_name = ""
+            # TODO обновить аватар, если задан
+            # TODO если заданы оба поля с паролями и одинаковые (это должно проверяться в is_valid), то установить новый пароль
+            user.save()
+            is_ok = True
+        context = {"form": form, "is_ok": is_ok}
+        return render(request, "user/profile.html", context=context)
 
 
 @login_required

@@ -98,3 +98,46 @@ class UserRegistrationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ["email", "password1", "password2", "first_name", "last_name", "middle_name", "phone", "avatar"]
+
+
+class UserUpdateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        instance = kwargs.pop("instance", None)
+        self.fields["fio"].initial = instance.get_fio
+        self.fields['password1'].required = False
+        self.fields['password2'].required = False
+
+    password1 = forms.CharField(
+        label=_("Пароль"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
+        help_text=password_validation.password_validators_help_text_html(),
+    )
+    password2 = forms.CharField(
+        label=_("Подтверждение пароля"),
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
+        strip=False,
+        help_text=_("Введите пароль повторно"),
+    )
+
+    fio = forms.CharField()
+
+    def clean(self):
+        """Проверка на совпадение введенных паролей и остальное"""
+        cleaner_data = super().clean()
+        if len(cleaner_data.get("fio").split()) < 2:
+            self.add_error("fio", _("Нужно написать Фамилию Имя"))
+        # password = cleaner_data.get("password1")
+        # password_2 = cleaner_data.get("password2")
+        # if password is not None and password != password_2:
+        #     self.add_error("password2", _("Введенные пароли должны совпадать"))
+        return cleaner_data
+
+    # error_messages = {
+    #     "password_mismatch": _("Пароли не совпадают"),
+    # }
+
+    class Meta:
+        model = User
+        fields = ["email", "phone", "avatar"]
