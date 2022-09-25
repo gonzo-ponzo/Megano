@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from user.views import UserLoginView, UserRegistrationView
+from user.views import UserLoginView, UserRegistrationView, LogoutView
 from product.views import MainPage
 from django.conf import settings
 from django.conf.urls.static import static
@@ -26,6 +26,7 @@ urlpatterns = [
     path("", MainPage.as_view(), name="main-page"),
     path("login/", UserLoginView.as_view(), name="login-page"),
     path("register/", UserRegistrationView.as_view(), name="registration-page"),
+    path("logout/", LogoutView.as_view(), name="logout"),
     path("product/", include("product.urls"), name='product'),
     path("catalog/", include("product.urls_catalog")),
     path("shop/", include("shop.urls"), name='shop'),

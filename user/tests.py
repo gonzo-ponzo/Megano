@@ -4,6 +4,27 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+
+class UserTestLoginExample(TestCase):
+    """Примеры создания пользователей для использования в тестах"""
+    @classmethod
+    def setUpTestData(cls):
+        get_user_model().objects.create_user(email="test@e.mail", password="test_password")
+
+    def test_check_normal_registration(self):
+        login = self.client.login(email="test@e.mail", password="test_password")
+
+        self.assertTrue(login)
+
+    def test_check_registration_without_password(self):
+        test_user = get_user_model().objects.get(email="test@e.mail")
+        self.client.force_login(test_user)
+
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        self.assertEqual(user.email, "test@e.mail")
+
+
 User = get_user_model()
 
 
@@ -12,8 +33,7 @@ def user_create(email="test@test.com"):
     test_user = User.objects.create(
         email=email,
         first_name="test_f",
-        last_name="test_l",
-        role="Buyer"
+        last_name="test_l"
     )
     return test_user
 
@@ -41,7 +61,7 @@ class UserRegisterViewTest(TestCase):
                 "first_name": "test_first_name",
                 "last_name": "test_last_name",
                 "middle_name": "test_middle_name",
-                "phone": "111-111-11-11"
+                "phone": "+7(926)111-11-11"
             }
         )
         self.assertRedirects(response, reverse("main-page"))
@@ -62,7 +82,7 @@ class UserRegisterViewTest(TestCase):
                 "first_name": "test_first_name",
                 "last_name": "test_last_name",
                 "middle_name": "test_middle_name",
-                "phone": "111-111-11-11"
+                "phone": "+7(926)111-11-11"
             }
         )
         self.assertEqual(response.status_code, 200)
@@ -78,11 +98,11 @@ class UserRegisterViewTest(TestCase):
                 "first_name": "test_first_name",
                 "last_name": "test_last_name",
                 "middle_name": "test_middle_name",
-                "phone": "111-111-11-11"
+                "phone": "+7(926)111-11-11"
             }
         )
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, _("Пользователь с таким емеилом уже зарегистрирован"))
+        self.assertContains(response, _("Пользователь с таким емейлом уже зарегистрирован"))
 
         # неверный формат номера телефона
         response = self.client.post(
@@ -98,7 +118,22 @@ class UserRegisterViewTest(TestCase):
             }
         )
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, _("Номер телефона должен быть в формате  123-456-78-90"))
+        self.assertContains(response, _("Enter a valid phone number"))
+
+        # телефон не указан
+        response = self.client.post(
+            url,
+            {
+                "email": "test_email@test.com",
+                "password1": "test_password",
+                "password2": "test_password",
+                "first_name": "test_first_name",
+                "last_name": "test_last_name",
+                "middle_name": "test_middle_name"
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, _("required"))
 
 
 class UserLoginViewTest(TestCase):
@@ -121,10 +156,29 @@ class UserLoginViewTest(TestCase):
         user = auth.get_user(self.client)
         self.assertTrue(user.is_authenticated)
 
-    def test_login_failed(self):
+    def test_login_failed_wrong_password(self):
         url = reverse("login-page")
         response = self.client.post(url, {"username": "test@test.com", "password": "incorrect_test_password"})
         self.assertTrue(response.status_code, 200)
         self.assertContains(response, _("Данные не корректны. Пожалуйста, попробуйте еще раз."))
+        user = auth.get_user(self.client)
+        self.assertFalse(user.is_authenticated)
+
+    def test_login_failed_unregistered(self):
+        url = reverse("login-page")
+        response = self.client.post(url, {"username": "guest@test.com", "password": "test_password"})
+        self.assertTrue(response.status_code, 200)
+        self.assertContains(response, _("Данные не корректны. Пожалуйста, попробуйте еще раз."))
+        user = auth.get_user(self.client)
+        self.assertFalse(user.is_authenticated)
+
+
+class UserLogoutViewTest(TestCase):
+    def test_success_logout(self):
+        get_user_model().objects.create_user(email="test@e.mail", password="test_password")
+        self.client.login(email="test@e.mail", password="test_password")
+        url = reverse("logout")
+        response = self.client.get(url)
+        self.assertRedirects(response, reverse("main-page"))
         user = auth.get_user(self.client)
         self.assertFalse(user.is_authenticated)
