@@ -5,7 +5,7 @@ from django.views import View
 from product.forms import ProductForm, ReviewForm
 from product.models import Product, ProductView, ProductCategory
 from promotion.services import BannerMain
-from .services import ReviewForItem, ProductCompare
+from .services import ReviewForItem, ProductCompareList
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
@@ -20,14 +20,6 @@ from .utils import (
     get_property_dict,
     get_offer_list
 )
-from django.template.defaulttags import register
-
-
-@register.filter
-def get_item_dict(dictionary, key):
-    if dictionary.get(key):
-        return dictionary.get(key).value
-    return '-'
 
 
 class CreateProductView(CreateView):
@@ -45,13 +37,25 @@ class MainPage(TemplateView):
 
 
 class CompareView(View):
+    """
+    Получение листа сравнений
+    """
 
     def get(self, request, *args, **kwargs):
-        compare_list = ProductCompare(request.session.get(settings.CACHE_KEY_COMPARISON))
+        compare_list = ProductCompareList(request.session.get(settings.CACHE_KEY_COMPARISON), True, 'None')
+        return render(request, 'product/compare.html', {'compare_list': compare_list})
+
+    def post(self, request, *args, **kwargs):
+        short_list = request.POST.get('differentFeature')
+        choice_category = request.POST.get('ChoiceCategory')
+        compare_list = ProductCompareList(request.session.get(settings.CACHE_KEY_COMPARISON), short_list, choice_category)
         return render(request, 'product/compare.html', {'compare_list': compare_list})
 
 
 class CompareAdd(View):
+    """
+    Добавление элемента в список сравнений
+    """
 
     def get(self, request, *args, **kwargs):
         product_list = request.session.get(settings.CACHE_KEY_COMPARISON)
@@ -66,6 +70,9 @@ class CompareAdd(View):
 
 
 class CompareRemove(View):
+    """
+    Удаление элемента из списка сравнений
+    """
 
     def get(self, request, *args, **kwargs):
         product_list = request.session.get(settings.CACHE_KEY_COMPARISON)
@@ -78,6 +85,9 @@ class CompareRemove(View):
 
 
 class CompareClear(View):
+    """
+    Полная очистка листа сравнений
+    """
 
     def get(self, request, *args, **kwargs):
         product_list = request.session.get(settings.CACHE_KEY_COMPARISON)
