@@ -12,8 +12,7 @@ class Shop(Model):
     name = models.CharField(
         max_length=512,
         null=False,
-        verbose_name=_("название"),
-        db_index=True
+        verbose_name=_("название")
     )
     description = models.TextField(
         max_length=5000,
@@ -55,9 +54,9 @@ class Shop(Model):
     class Meta:
         verbose_name = _("магазин")
         verbose_name_plural = _("магазины")
-        ordering = ["-id"]
 
 
+# предлагаю добавить таблицу в нашу схему
 class ShopImage(Timestampable):
     """Фотографии магазинов"""
     image = models.ImageField(
@@ -70,8 +69,3 @@ class ShopImage(Timestampable):
         on_delete=models.CASCADE,
         verbose_name=_("магазин")
     )
-
-    class Meta:
-        verbose_name = _("фотография")
-        verbose_name_plural = _("фотографии")
-        ordering = ["-id"]
