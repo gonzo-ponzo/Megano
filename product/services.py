@@ -1,8 +1,6 @@
 from copy import copy
 from statistics import mean
-
-from django.shortcuts import get_object_or_404
-
+from django.core.exceptions import ObjectDoesNotExist
 from .models import Review, Product, ProductProperty
 
 
@@ -74,12 +72,11 @@ class ProductCompareList:
 
         for k, i in self.attribute_list.items():
             for m, j in self.product_list.items():
-                a = get_object_or_404(attributes, product=m, property=k)
-                # try:
-                #     a = attributes.get(product=m, property=k).value
-                # except:
-                #     a = '-'
-                i.set_product(a.value)
+                try:
+                    a = attributes.get(product=m, property=k).value
+                except ObjectDoesNotExist:
+                    a = '-'
+                i.set_product(a)
 
         if self.short_list:
             for k, i in copy(self.attribute_list).items():
