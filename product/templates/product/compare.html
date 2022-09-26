@@ -51,10 +51,13 @@
                   <div class="Compare-products">
                       <div class="Compare-product">
                           <div class="Compare-nameProduct Compare-nameProduct_main">
-                              <a href="/product/{{ product.id }}">{{ product.name }}</a>
+                              <a href="{% url 'product-page' product.id %}">{{ product.name }}</a>
                           </div>
                           <div class="Compare-feature">
-                              <img class="Compare-pict" src="{{ product.image }}" alt="card.jpg"/></div>
+                              <img class="Compare-pict"
+                                   src="{% if product.image %}{{ product.image.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}"
+                                   alt="{{ product.name|truncatechars:30 }}">
+                          </div>
                           <div class="Compare-feature">
                           <a class="Compare-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a>
                           <a class="Compare-btn" href="{% url 'compare_remove' product.id %}">

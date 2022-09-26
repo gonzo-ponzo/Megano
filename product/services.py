@@ -102,7 +102,8 @@ class ProductCompare:
         self.name = product.name
         self.category = product.category
         self.manufacturer = product.manufacturer
-        self.image = product.productimage_set.first().image.url
+        self.image = product.productimage_set.first()
+        print(self.image)
         self.min_price = min(product.offer_set.all().values_list('price', flat=True))
         self.rating = self.get_rating_list(product)
 
