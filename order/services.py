@@ -14,55 +14,45 @@ class Cart(object):
     def __getitem__(self, item):
         return self.cart[item]
 
-    def __init__(self, request, user_cart={}):
+    def __init__(self, request):
         """
         Инициализация корзины
         """
         if request.user.is_authenticated:
-            cart = user_cart
+            cart = request.user.cart
         else:
-            self.session = request.session
-            cart = self.session.get(settings.CART_SESSION_ID)
-            if not cart:
+            try:
+                self.session = request.session
+                cart = self.session.get(settings.CART_SESSION_ID)
+            except Exception:
                 cart = self.session[settings.CART_SESSION_ID] = {}
+
         self.cart = cart
 
     def __iter__(self):
         """
-        Перебор элементов в корзине и получение продуктов из базы данных.
+        Перебор элементов в корзине и получение данных из базы данных.
         """
-        product_idx = self.cart.keys()
-        # получение объектов product и добавление их в корзину
-        products = Product.objects.filter(id__in=product_idx)
-        # for product in products:
-        #     self.cart[str(product.id)]["product"] = product
-        cart = self.cart
-        for product in cart:
-            cart[product]["current"] = {}
-            for shop in cart[product]["offers"].keys():
-                cart[product]["current"][shop] = {
-                    "price": get_product_price_by_shop(int(shop), int(product)),
-                    "quantity": cart[product]["offers"][shop],
-                    "shop": get_shop_by_id(int(shop)),
-                    "name": get_name_by_product(product_id=int(product)),
-                    "image": get_main_pic_by_product(int(product)),
-                    "product_id": int(product),
-                    "shop_id": shop,
-                    "limits": get_shop_limit(int(shop), int(product))
-                }
-                price = cart[product]["current"][shop]["price"]
-                quantity = cart[product]["current"][shop]["quantity"]
-                cart[product]["current"][shop]["total_price"] = price * quantity
-                yield cart[product]["current"][shop]
+        for shop in self.cart:
+            for product in self.cart[shop].keys():
+                item = self.cart[shop][product]
+                item["shop_id"] = shop
+                item["shop_name"] = get_shop_by_id(shop)
+                item["product_id"] = product
+                item["product_name"] = get_name_by_product(product)
+                item["product_image"] = get_main_pic_by_product(product)
+                item["offer_price"] = get_product_price_by_shop(shop, product)
+                item["limits"] = get_shop_limit(shop, product)
+                yield self.cart[shop][product]
 
     def __len__(self):
         """
         Подсчет всех товаров в корзине.
         """
         total = 0
-        for product in self.cart.keys():
-            for quantity in self.cart[product]["offers"].values():
-                total += quantity
+        for shop in self.cart:
+            for product in self.cart[shop]:
+                total += self.cart[shop][product]["quantity"]
         return total
 
     def get_total_price(self):
@@ -70,74 +60,78 @@ class Cart(object):
         Подсчет стоимости товаров в корзине.
         """
         total_price = 0
-        for product in self.cart:
-            for shop in self.cart[product]["offers"].keys():
-                price = get_product_price_by_shop(int(shop), int(product))
-                amount = self.cart[product]["offers"][shop]
+        for shop in self.cart:
+            for product in self.cart[shop]:
+                price = get_product_price_by_shop(shop, product)
+                amount = self.cart[shop][product]["quantity"]
                 total_price += price * amount
 
         return Decimal(total_price)
 
-    def check_limits(self, product_id: int, shop_id: int):
+    def check_limits(self, product_id: str, shop_id: str):
         limits = get_object_or_404(Offer, product_id=product_id, shop_id=shop_id).amount
-        offer = self.cart.get(str(product_id)).get("offers").get(str(shop_id))
-        if offer:
-            if self.cart.get(str(product_id)).get("offers").get(str(shop_id)) < limits:
-                return True
-            else:
-                return False
-        return True
+        try:
+            cart_amount = self.cart[shop_id][product_id]["quantity"]
+        except Exception:
+            cart_amount = 1
+        return cart_amount < limits
 
-    def add(self, request, product: Product, shop_id: int, quantity: int = 1, update_quantity: bool = False):
+    def add(self, request, product_id: str, shop_id: str, quantity: int = 1, update_quantity: bool = False):
         """
         Добавление продукта в корзину
         """
-        product_id = str(product.id)
-        if product_id not in self.cart:
-            self.cart[product_id] = {"offers": {}}
+        if not self.cart.get(shop_id):
+            self.cart[shop_id] = {}
         if update_quantity:
-            self.cart[product_id]["offers"][str(shop_id)] = quantity
+            self.cart[shop_id][product_id] = {"quantity": quantity}
+        if product_id not in self.cart[shop_id]:
+            self.cart[shop_id] = {product_id: {"quantity": 1}}
         else:
-            if self.cart[product_id]["offers"].get(str(shop_id)):
-                self.cart[product_id]["offers"][str(shop_id)] += quantity
-            else:
-                self.cart[product_id]["offers"][shop_id] = quantity
-        self.save(request=request)
+            self.cart[shop_id][product_id]["quantity"] += 1
+        self.save(request)
 
-    def lower(self, request, product: Product, shop_id: int):
+    def lower(self, request, product_id: str, shop_id: str):
         """
         Уменьшение кол-ва товара в корзине
         """
-        product_id = str(product.id)
-        cart = self.cart
-        if cart[product_id]["offers"][str(shop_id)] > 0:
-            cart[product_id]["offers"][str(shop_id)] -= 1
-        if cart[product_id]["offers"][str(shop_id)] == 0:
-            del cart[product_id]["offers"][str(shop_id)]
+        if self.cart[shop_id][product_id]["quantity"] > 0:
+            self.cart[shop_id][product_id]["quantity"] -= 1
+        if self.cart[shop_id][product_id]["quantity"] == 0:
+            del self.cart[shop_id][product_id]
+            if self.cart[shop_id] == {}:
+                del self.cart[shop_id]
         self.save(request)
 
     def save(self, request):
+        """
+        Сохранение корзины
+        """
         if request.user.is_authenticated:
             request.user.save()
         else:
             self.session[settings.CART_SESSION_ID] = self.cart
             self.session.modified = True
 
-    def remove(self, request, product: Product, shop_id: int):
+    def remove(self, request, product_id: str, shop_id: int):
         """
         Удаление продукта из корзины.
         """
-        product_id = str(product.id)
-        cart = self.cart
-
-        if str(shop_id) in cart[product_id]["offers"]:
-            del cart[product_id]["offers"][str(shop_id)]
+        if product_id in self.cart[shop_id]:
+            del self.cart[shop_id][product_id]
+            if self.cart[shop_id] == {}:
+                del self.cart[shop_id]
             self.save(request)
 
-    def clear(self):
+    def clear(self, request):
+        """
         # Удаление корзины из сессии
-        del self.session[settings.CART_SESSION_ID]
-        self.session.modified = True
+        """
+        if request.user.is_authenticated:
+            request.user.cart = {}
+            request.user.save()
+        else:
+            del self.session[settings.CART_SESSION_ID]
+            self.session.modified = True
 
 
 class Order:

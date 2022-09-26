@@ -30,10 +30,10 @@
           {% for item in cart %}
           <div class="Cart-product">
             <div class="Cart-block Cart-block_row">
-              <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img class="Cart-img" src=/media/{{ item.image }} alt="card.jpg"/></a>
+              <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img class="Cart-img" src=/media/{{ item.product_image }} alt="card.jpg"/></a>
               </div>
-              <div class="Cart-block Cart-block_info"><a class="Cart-title" href="/product/{{ item.product_id }}">{{ item.name }}</a>
-                <div class="Cart-desc">{{ item.shop }}
+              <div class="Cart-block Cart-block_info"><a class="Cart-title" href="/product/{{ item.product_id }}">{{ item.product_name }}</a>
+                <div class="Cart-desc">{{ item.shop_name }}
                 </div>
 
               </div>
@@ -45,7 +45,7 @@
                 {% endif %}
               </div>
               <div class="Cart-block Cart-block_price">
-                <div class="Cart-price">{{ item.price }}$
+                <div class="Cart-price">{{ item.offer_price }}$
                 </div>
               </div>
             </div>
