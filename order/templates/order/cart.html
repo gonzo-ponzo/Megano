@@ -1,6 +1,13 @@
 {% load static %}
 {% include 'base.html' with title="Cart" %}
 <body class="Site">
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
   {% include 'header.html' with cart_price=cart_price cart_counter=cart_counter %}
   <div class="Middle Middle_top">
     <div class="Middle-top">
@@ -28,6 +35,14 @@
               <div class="Cart-block Cart-block_info"><a class="Cart-title" href="/product/{{ item.product_id }}">{{ item.name }}</a>
                 <div class="Cart-desc">{{ item.shop }}
                 </div>
+
+              </div>
+              <div class="Cart-block Cart-block_info">
+                {% if item.quantity > item.limits %}
+                  <div class="Cart-desc alert alert-error">
+                    Превышен лимит. Доступный остаток: {{ item.limits }}
+                  </div>
+                {% endif %}
               </div>
               <div class="Cart-block Cart-block_price">
                 <div class="Cart-price">{{ item.price }}$

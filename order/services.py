@@ -3,12 +3,16 @@ from django.conf import settings
 from order.models import Offer
 from product.models import ProductImage, Product
 from shop.models import Shop
+from django.shortcuts import get_object_or_404
 
 
 class Cart(object):
     """
     Объект корзины
     """
+
+    def __getitem__(self, item):
+        return self.cart[item]
 
     def __init__(self, request, user_cart={}):
         """
@@ -30,9 +34,8 @@ class Cart(object):
         product_idx = self.cart.keys()
         # получение объектов product и добавление их в корзину
         products = Product.objects.filter(id__in=product_idx)
-        for product in products:
-            self.cart[str(product.id)]["product"] = product
-
+        # for product in products:
+        #     self.cart[str(product.id)]["product"] = product
         cart = self.cart
         for product in cart:
             cart[product]["current"] = {}
@@ -45,6 +48,7 @@ class Cart(object):
                     "image": get_main_pic_by_product(int(product)),
                     "product_id": int(product),
                     "shop_id": shop,
+                    "limits": get_shop_limit(int(shop), int(product))
                 }
                 price = cart[product]["current"][shop]["price"]
                 quantity = cart[product]["current"][shop]["quantity"]
@@ -74,6 +78,16 @@ class Cart(object):
 
         return Decimal(total_price)
 
+    def check_limits(self, product_id: int, shop_id: int):
+        limits = get_object_or_404(Offer, product_id=product_id, shop_id=shop_id).amount
+        offer = self.cart.get(str(product_id)).get("offers").get(str(shop_id))
+        if offer:
+            if self.cart.get(str(product_id)).get("offers").get(str(shop_id)) < limits:
+                return True
+            else:
+                return False
+        return True
+
     def add(self, request, product: Product, shop_id: int, quantity: int = 1, update_quantity: bool = False):
         """
         Добавление продукта в корзину
@@ -86,7 +100,6 @@ class Cart(object):
         else:
             if self.cart[product_id]["offers"].get(str(shop_id)):
                 self.cart[product_id]["offers"][str(shop_id)] += quantity
-                print(quantity)
             else:
                 self.cart[product_id]["offers"][shop_id] = quantity
         self.save(request=request)
@@ -169,38 +182,32 @@ def get_product_price_by_shop(shop_id: int, product_id: int):
     """
     Получение цены за ед. продукта
     """
-    price = Decimal(Offer.objects.get(shop_id=shop_id, product_id=product_id).price)
-    return price
+    return Decimal(Offer.objects.get(shop_id=shop_id, product_id=product_id).price)
 
 
 def get_main_pic_by_product(product_id: int):
     """
     Получение главного изображения продукта
     """
-    try:
-        main_pic = ProductImage.objects.all().filter(product_id=product_id)[0].image
-    except ProductImage.DoesNotExist:
-        main_pic = None
-    return main_pic
+    return ProductImage.objects.all().filter(product_id=product_id)[0].image
 
 
 def get_name_by_product(product_id: int):
     """
     Получение наименования продукта
     """
-    try:
-        name = Product.objects.get(id=product_id).name
-    except Product.DoesNotExist:
-        name = None
-    return name
+    return get_object_or_404(Product, id=product_id).name
 
 
 def get_shop_by_id(shop_id: int):
     """
     Получение наименования магазина
     """
-    try:
-        shop = Shop.objects.get(id=shop_id).name
-    except Shop.DoesNotExist:
-        shop = None
-    return shop
+    return get_object_or_404(Shop, id=shop_id).name
+
+
+def get_shop_limit(shop_id: int, product_id: int):
+    """
+    Получение остатка по предложению магазина
+    """
+    return get_object_or_404(Offer, shop_id=shop_id, product_id=product_id).amount
