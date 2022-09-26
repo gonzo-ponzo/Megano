@@ -1,5 +1,6 @@
 from .models import Review
 from django.db.models.query import QuerySet
+from django.db.models import F
 from django.utils.translation import gettext_lazy as _
 
 
@@ -105,23 +106,29 @@ class SortProductsResult:
 
     def __init__(self, products: QuerySet, **sort_params):
         self.products = products
-        self.sort_by = sort_params.get('sort_by', [None])[0]
-        self.sort_revers = bool(sort_params.get('reverse', [False])[0])
 
-    def sort_by_params(self):
-        pass
+    def sort_by_params(self, **get_params) -> QuerySet:
+        sort_by = get_params.get('sort_by', None)
+        sort_revers = bool(get_params.get('reverse', False))
 
+        if sort_by == 'price':
+            return self.by_price(reverse=sort_revers)
 
-    def get_data_for_sort_options(self):
+        return self.products
+
+    @classmethod
+    def get_data_for_sort_links(cls, **get_params) -> list[dict]:
+        sort_by = get_params.get('sort_by', None)
+        sort_revers = bool(get_params.get('reverse', False))
         result = []
-        for field in self.fields:
+        for field in cls.fields:
             css_class = reverse = ''
 
-            if field[0] == self.sort_by:
-                if self.sort_revers:
-                    css_class = self.css_class_for_decrement
+            if field[0] == sort_by:
+                if sort_revers:
+                    css_class = cls.css_class_for_decrement
                 else:
-                    css_class = self.css_class_for_increment
+                    css_class = cls.css_class_for_increment
                     reverse = '&reverse=True'
 
             result.append({
@@ -135,9 +142,12 @@ class SortProductsResult:
         """По популярности"""
         pass
 
-    def by_price(self):
-        """По цене"""
-        pass
+    def by_price(self, reverse=False) -> QuerySet:
+        field = 'min_price'
+        if reverse:
+            return self.products.order_by(F(field).asc(nulls_last=True))
+        else:
+            return self.products.order_by(F(field).desc(nulls_last=True))
 
     def by_review(self):
         """По отзывам"""

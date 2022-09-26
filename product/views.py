@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import redirect, render, get_object_or_404
+from django.db.models import Min, Count
 from product.forms import ProductForm, ReviewForm
 from product.models import Product, ProductView, ProductCategory
 from promotion.services import BannerMain
@@ -40,25 +41,32 @@ class CompareView(TemplateView):
 
 
 class CatalogView(ListView):
-    # model = Product
+    model = Product
     template_name = 'product/catalog.html'
     context_objects_name = 'product_list'
+
+
+
 
     def get_queryset(self):
 
         category = self.kwargs.get('category', None)
-
-        queryset = Product.objects.all().prefetch_related('productimage_set')
+        queryset = super().get_queryset()
+        queryset = queryset.prefetch_related('productimage_set')
         queryset = queryset.select_related('category')
+        queryset = queryset.annotate(min_price=Min('offer__price'))
 
         if category:
             category = get_object_or_404(ProductCategory, slug=category)
             queryset = queryset.filter(category__in=category.get_descendants(include_self=True))
+
+        queryset = SortProductsResult(queryset).sort_by_params(**self.request.GET.dict())
+
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['sort_data'] = SortProductsResult(self.queryset, **self.request.GET).get_data_for_sort_options()
+        context['sort_data'] = SortProductsResult.get_data_for_sort_links(**self.request.GET.dict())
         return context
 
 

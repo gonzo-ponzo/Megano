@@ -98,10 +98,6 @@
                     <a class="Sort-sortBy {{ sort_item.css_class }}" href="{{ request.path }}?{{ sort_item.arg_str }}">{{ sort_item.title|capfirst }}</a>
                 {% endfor %}
 
-{#                <a class="Sort-sortBy Sort-sortBy_dec" href="#">Популярности</a>#}
-{#                <a class="Sort-sortBy" href="{{ request.path }}?by=price">Цене</a>#}
-{#                <a class="Sort-sortBy" href="#">Отзывам</a>#}
-{#                <a class="Sort-sortBy Sort-sortBy_inc" href="#">Новизне</a>#}
 
             </div>
           </div>
@@ -129,7 +125,7 @@
                         <div class="Card-description">
                             <div class="Card-cost">
                                 <span class="Card-priceOld">$115.00</span>
-                                <span class="Card-price">$85.00</span>
+                                <span class="Card-price">{{ product.min_price }}</span>
                             </div>
                             <div class="Card-category">
                                 {{ product.category }}
