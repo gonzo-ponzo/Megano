@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     "timestamps",
     "mptt",
     "product",
-    "shop.apps.ShopConfig",
+    "shop",
     "promotion",
     "user",
     "order",
@@ -113,12 +113,9 @@ CACHES = {
 
 CACHE_KEY_PRODUCT_CATEGORY = "product_category"
 CACHE_KEY_BANNER = "banner"
-CACHE_KEY_COMPARISON = "comparison"
-
 CACHE_TIMEOUT = {
     CACHE_KEY_PRODUCT_CATEGORY: 60 * 60 * 24,
     CACHE_KEY_BANNER: 60 * 10,
-    CACHE_KEY_COMPARISON: 60 * 60 * 24 * 30
 }
 CART_SESSION_ID = "cart"
 SESSION_COOKIE_AGE = 24 * 60 * 60
@@ -190,5 +187,3 @@ MEDIA_URL = "/media/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MPTT_ADMIN_LEVEL_INDENT = 20
-
-COUNT_ELEMENTS_BEST_OFFER_SHOP = 6
