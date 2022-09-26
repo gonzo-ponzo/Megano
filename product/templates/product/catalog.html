@@ -95,14 +95,13 @@
             <div class="Sort-variants">
 
                 {% for sort_item in sort_data %}
-                    <a class="Sort-sortBy {{ sort_item.sort_now }}" href="{{ request.path }}">{{ sort_item.title|capfirst }}</a>
-
+                    <a class="Sort-sortBy {{ sort_item.css_class }}" href="{{ request.path }}?{{ sort_item.arg_str }}">{{ sort_item.title|capfirst }}</a>
                 {% endfor %}
 
-                <a class="Sort-sortBy Sort-sortBy_dec" href="#">Популярности</a>
-                <a class="Sort-sortBy" href="{{ request.path }}?by=price">Цене</a>
-                <a class="Sort-sortBy" href="#">Отзывам</a>
-                <a class="Sort-sortBy Sort-sortBy_inc" href="#">Новизне</a>
+{#                <a class="Sort-sortBy Sort-sortBy_dec" href="#">Популярности</a>#}
+{#                <a class="Sort-sortBy" href="{{ request.path }}?by=price">Цене</a>#}
+{#                <a class="Sort-sortBy" href="#">Отзывам</a>#}
+{#                <a class="Sort-sortBy Sort-sortBy_inc" href="#">Новизне</a>#}
 
             </div>
           </div>

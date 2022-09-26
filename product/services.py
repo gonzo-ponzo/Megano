@@ -103,28 +103,25 @@ class SortProductsResult:
     css_class_for_increment = 'Sort-sortBy_inc'
     css_class_for_decrement = 'Sort-sortBy_dec'
 
-    # default_sort_data = []
-    # for field in fields:
-    #     default_sort_data.append({
-    #         'css_class': '',
-    #         'title': field[1],
-    #         'arg_str': f'sort_by={field[0]}',
-    #     })
-
     def __init__(self, products: QuerySet, **sort_params):
         self.products = products
-        self.sort_by = sort_params.get('sort_by', None)
-        self.sort_revers = bool(sort_params.get('reverse', False))
+        self.sort_by = sort_params.get('sort_by', [None])[0]
+        self.sort_revers = bool(sort_params.get('reverse', [False])[0])
+
+    def sort_by_params(self):
+        pass
+
 
     def get_data_for_sort_options(self):
         result = []
         for field in self.fields:
             css_class = reverse = ''
 
-            if field == self.sort_by:
+            if field[0] == self.sort_by:
                 if self.sort_revers:
                     css_class = self.css_class_for_decrement
                 else:
+                    css_class = self.css_class_for_increment
                     reverse = '&reverse=True'
 
             result.append({

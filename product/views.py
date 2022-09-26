@@ -58,14 +58,7 @@ class CatalogView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # context.update(get_data_for_sort_options(self.request.GET))
-        context['sort_data'] = [
-            {
-                'title': 'цене',
-                'sort_now': 'ink',
-            }
-        ]
-        print(f'{self.request.GET }')
+        context['sort_data'] = SortProductsResult(self.queryset, **self.request.GET).get_data_for_sort_options()
         return context
 
 
