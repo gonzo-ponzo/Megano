@@ -1,4 +1,6 @@
 from .models import Review
+from django.db.models.query import QuerySet
+from django.utils.translation import gettext_lazy as _
 
 
 class ReviewForItem:
@@ -92,6 +94,45 @@ class SortProductsResult:
     """
     Сортировка результатов поиска продуктов
     """
+    fields = (
+        ('price', _('цене')),
+        ('popular', _('популярности')),
+        ('reviews', _('отзывам')),
+        ('new', _('новизне')),
+    )
+    css_class_for_increment = 'Sort-sortBy_inc'
+    css_class_for_decrement = 'Sort-sortBy_dec'
+
+    # default_sort_data = []
+    # for field in fields:
+    #     default_sort_data.append({
+    #         'css_class': '',
+    #         'title': field[1],
+    #         'arg_str': f'sort_by={field[0]}',
+    #     })
+
+    def __init__(self, products: QuerySet, **sort_params):
+        self.products = products
+        self.sort_by = sort_params.get('sort_by', None)
+        self.sort_revers = bool(sort_params.get('reverse', False))
+
+    def get_data_for_sort_options(self):
+        result = []
+        for field in self.fields:
+            css_class = reverse = ''
+
+            if field == self.sort_by:
+                if self.sort_revers:
+                    css_class = self.css_class_for_decrement
+                else:
+                    reverse = '&reverse=True'
+
+            result.append({
+                'css_class': css_class,
+                'title': field[1],
+                'arg_str': f'sort_by={field[0]}{reverse}',
+            })
+        return result
 
     def by_popularity(self):
         """По популярности"""
