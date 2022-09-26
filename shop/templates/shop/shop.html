@@ -167,15 +167,6 @@
                                 <a href="{{ shop_description.email }}">{{ shop_description.email }}</a>
                                 <br><a href="tel:{{ shop_description.phone }}">{{ shop_description.phone }}</a>
                             </div>
-
-
-{#----------------------------------#}
-
-
-
-
-
-
             </div>
             {% if top_products|length == 0 %}
                 <header class="Section-header">
@@ -190,7 +181,11 @@
                 <div class="Cards">
                 {% for i in top_products %}
                     <div class="Card">
-                        <a class="Card-picture" href="/product/{{ i.product_id }}"><img src="{{ i.product.productimage_set.first.image.url }}" alt="product {{ id.product.name }}"/></a>
+                        <a class="Card-picture" href="/product/{{ i.product_id }}">
+                            <img class="Compare-pict"
+                                 src="{% if i.product.productimage_set.first %}{{ i.product.productimage_set.first.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}"
+                                 alt="{{ i.product.name|truncatechars:30 }}">
+                        </a>
                         <div class="Card-content">
                             <strong class="Card-title"><a href="/product/{{ i.product_id }}">{{ i.product.name }}</a>
                             </strong>
@@ -202,7 +197,7 @@
                                 <div class="Card-hover"><a class="Card-btn" href="#">
                                     <img src="{% static 'img/icons/card/bookmark.svg' %}" alt="bookmark.svg"/></a>
                                     <a class="Card-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a>
-                                    <a class="Card-btn" href="{% url 'compare_add' i.product_id %}" target="_blank">
+                                    <a class="Card-btn" onclick="openWin(url='{% url 'compare_add' i.product_id %}')">
                                         <img src="{% static 'img/icons/card/change.svg' %}" alt="change.svg"/></a>
                                 </div>
                             </div>
@@ -217,6 +212,7 @@
       </div>
     </div>
   </div>
+
   {% include 'footer.html' %}
   <script src="{% static 'plg/jQuery/jquery-3.5.0.slim.min.js' %}"></script>
   <script src="{% static 'plg/form/jquery.form.js' %}"></script>
