@@ -95,6 +95,8 @@ class SortProductsResult:
     """
     Сортировка результатов поиска продуктов
     """
+    # поля, по которым проводится сортировка, кортеж кортежей вида
+    # (значение параметра sort_by в строке запроса, наименование поля на сайте)
     fields = (
         ('price', _('цене')),
         ('popular', _('популярности')),
@@ -113,6 +115,8 @@ class SortProductsResult:
 
         if sort_by == 'price':
             return self.by_price(reverse=sort_revers)
+        if sort_by == 'new':
+            return self.by_newness(reverse=sort_revers)
 
         return self.products
 
@@ -138,7 +142,7 @@ class SortProductsResult:
             })
         return result
 
-    def by_popularity(self):
+    def by_popularity(self, reverse=False) -> QuerySet:
         """По популярности"""
         pass
 
@@ -149,13 +153,15 @@ class SortProductsResult:
         else:
             return self.products.order_by(F(field).desc(nulls_last=True))
 
-    def by_review(self):
+    def by_review(self, reverse=False) -> QuerySet:
         """По отзывам"""
         pass
 
-    def by_newness(self):
-        """По новизне"""
-        pass
+    def by_newness(self, reverse=False) -> QuerySet:
+        field = 'created_at'
+        if reverse:
+            field = '-' + field
+        return self.products.order_by(field)
 
 
 class SearchProduct:
