@@ -152,7 +152,6 @@ class SortProductsResult:
             field = '-' + field
         return self.products.order_by(field)
 
-
     def by_price(self, reverse=False) -> QuerySet:
         field = 'min_price'
         if field not in self.products.query.annotations:

@@ -45,18 +45,25 @@ class CatalogView(ListView):
     template_name = 'product/catalog.html'
     context_objects_name = 'product_list'
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.category = None
+
     def get_queryset(self):
 
         category = self.kwargs.get('category', None)
+        if category:
+            self.category = get_object_or_404(ProductCategory, slug=category)
+
         queryset = super().get_queryset()
         queryset = queryset.prefetch_related('productimage_set')
         queryset = queryset.select_related('category')
         queryset = queryset.annotate(min_price=Min('offer__price'))
         queryset = queryset.annotate(rating=Avg('review__rating', default=0))
         queryset = queryset.annotate(order_count=Sum('offer__orderoffer__amount', default=0))
-        if category:
-            category = get_object_or_404(ProductCategory, slug=category)
-            queryset = queryset.filter(category__in=category.get_descendants(include_self=True))
+
+        if self.category:
+            queryset = queryset.filter(category__in=self.category.get_descendants(include_self=True))
 
         queryset = SortProductsResult(queryset).sort_by_params(**self.request.GET.dict())
 
@@ -65,6 +72,9 @@ class CatalogView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['sort_data'] = SortProductsResult.get_data_for_sort_links(**self.request.GET.dict())
+        context['parent_categories'] = self.category.get_ancestors(include_self=True) if self.category else None
+        context['child_categories'] = self.category.get_children() if self.category else ProductCategory.objects.root_nodes()
+
         return context
 
 

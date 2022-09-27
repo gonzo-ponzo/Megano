@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 
 {% include 'templates/base.html' with title="Catalog" %}
 
@@ -11,14 +12,34 @@
     <div class="Middle-top">
       <div class="wrap">
         <div class="Middle-header">
-          <h1 class="Middle-title">Catalog Megano
+          <h1 class="Middle-title">
+            <ul>
+                <li class="breadcrumbs-item">
+                    <a href="{% url 'catalog-page' %}">{% trans "Каталог Megano" %}</a>
+                </li>
+                {% for cat in parent_categories %}
+                      <li class="breadcrumbs-item">
+                          <a href="{% url 'category-catalog-page' cat.slug %}">
+                              {{ cat.name }}
+                          </a>
+                      </li>
+                {% endfor %}
+
+            </ul>
+
           </h1>
-          <ul class="breadcrumbs Middle-breadcrumbs">
-            <li class="breadcrumbs-item"><a href="/static">home</a>
-            </li>
-            <li class="breadcrumbs-item breadcrumbs-item_current"><span>Catalog</span>
-            </li>
+
+
+          <ul class="breadcrumbs">
+                {% for cat in child_categories %}
+                    <li class="breadcrumbs-item">
+                        <a href="{% url 'category-catalog-page' cat.slug %}">
+                            {{ cat.name }}
+                        </a>
+                    </li>
+                {% endfor %}
           </ul>
+
         </div>
       </div>
     </div>
