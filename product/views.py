@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import redirect, render, get_object_or_404
-from django.db.models import Min, Count, Avg, Sum
+from django.db.models import Min, Avg, Sum
 from product.forms import ProductForm, ReviewForm
 from product.models import Product, ProductView, ProductCategory
 from promotion.services import BannerMain
@@ -44,7 +44,7 @@ class CatalogView(ListView):
     model = Product
     template_name = 'product/catalog.html'
     context_objects_name = 'product_list'
-    paginate_by = 2
+    paginate_by = settings.PRODUCT_PER_PAGES
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -74,7 +74,8 @@ class CatalogView(ListView):
         context = super().get_context_data(**kwargs)
         context['sort_data'] = SortProductsResult.get_data_for_sort_links(**self.request.GET.dict())
         context['parent_categories'] = self.category.get_ancestors(include_self=True) if self.category else None
-        context['child_categories'] = self.category.get_children() if self.category else ProductCategory.objects.root_nodes()
+        context['child_categories'] = self.category.get_children() if self.category \
+            else ProductCategory.objects.root_nodes()
 
         return context
 

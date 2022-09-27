@@ -187,3 +187,5 @@ MEDIA_URL = "/media/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MPTT_ADMIN_LEVEL_INDENT = 20
+
+PRODUCT_PER_PAGES = 3
