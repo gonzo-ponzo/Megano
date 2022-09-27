@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import redirect, render, get_object_or_404
-from django.db.models import Min, Count
+from django.db.models import Min, Count, Avg, Sum
 from product.forms import ProductForm, ReviewForm
 from product.models import Product, ProductView, ProductCategory
 from promotion.services import BannerMain
@@ -45,9 +45,6 @@ class CatalogView(ListView):
     template_name = 'product/catalog.html'
     context_objects_name = 'product_list'
 
-
-
-
     def get_queryset(self):
 
         category = self.kwargs.get('category', None)
@@ -55,7 +52,8 @@ class CatalogView(ListView):
         queryset = queryset.prefetch_related('productimage_set')
         queryset = queryset.select_related('category')
         queryset = queryset.annotate(min_price=Min('offer__price'))
-
+        queryset = queryset.annotate(rating=Avg('review__rating', default=0))
+        queryset = queryset.annotate(order_count=Sum('offer__orderoffer__amount', default=0))
         if category:
             category = get_object_or_404(ProductCategory, slug=category)
             queryset = queryset.filter(category__in=category.get_descendants(include_self=True))

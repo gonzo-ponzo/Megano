@@ -1,6 +1,6 @@
 from .models import Review
 from django.db.models.query import QuerySet
-from django.db.models import F
+from django.db.models import F, Min, Avg
 from django.utils.translation import gettext_lazy as _
 
 
@@ -117,6 +117,10 @@ class SortProductsResult:
             return self.by_price(reverse=sort_revers)
         if sort_by == 'new':
             return self.by_newness(reverse=sort_revers)
+        if sort_by == 'reviews':
+            return self.by_review(reverse=sort_revers)
+        if sort_by == 'popular':
+            return self.by_popularity(reverse=sort_revers)
 
         return self.products
 
@@ -143,19 +147,28 @@ class SortProductsResult:
         return result
 
     def by_popularity(self, reverse=False) -> QuerySet:
-        """По популярности"""
-        pass
+        field = 'order_count'
+        if not reverse:
+            field = '-' + field
+        return self.products.order_by(field)
+
 
     def by_price(self, reverse=False) -> QuerySet:
         field = 'min_price'
+        if field not in self.products.query.annotations:
+            self.products = self.products.annotate(min_price=Min('offer__price'))
         if reverse:
             return self.products.order_by(F(field).asc(nulls_last=True))
         else:
             return self.products.order_by(F(field).desc(nulls_last=True))
 
     def by_review(self, reverse=False) -> QuerySet:
-        """По отзывам"""
-        pass
+        field = 'rating'
+        if field not in self.products.query.annotations:
+            self.products = self.products.annotate(rating=Avg('review__rating', default=0))
+        if not reverse:
+            field = '-' + field
+        return self.products.order_by(field)
 
     def by_newness(self, reverse=False) -> QuerySet:
         field = 'created_at'

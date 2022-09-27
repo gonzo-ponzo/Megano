@@ -128,24 +128,17 @@
                                 <span class="Card-price">{{ product.min_price }}</span>
                             </div>
                             <div class="Card-category">
+                                <p>Заказов: {{ product.order_count }}</p>
                                 {{ product.category }}
                             </div>
                             <div class="Card-hover">
-{#                                <a class="Card-btn" href="#">#}
-{#                                    <img src="{% static 'img/icons/card/bookmark.svg' %}" alt="bookmark.svg"/>#}
-{#                                </a>#}
-{#                                <a class="Card-btn" href="{% url 'order:cart-add' product.id 0 %}">#}
-{#                                 Непонятно, от какого магазина добавлять в корзину#}
-                                <a class="Card-btn" href="#">
-                                    <img src="{% static 'img/icons/card/cart.svg' %}" alt="в корзину"/>
-                                </a>
                                 <a class="Card-btn" href="#">
                                     <img src="{% static 'img/icons/card/change.svg' %}" alt="сравнить"/>
                                 </a>
                             </div>
                         </div>
                     </div>
-{#                    <div class="Card-sale">-60%</div>#}
+                    <div class="Card-sale"><img src="{% static 'img/icons/star.svg' %}"> {{ product.rating }}</div>
                 </div>
             {% endfor %}
 
