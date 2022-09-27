@@ -44,6 +44,7 @@ class CatalogView(ListView):
     model = Product
     template_name = 'product/catalog.html'
     context_objects_name = 'product_list'
+    paginate_by = 2
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
