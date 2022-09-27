@@ -37,10 +37,6 @@ class UserRegistrationView(View):
             email = form_data.get("email")
             raw_password = form_data.get("password1")
             user = form.save()
-            if request.FILES:
-                avatar = request.FILES["avatar"]
-                user.avatar = avatar
-                user.save(update_fields=["avatar"])
             user = authenticate(email=email, password=raw_password)
             login(request, user)
             return redirect(reverse("main-page"))
@@ -71,16 +67,12 @@ class UserUpdateView(View):
 
     def post(self, request, *args, **kwargs):
         form = UserUpdateForm(request.POST, request.FILES, instance=request.user)
-        # form_data = form.data
-        print(form.data, "\nis_valid:", form.is_valid(), "\n", form.errors)
         is_ok = False
         if form.is_valid():
             form_data = form.data
             user = request.user
-            # обновить емейл, телефон
             user.email = form_data.get("email")
             user.phone = form_data.get("phone")
-            # спарсить фио на отдельные поля, обновить у юзера
             fio = form_data.get("fio").split()
             user.last_name = fio[0]
             user.first_name = fio[1]
@@ -88,8 +80,12 @@ class UserUpdateView(View):
                 user.middle_name = " ".join(fio[2:])
             else:
                 user.middle_name = ""
-            # TODO обновить аватар, если задан
-            # TODO если заданы оба поля с паролями и одинаковые (это должно проверяться в is_valid), то установить новый пароль
+            password = form_data.get("password1")
+            if len(password) > 0:
+                user.set_password(password)
+            if request.FILES:
+                avatar = request.FILES["avatar"]
+                user.avatar = avatar
             user.save()
             is_ok = True
         context = {"form": form, "is_ok": is_ok}

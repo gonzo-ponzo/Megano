@@ -128,15 +128,11 @@ class UserUpdateForm(forms.ModelForm):
         cleaner_data = super().clean()
         if len(cleaner_data.get("fio").split()) < 2:
             self.add_error("fio", _("Нужно написать Фамилию Имя"))
-        # password = cleaner_data.get("password1")
-        # password_2 = cleaner_data.get("password2")
-        # if password is not None and password != password_2:
-        #     self.add_error("password2", _("Введенные пароли должны совпадать"))
+        password = cleaner_data.get("password1")
+        password_2 = cleaner_data.get("password2")
+        if (len(password) > 0 or len(password_2) > 0) and (password != password_2):
+            self.add_error("password1", _("Для смены пароля введите новый пароль два раза"))
         return cleaner_data
-
-    # error_messages = {
-    #     "password_mismatch": _("Пароли не совпадают"),
-    # }
 
     class Meta:
         model = User

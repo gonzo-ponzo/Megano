@@ -22,7 +22,7 @@
         {% include 'user/user_nav.html' with item="update" %}
         <div class="Section-content">
           <div class="Profile">
-            <form class="form Profile-form" method="post">
+            <form class="form Profile-form" method="post" enctype="multipart/form-data">
               {% if form.errors %}
                   {{ form.errors }}
               {% endif %}
