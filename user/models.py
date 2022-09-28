@@ -59,6 +59,18 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def get_full_name(self):
         return f'{self.first_name} {self.last_name}'
 
+    @property
+    def get_fio(self):
+        return " ".join(list(filter(lambda item: item is not None,
+                                    [self.last_name, self.first_name, self.middle_name])))
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            this_record = CustomUser.objects.get(pk=self.pk)
+            if this_record.avatar and (this_record.avatar != self.avatar):
+                this_record.avatar.delete(save=False)
+        super(CustomUser, self).save(*args, **kwargs)
+
     def check_groups_staff(self):
         """если пользователя добавили хотя бы в одну группу, где есть какие-то права, пускаем пользователя в админку"""
         if self.pk and not self.is_superuser:

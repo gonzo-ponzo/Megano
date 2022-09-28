@@ -1,0 +1,93 @@
+{% load static %}
+{% include 'base.html' with title="Профайл" %}
+<body class="Site">
+  {% include 'header.html' %}
+  <div class="Middle Middle_top">
+    <div class="Middle-top">
+      <div class="wrap">
+        <div class="Middle-header">
+          <h1 class="Middle-title">Профиль
+          </h1>
+          <ul class="breadcrumbs Middle-breadcrumbs">
+            <li class="breadcrumbs-item"><a href="{% url 'main-page' %}">home</a>
+            </li>
+            <li class="breadcrumbs-item breadcrumbs-item_current"><span>Профиль</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="Section Section_column Section_columnLeft">
+      <div class="wrap">
+        {% include 'user/user_nav.html' with item="update" %}
+        <div class="Section-content">
+          <div class="Profile">
+            <form class="form Profile-form" method="post" enctype="multipart/form-data">
+              {% if form.errors %}
+                  {{ form.errors }}
+              {% endif %}
+              {% csrf_token %}
+              <div class="row">
+                <div class="row-block">
+                  <div class="form-group">
+                    <label class="form-label" for="avatar">Аватар
+                    </label>
+                    <div class="Profile-avatar{% if not request.user.avatar %} Profile-avatar_noimg{% endif %}">
+                      <div class="Profile-img"><img src="{% if request.user.avatar %}{{ request.user.avatar.url }}{% endif %}" alt="avatar"/>
+                      </div>
+                      <label class="Profile-fileLabel" for="avatar">Выберите аватар
+                      </label>
+                      <input class="Profile-file form-input" id="avatar" name="avatar" type="file" data-validate="onlyImgAvatar"/>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="fio">ФИО
+                    </label>
+                    <input class="form-input" id="fio" name="fio" type="text" value="{{ form.fio.value }}" data-validate="require"/>
+                  </div>
+                </div>
+                <div class="row-block">
+                  <div class="form-group">
+                    <label class="form-label" for="phone">Телефон
+                    </label>
+                    <input class="form-input" id="phone" name="phone" type="text" value="{% if form.phone.value %}{{ form.phone.value }}{% endif %}"/>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="email">E-mail
+                    </label>
+                    <input class="form-input" id="email" name="email" type="text" value="{{ form.email.value }}" data-validate="require"/>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="password1">Пароль
+                    </label>
+                    <input class="form-input" id="password1" name="password1" type="password" placeholder="Тут можно изменить пароль"/>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="password2">Подтверждение пароля
+                    </label>
+                    <input class="form-input" id="password2" name="password2" type="password" placeholder="Введите пароль повторно"/>
+                  </div>
+                  <div class="form-group">
+                    <div class="Profile-btn">
+                      <button class="btn btn_success" type="submit">Сохранить
+                      </button>
+                    </div>{% if is_ok %}
+                    <div class="Profile-success">Профиль успешно сохранен
+                    </div>{% endif %}
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% include 'footer.html' %}
+  <script src="assets/plg/jQuery/jquery-3.5.0.slim.min.js"></script>
+  <script src="assets/plg/form/jquery.form.js"></script>
+  <script src="assets/plg/form/jquery.maskedinput.min.js"></script>
+  <script src="assets/plg/range/ion.rangeSlider.min.js"></script>
+  <script src="assets/plg/Slider/slick.min.js"></script>
+  <script src="assets/js/scripts.js"></script>
+</body></html>
