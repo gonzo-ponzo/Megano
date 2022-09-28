@@ -1,3 +1,6 @@
+from django.db.models.query import QuerySet
+from django.db.models import F, Min, Avg
+from django.utils.translation import gettext_lazy as _
 from copy import copy
 from statistics import mean
 from django.core.exceptions import ObjectDoesNotExist
@@ -169,22 +172,85 @@ class SortProductsResult:
     """
     Сортировка результатов поиска продуктов
     """
+    # поля, по которым проводится сортировка, кортеж кортежей вида
+    # (значение параметра sort_by в строке запроса, наименование поля на сайте)
+    fields = (
+        ('price', _('цене')),
+        ('popular', _('популярности')),
+        ('reviews', _('отзывам')),
+        ('new', _('новизне')),
+    )
+    css_class_for_increment = 'Sort-sortBy_inc'
+    css_class_for_decrement = 'Sort-sortBy_dec'
 
-    def by_popularity(self):
-        """По популярности"""
-        pass
+    def __init__(self, products: QuerySet, **sort_params):
+        self.products = products
 
-    def by_price(self):
-        """По цене"""
-        pass
+    def sort_by_params(self, **get_params) -> QuerySet:
+        sort_by = get_params.get('sort_by', None)
+        sort_revers = bool(get_params.get('reverse', False))
 
-    def by_review(self):
-        """По отзывам"""
-        pass
+        if sort_by == 'price':
+            return self.by_price(reverse=sort_revers)
+        if sort_by == 'new':
+            return self.by_newness(reverse=sort_revers)
+        if sort_by == 'reviews':
+            return self.by_review(reverse=sort_revers)
+        if sort_by == 'popular':
+            return self.by_popularity(reverse=sort_revers)
 
-    def by_newness(self):
-        """По новизне"""
-        pass
+        return self.products
+
+    @classmethod
+    def get_data_for_sort_links(cls, **get_params) -> list[dict]:
+        sort_by = get_params.get('sort_by', None)
+        sort_revers = bool(get_params.get('reverse', False))
+        result = []
+        for field in cls.fields:
+            css_class = reverse = ''
+
+            if field[0] == sort_by:
+                if sort_revers:
+                    css_class = cls.css_class_for_decrement
+                else:
+                    css_class = cls.css_class_for_increment
+                    reverse = '&reverse=True'
+
+            result.append({
+                'css_class': css_class,
+                'title': field[1],
+                'arg_str': f'sort_by={field[0]}{reverse}',
+            })
+        return result
+
+    def by_popularity(self, reverse=False) -> QuerySet:
+        field = 'order_count'
+        if not reverse:
+            field = '-' + field
+        return self.products.order_by(field)
+
+    def by_price(self, reverse=False) -> QuerySet:
+        field = 'min_price'
+        if field not in self.products.query.annotations:
+            self.products = self.products.annotate(min_price=Min('offer__price'))
+        if reverse:
+            return self.products.order_by(F(field).asc(nulls_last=True))
+        else:
+            return self.products.order_by(F(field).desc(nulls_last=True))
+
+    def by_review(self, reverse=False) -> QuerySet:
+        field = 'rating'
+        if field not in self.products.query.annotations:
+            self.products = self.products.annotate(rating=Avg('review__rating', default=0))
+        if not reverse:
+            field = '-' + field
+        return self.products.order_by(field)
+
+    def by_newness(self, reverse=False) -> QuerySet:
+        field = 'created_at'
+        if reverse:
+            field = '-' + field
+        return self.products.order_by(field)
 
 
 class SearchProduct:

@@ -1,11 +1,14 @@
 from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import redirect, render, get_object_or_404
+from django.db.models import Min, Avg, Sum
+
 from django.views import View
 from product.forms import ProductForm, ReviewForm
 from product.models import Product, ProductView, ProductCategory
 from promotion.services import BannerMain
-from .services import ReviewForItem, ProductCompareList
+from .services import ReviewForItem, ProductCompareList, SortProductsResult
+
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
@@ -105,25 +108,43 @@ class MainPage(TemplateView):
 
 
 class CatalogView(ListView):
-    # model = Product
+    model = Product
     template_name = 'product/catalog.html'
     context_objects_name = 'product_list'
+    paginate_by = settings.PRODUCT_PER_PAGES
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.category = None
 
     def get_queryset(self):
 
         category = self.kwargs.get('category', None)
-
-        queryset = Product.objects.all().prefetch_related('productimage_set')
-        queryset = queryset.select_related('category')
         if category:
-            category = get_object_or_404(ProductCategory, slug=category)
-            queryset = queryset.filter(category__in=category.get_descendants(include_self=True))
+            self.category = get_object_or_404(ProductCategory, slug=category)
+
+        queryset = super().get_queryset()
+        queryset = queryset.prefetch_related('productimage_set')
+        queryset = queryset.select_related('category')
+        queryset = queryset.annotate(min_price=Min('offer__price'))
+        queryset = queryset.annotate(rating=Avg('review__rating', default=0))
+        queryset = queryset.annotate(order_count=Sum('offer__orderoffer__amount', default=0))
+
+        if self.category:
+            queryset = queryset.filter(category__in=self.category.get_descendants(include_self=True))
+
+        queryset = SortProductsResult(queryset).sort_by_params(**self.request.GET.dict())
+
         return queryset
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context["list"] = Product.objects.all()
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['sort_data'] = SortProductsResult.get_data_for_sort_links(**self.request.GET.dict())
+        context['parent_categories'] = self.category.get_ancestors(include_self=True) if self.category else None
+        context['child_categories'] = self.category.get_children() if self.category \
+            else ProductCategory.objects.root_nodes()
+
+        return context
 
 
 class DetailedProductView(DetailView):
