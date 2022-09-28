@@ -1,0 +1,40 @@
+.logo-shop img {
+    border-radius: 50%;
+    height: 150px;
+    margin: inherit;
+}
+
+.photo-shop-block {
+    height: 360px;
+    width: 360px;
+}
+
+.photo-shop-block img {
+    height: 100%;
+}
+
+.shop-block-info {
+    flex-wrap: unset;
+}
+
+.shops-list-li {
+    display: flex;
+    width: 50%;
+}
+
+.shops-list-li-text {
+    margin: auto 50px;
+}
+
+.shops-list-li-logo {
+    width: 30%;
+}
+
+.shops-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.shops-list-li-logo img {
+    border-radius: 50%;
+}

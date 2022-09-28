@@ -2,10 +2,13 @@ from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import redirect, render, get_object_or_404
 from django.db.models import Min, Avg, Sum
+
+from django.views import View
 from product.forms import ProductForm, ReviewForm
 from product.models import Product, ProductView, ProductCategory
 from promotion.services import BannerMain
-from .services import ReviewForItem, SortProductsResult
+from .services import ReviewForItem, ProductCompareList, SortProductsResult
+
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
@@ -18,8 +21,76 @@ from .utils import (
     get_discount,
     get_description,
     get_property_dict,
-    get_offer_list,
+    get_offer_list
 )
+
+
+class CompareView(View):
+    """
+    Получение листа сравнений
+    """
+
+    def get(self, request, *args, **kwargs):
+        compare_list = ProductCompareList(
+            request.session.get(settings.CACHE_KEY_COMPARISON),
+            True,
+            'None'
+        )
+        return render(request, 'product/compare.html', {'compare_list': compare_list})
+
+    def post(self, request, *args, **kwargs):
+        short_list = request.POST.get('differentFeature')
+        choice_category = request.POST.get('ChoiceCategory')
+        compare_list = ProductCompareList(
+            request.session.get(settings.CACHE_KEY_COMPARISON),
+            short_list,
+            choice_category
+        )
+        return render(request, 'product/compare.html', {'compare_list': compare_list})
+
+
+class CompareAdd(View):
+    """
+    Добавление элемента в список сравнений
+    """
+
+    def get(self, request, *args, **kwargs):
+        product_list = request.session.get(settings.CACHE_KEY_COMPARISON)
+        product = kwargs['pk']
+
+        if not product_list:
+            product_list = [product]
+        elif product not in product_list:
+            product_list.append(product)
+        request.session[settings.CACHE_KEY_COMPARISON] = product_list
+        return render(request, 'product/compare_change.html', {'message': 'объект добавлен'})
+
+
+class CompareRemove(View):
+    """
+    Удаление элемента из списка сравнений
+    """
+
+    def get(self, request, *args, **kwargs):
+        product_list = request.session.get(settings.CACHE_KEY_COMPARISON)
+        product = kwargs['pk']
+
+        if product in product_list:
+            product_list.remove(product)
+            request.session[settings.CACHE_KEY_COMPARISON] = product_list
+        return redirect('/product/compare/')
+
+
+class CompareClear(View):
+    """
+    Полная очистка листа сравнений
+    """
+
+    def get(self, request, *args, **kwargs):
+        product_list = request.session.get(settings.CACHE_KEY_COMPARISON)
+        product_list.clear()
+        request.session[settings.CACHE_KEY_COMPARISON] = product_list
+        return redirect('/')
 
 
 class CreateProductView(CreateView):
@@ -34,10 +105,6 @@ class MainPage(TemplateView):
         context = super().get_context_data(**kwargs)
         context["banners"] = BannerMain.get_cache_banners()
         return context
-
-
-class CompareView(TemplateView):
-    template_name = "product/compare.html"
 
 
 class CatalogView(ListView):
