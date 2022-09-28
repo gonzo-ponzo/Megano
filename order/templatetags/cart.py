@@ -17,4 +17,6 @@ def get_cart_price(request):
 
 @register.simple_tag()
 def get_compare_len(request):
-    return len(request.session.get(settings.CACHE_KEY_COMPARISON))
+    if request.session.get(settings.CACHE_KEY_COMPARISON):
+        return len(request.session.get(settings.CACHE_KEY_COMPARISON))
+    return 0
