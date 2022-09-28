@@ -1,5 +1,5 @@
 {% load static %}
-{% load get_cart_len get_cart_price from cart %}
+{% load get_cart_len get_cart_price get_compare_len from cart %}
 <header class="Header">
     <div class="ControlPanel">
       <div class="wrap">
@@ -56,7 +56,15 @@
           </div>
         </nav>
         <div class="row-block">
-          <div class="CartBlock"><a class="CartBlock-block" href="/product/compare"><img class="CartBlock-img" src="{% static 'img/icons/exchange.svg' %}" alt="exchange.svg"/><span class="CartBlock-amount">4</span></a><a class="CartBlock-block" href="/order/cart"><img class="CartBlock-img" src="{% static 'img/icons/cart.svg' %}" alt="cart.svg"/><span class="CartBlock-amount">{% get_cart_len request %}</span></a>
+          <div class="CartBlock">
+              <a class="CartBlock-block" href="/product/compare">
+                  <img class="CartBlock-img" src="{% static 'img/icons/exchange.svg' %}" alt="exchange.svg"/>
+                  <span class="CartBlock-amount">{% get_compare_len request %}</span>
+              </a>
+              <a class="CartBlock-block" href="/order/cart">
+                  <img class="CartBlock-img" src="{% static 'img/icons/cart.svg' %}" alt="cart.svg"/>
+                  <span class="CartBlock-amount">{% get_cart_len request %}</span>
+              </a>
             <div class="CartBlock-block"><span class="CartBlock-price">{% get_cart_price request %}$</span>
             </div>
           </div>
