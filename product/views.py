@@ -129,6 +129,8 @@ class CatalogView(ListView):
         queryset = FilterProductsResult(queryset).filter_by_params(**self.request.GET.dict())
         queryset = SortProductsResult(queryset).sort_by_params(**self.request.GET.dict())
 
+        # print(queryset.values()[0].keys())
+
         return queryset
 
     def get_context_data(self, **kwargs):
