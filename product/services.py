@@ -177,7 +177,7 @@ class SortProductsResult:
     fields = (
         ('price', _('цене')),
         ('popular', _('популярности')),
-        ('reviews', _('отзывам')),
+        ('reviews', _('рейтингу')),
         ('new', _('новизне')),
     )
     css_class_for_increment = 'Sort-sortBy_inc'

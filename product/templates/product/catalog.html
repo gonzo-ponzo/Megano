@@ -144,8 +144,14 @@
                         </strong>
                         <div class="Card-description">
                             <div class="Card-cost">
-                                <span class="Card-priceOld">$115.00</span>
-                                <span class="Card-price">{{ product.min_price }}</span>
+{#                                <span class="Card-priceOld">$115.00</span>#}
+                                <span class="Card-price">
+                                    {% if product.min_price > 0 %}
+                                        от {{ product.min_price|floatformat:"0g" }} руб.
+                                    {% else %}
+                                        нет в продаже
+                                    {% endif %}
+                                </span>
                             </div>
                             <div class="Card-category">
                                 <p>Заказов: {{ product.order_count }}</p>
