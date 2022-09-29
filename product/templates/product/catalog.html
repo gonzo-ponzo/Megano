@@ -55,7 +55,8 @@
             </header>
             <div class="Section-columnContent">
 
-              <form class="form" action="#" method="get">
+              <form class="form" action="" method="get">
+
                 <div class="form-group">
                   <div class="range Section-columnRange">
                     <input class="range-line" id="price" name="price" type="text" data-type="double" data-min="7" data-max="50"/>
@@ -64,9 +65,11 @@
                     </div>
                   </div>
                 </div>
+
                 <div class="form-group">
-                  <input class="form-input form-input_full" id="title" name="title" type="text" placeholder="{% trans 'Название' %}"/>
+                  <input class="form-input form-input_full" name="fil_title" type="text" placeholder="{% trans 'Название' %}" value="{{ request.GET.fil_title }}"/>
                 </div>
+
                 <div class="form-group">
                   <select class="form-select">
                     <option value="seller" selected="selected" disabled="disabled">{% trans 'Продавец' %}</option>
@@ -74,21 +77,28 @@
                     <option value="sdfsdf">sdfsdf</option>
                   </select>
                 </div>
+
                 <div class="form-group">
                   <label class="toggle">
-                    <input type="checkbox"/><span class="toggle-box"></span><span class="toggle-text">{% trans 'Только товары в наличии' %}</span>
+                    <input type="checkbox" name="fil_actual"/><span class="toggle-box"></span><span class="toggle-text">{% trans 'Только товары в наличии' %}</span>
                   </label>
                 </div>
+
                 <div class="form-group">
                   <label class="toggle">
                     <input type="checkbox"/><span class="toggle-box"></span><span class="toggle-text">{% trans 'С бесплатной доставкой' %}</span>
                   </label>
                 </div>
+
                 <div class="form-group">
+                  <input type="hidden" name="sort_by" value="{{ request.GET.sort_by }}">
+                  <input type="hidden" name="reverse" value="{{ request.GET.reverse }}">
                   <div class="buttons">
-                      <a class="btn btn_square btn_dark btn_narrow" href="#">OK</a>
+                      <input class="btn btn_square btn_dark btn_narrow" type="submit" value="OK">
+                      <a href="{{ request.path }}?{{ sort_part_url }}" class="btn btn_square btn_dark btn_narrow">{% trans "Сбросить" %}</a>
                   </div>
                 </div>
+
               </form>
 
             </div>
@@ -115,7 +125,7 @@
             <div class="Sort-variants">
 
                 {% for sort_item in sort_data %}
-                    <a class="Sort-sortBy {{ sort_item.css_class }}" href="{{ request.path }}?{{ sort_item.arg_str }}">{{ sort_item.title|capfirst }}</a>
+                    <a class="Sort-sortBy {{ sort_item.css_class }}" href="{{ request.path }}?{{ sort_item.arg_str }}&{{ filter_part_url }}">{{ sort_item.title|capfirst }}</a>
                 {% endfor %}
 
 

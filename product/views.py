@@ -7,7 +7,7 @@ from django.views import View
 from product.forms import ProductForm, ReviewForm
 from product.models import Product, ProductView, ProductCategory
 from promotion.services import BannerMain
-from .services import ReviewForItem, ProductCompareList, SortProductsResult
+from .services import ReviewForItem, ProductCompareList, SortProductsResult, FilterProductsResult
 
 from django.core.paginator import Paginator
 from django.contrib import messages
@@ -21,7 +21,8 @@ from .utils import (
     get_discount,
     get_description,
     get_property_dict,
-    get_offer_list
+    get_offer_list,
+    get_queryset_for_catalog,
 )
 
 
@@ -108,7 +109,7 @@ class MainPage(TemplateView):
 
 
 class CatalogView(ListView):
-    model = Product
+
     template_name = 'product/catalog.html'
     context_objects_name = 'product_list'
     paginate_by = settings.PRODUCT_PER_PAGES
@@ -119,20 +120,13 @@ class CatalogView(ListView):
 
     def get_queryset(self):
 
-        category = self.kwargs.get('category', None)
-        if category:
+        queryset = get_queryset_for_catalog()
+
+        if category := self.kwargs.get('category', None):
             self.category = get_object_or_404(ProductCategory, slug=category)
-
-        queryset = super().get_queryset()
-        queryset = queryset.prefetch_related('productimage_set')
-        queryset = queryset.select_related('category')
-        queryset = queryset.annotate(min_price=Min('offer__price'))
-        queryset = queryset.annotate(rating=Avg('review__rating', default=0))
-        queryset = queryset.annotate(order_count=Sum('offer__orderoffer__amount', default=0))
-
-        if self.category:
             queryset = queryset.filter(category__in=self.category.get_descendants(include_self=True))
 
+        queryset = FilterProductsResult(queryset).filter_by_params(**self.request.GET.dict())
         queryset = SortProductsResult(queryset).sort_by_params(**self.request.GET.dict())
 
         return queryset
@@ -143,7 +137,8 @@ class CatalogView(ListView):
         context['parent_categories'] = self.category.get_ancestors(include_self=True) if self.category else None
         context['child_categories'] = self.category.get_children() if self.category \
             else ProductCategory.objects.root_nodes()
-
+        context['filter_part_url'] = FilterProductsResult.make_filter_part_url(self.request.GET.dict())
+        context['sort_part_url'] = SortProductsResult.make_sort_part_url(self.request.GET.dict())
         return context
 
 

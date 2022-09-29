@@ -3,6 +3,7 @@ from .models import Product, ProductImage, Offer, ProductProperty, Property, \
 from shop.models import Shop
 from user.models import CustomUser
 from django.shortcuts import get_object_or_404
+from django.db.models import Min, Sum, Avg
 
 
 def get_main_pic(obj: Product):
@@ -159,3 +160,14 @@ def get_review(obj: Product):
     except Review.DoesNotExist:
         reviews = None
     return reviews
+
+
+def get_queryset_for_catalog():
+    queryset = Product.objects.all()
+    queryset = queryset.prefetch_related('productimage_set')
+    queryset = queryset.select_related('category')
+    queryset = queryset.annotate(min_price=Min('offer__price'))
+    queryset = queryset.annotate(rating=Avg('review__rating', default=0))
+    queryset = queryset.annotate(order_count=Sum('offer__orderoffer__amount', default=0))
+
+    return queryset

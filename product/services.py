@@ -1,5 +1,6 @@
 from django.db.models.query import QuerySet
 from django.db.models import F, Min, Avg
+from urllib.parse import urlencode
 from django.utils.translation import gettext_lazy as _
 from copy import copy
 from statistics import mean
@@ -143,25 +144,40 @@ class PropertyCompare:
         return self.product_list
 
 
-class ProductsFilter:
+class FilterProductsResult:
     """
     Фильтр для списка продуктов
     """
+    filter_field_name = (
+        'fil_title',
+    )
 
-    def filter(self):
+    def __init__(self, products: QuerySet):
+        """
+        :param products: Queryset подготовленный функцией .utils.get_queryset_for_catalog
+        """
+        self.products = products
+
+    @classmethod
+    def make_filter_part_url(cls, get_params: dict):
+        filter_params = {key: get_params.get(key) for key in cls.filter_field_name if key in get_params}
+        return urlencode(filter_params)
+
+    def filter_by_params(self, **get_params) -> QuerySet:
         """Отфильтровать список по указанным параметрам"""
-        self.by_price()
-        self.by_keywords()
-        self.by_seller()
-        return
+        title = get_params.get('fil_title', None)
+        # self.by_price()
+        # self.by_seller()
+        if title: self.by_keywords(title)
+
+        return self.products
 
     def by_price(self):
         """Фильтрация по цене"""
         pass
 
-    def by_keywords(self):
-        """Фильтрация по ключевым словам в названии"""
-        pass
+    def by_keywords(self, title):
+        self.products = self.products.filter(name__icontains=title)
 
     def by_seller(self):
         """Фильтрация по продавцу"""
@@ -183,12 +199,23 @@ class SortProductsResult:
     css_class_for_increment = 'Sort-sortBy_inc'
     css_class_for_decrement = 'Sort-sortBy_dec'
 
-    def __init__(self, products: QuerySet, **sort_params):
+    def __init__(self, products: QuerySet):
+        """
+        :param products: Queryset подготовленный функцией .utils.get_queryset_for_catalog
+        """
         self.products = products
+
+    @classmethod
+    def make_sort_part_url(cls, get_params: dict):
+        sort_params = {
+            'sort_by': get_params.get('sort_by', None),
+            'reverse': get_params.get('reverse', ''),
+        }
+        return urlencode(sort_params)
 
     def sort_by_params(self, **get_params) -> QuerySet:
         sort_by = get_params.get('sort_by', None)
-        sort_revers = bool(get_params.get('reverse', False))
+        sort_revers = bool(get_params.get('reverse'))
 
         if sort_by == 'price':
             return self.by_price(reverse=sort_revers)
@@ -240,8 +267,6 @@ class SortProductsResult:
 
     def by_review(self, reverse=False) -> QuerySet:
         field = 'rating'
-        if field not in self.products.query.annotations:
-            self.products = self.products.annotate(rating=Avg('review__rating', default=0))
         if not reverse:
             field = '-' + field
         return self.products.order_by(field)
