@@ -150,6 +150,7 @@ class FilterProductsResult:
     """
     filter_field_name = (
         'fil_title',
+        'fil_actual'
     )
 
     def __init__(self, products: QuerySet):
@@ -166,18 +167,23 @@ class FilterProductsResult:
     def filter_by_params(self, **get_params) -> QuerySet:
         """Отфильтровать список по указанным параметрам"""
         title = get_params.get('fil_title', None)
+        actual = bool(get_params.get('fil_actual'))
         # self.by_price()
         # self.by_seller()
         if title: self.by_keywords(title)
+        if actual: self.only_actual()
 
         return self.products
+
+    def by_keywords(self, title):
+        self.products = self.products.filter(name__icontains=title)
+
+    def only_actual(self):
+        self.products = self.products.filter(offer__isnull=False)
 
     def by_price(self):
         """Фильтрация по цене"""
         pass
-
-    def by_keywords(self, title):
-        self.products = self.products.filter(name__icontains=title)
 
     def by_seller(self):
         """Фильтрация по продавцу"""

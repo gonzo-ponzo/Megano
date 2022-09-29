@@ -80,7 +80,7 @@
 
                 <div class="form-group">
                   <label class="toggle">
-                    <input type="checkbox" name="fil_actual"/><span class="toggle-box"></span><span class="toggle-text">{% trans 'Только товары в наличии' %}</span>
+                    <input type="checkbox" name="fil_actual" {% if request.GET.fil_actual %}checked{% endif %}/><span class="toggle-box"></span><span class="toggle-text">{% trans 'Только товары в наличии' %}</span>
                   </label>
                 </div>
 
