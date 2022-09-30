@@ -178,7 +178,7 @@
                                 {{ product.category }}
                             </div>
                             <div class="Card-hover">
-                                <a class="Card-btn" href="#">
+                                <a class="Card-btn" onclick="openWin(url='{% url 'compare_add' product.id %}')">
                                     <img src="{% static 'img/icons/card/change.svg' %}" alt="сравнить"/>
                                 </a>
                             </div>

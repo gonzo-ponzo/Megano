@@ -170,5 +170,6 @@ def get_queryset_for_catalog():
     queryset = queryset.annotate(min_price=Min('offer__price'))
     queryset = queryset.annotate(rating=Avg('review__rating', default=0))
     queryset = queryset.annotate(order_count=Sum('offer__orderoffer__amount', default=0))
+    queryset = queryset.order_by('pk')
 
     return queryset
