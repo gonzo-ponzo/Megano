@@ -152,6 +152,7 @@ class FilterProductsResult:
         'fil_title',
         'fil_actual',
         'fil_limit',
+        'fil_shop',
     )
 
     def __init__(self, products: QuerySet):
@@ -170,11 +171,13 @@ class FilterProductsResult:
         title = get_params.get('fil_title', None)
         actual = bool(get_params.get('fil_actual'))
         limit = bool(get_params.get('fil_limit'))
+        shop = get_params.get('fil_shop', None)
         # self.by_price()
-        # self.by_seller()
+
         if title: self.by_keywords(title)
         if actual: self.only_actual()
         if limit: self.only_limited()
+        if shop: self.by_shop(shop)
 
         return self.products
 
@@ -187,12 +190,13 @@ class FilterProductsResult:
     def only_limited(self):
         self.products = self.products.filter(limited=True)
 
+    def by_shop(self, name_shop: str):
+        """Фильтрация по продавцу"""
+
+        self.products = self.products.filter(shop__name=name_shop)
+
     def by_price(self):
         """Фильтрация по цене"""
-        pass
-
-    def by_seller(self):
-        """Фильтрация по продавцу"""
         pass
 
 

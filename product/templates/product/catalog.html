@@ -71,10 +71,11 @@
                 </div>
 
                 <div class="form-group">
-                  <select class="form-select">
-                    <option value="seller" selected="selected" disabled="disabled">{% trans 'Продавец' %}</option>
-                    <option value="kkk">Kkkk</option>
-                    <option value="sdfsdf">sdfsdf</option>
+                  <select name="fil_shop" class="form-select">
+                    <option value = "" selected="selected">{% trans 'Все продавцы' %}</option>
+                    {% for shop in shops %}
+                        <option value="{{ shop }}" {% if request.GET.fil_shop == shop%}selected{% endif %}>{{ shop }}</option>
+                    {% endfor %}
                   </select>
                 </div>
 
@@ -132,7 +133,7 @@
             </div>
           </div>
 
-{{ product_list.offer_set }}
+
           <div class="Cards">
 
 
@@ -177,6 +178,11 @@
                         </div>
                     </div>
                     <div class="Card-sale"><img src="{% static 'img/icons/star.svg' %}"> {{ product.rating }}</div>
+                </div>
+
+            {% empty %}
+                <div>
+                    Продуктов не найдено.
                 </div>
             {% endfor %}
 

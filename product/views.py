@@ -6,6 +6,7 @@ from django.db.models import Min, Avg, Sum
 from django.views import View
 from product.forms import ProductForm, ReviewForm
 from product.models import Product, ProductView, ProductCategory
+from shop.models import Shop
 from promotion.services import BannerMain
 from .services import ReviewForItem, ProductCompareList, SortProductsResult, FilterProductsResult
 
@@ -117,6 +118,7 @@ class CatalogView(ListView):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.category = None
+        self.shops = None
 
     def get_queryset(self):
 
@@ -129,7 +131,7 @@ class CatalogView(ListView):
         queryset = FilterProductsResult(queryset).filter_by_params(**self.request.GET.dict())
         queryset = SortProductsResult(queryset).sort_by_params(**self.request.GET.dict())
 
-        # print(queryset.values()[0].keys())
+        self.shops = Shop.objects.filter(product__in=queryset).distinct().values_list('name', flat=True)
 
         return queryset
 
@@ -141,6 +143,7 @@ class CatalogView(ListView):
             else ProductCategory.objects.root_nodes()
         context['filter_part_url'] = FilterProductsResult.make_filter_part_url(self.request.GET.dict())
         context['sort_part_url'] = SortProductsResult.make_sort_part_url(self.request.GET.dict())
+        context['shops'] = self.shops
         return context
 
 
