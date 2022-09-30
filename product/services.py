@@ -1,5 +1,5 @@
 from django.db.models.query import QuerySet
-from django.db.models import F, Min, Avg, Max
+from django.db.models import F, Min, Avg, Max, Sum
 from urllib.parse import urlencode
 from django.utils.translation import gettext_lazy as _
 from copy import copy
@@ -193,7 +193,9 @@ class FilterProductsResult:
             self.products = self.products.filter(name__icontains=self.title)
 
     def only_actual(self):
-        self.products = self.products.filter(offer__isnull=False)
+        # self.products = self.products.filter(offer__isnull=False)
+        self.products = self.products.annotate(rest=Sum('offer__amount'))
+        self.products = self.products.filter(rest__gt=0)
 
     def only_limited(self):
         self.products = self.products.filter(limited=True)
