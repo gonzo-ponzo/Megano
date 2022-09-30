@@ -1,5 +1,5 @@
 from django.db.models.query import QuerySet
-from django.db.models import F, Min, Avg
+from django.db.models import F, Min, Avg, Max
 from urllib.parse import urlencode
 from django.utils.translation import gettext_lazy as _
 from copy import copy
@@ -153,36 +153,44 @@ class FilterProductsResult:
         'fil_actual',
         'fil_limit',
         'fil_shop',
+        'fil_price',
     )
 
-    def __init__(self, products: QuerySet):
+    def __init__(self, products: QuerySet, **get_params):
         """
         :param products: Queryset подготовленный функцией .utils.get_queryset_for_catalog
         """
         self.products = products
+        self.title = get_params.get('fil_title', None)
+        self.actual = bool(get_params.get('fil_actual'))
+        self.limit = bool(get_params.get('fil_limit'))
+        self.shop = get_params.get('fil_shop', None)
+        price = get_params.get('fil_price', '').split(";")
+        self.min_price = self.max_price = None
+        if len(price) == 2 and price[0].isdigit() and price[1].isdigit():
+            self.min_price, self.max_price = map(int, price)
 
     @classmethod
     def make_filter_part_url(cls, get_params: dict):
         filter_params = {key: get_params.get(key) for key in cls.filter_field_name if key in get_params}
         return urlencode(filter_params)
 
-    def filter_by_params(self, **get_params) -> QuerySet:
-        """Отфильтровать список по указанным параметрам"""
-        title = get_params.get('fil_title', None)
-        actual = bool(get_params.get('fil_actual'))
-        limit = bool(get_params.get('fil_limit'))
-        shop = get_params.get('fil_shop', None)
-        # self.by_price()
+    def price_range(self) -> dict:
+        """
+        :return: словарь с максимальной и минимальной стоимостью из текущего набора продуктов
+        """
+        return self.products.aggregate(min=Min('min_price'), max=Max('min_price'))
 
-        if title: self.by_keywords(title)
-        if actual: self.only_actual()
-        if limit: self.only_limited()
-        if shop: self.by_shop(shop)
+    def all_filter_without_price(self) -> None:
+        """Отфильтровать self.products по всем параметрам, кроме цены"""
+        self.by_keywords()
+        if self.actual: self.only_actual()
+        if self.limit: self.only_limited()
+        self.by_shop()
 
-        return self.products
-
-    def by_keywords(self, title):
-        self.products = self.products.filter(name__icontains=title)
+    def by_keywords(self):
+        if self.title:
+            self.products = self.products.filter(name__icontains=self.title)
 
     def only_actual(self):
         self.products = self.products.filter(offer__isnull=False)
@@ -190,14 +198,15 @@ class FilterProductsResult:
     def only_limited(self):
         self.products = self.products.filter(limited=True)
 
-    def by_shop(self, name_shop: str):
+    def by_shop(self):
         """Фильтрация по продавцу"""
-
-        self.products = self.products.filter(shop__name=name_shop)
+        if self.shop:
+            self.products = self.products.filter(shop__name=self.shop)
 
     def by_price(self):
         """Фильтрация по цене"""
-        pass
+        if self.min_price and self.max_price:
+            self.products = self.products.filter(min_price__gte=self.min_price, min_price__lte=self.max_price)
 
 
 class SortProductsResult:

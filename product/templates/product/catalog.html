@@ -59,9 +59,16 @@
 
                 <div class="form-group">
                   <div class="range Section-columnRange">
-                    <input class="range-line" id="price" name="price" type="text" data-type="double" data-min="7" data-max="50"/>
+                    <input class="range-line" id="price" name="fil_price" type="text" data-type="double" data-min="{{ price_range.min|floatformat:"0" }}" data-max="{{ price_range.max|floatformat:"0" }}"/>
                     <div class="range-price">{% trans 'Цена' %}:
                         <div class="rangePrice"></div>
+                    </div>
+                    <div>
+                      {% if request.GET.fil_price %}
+                        {% blocktranslate with min=current_price_range.min max=current_price_range.max %}
+                            Товары отобраны по цене <br> от {{ min }} до {{ max }} руб.
+                        {% endblocktranslate %}
+                      {% endif %}
                     </div>
                   </div>
                 </div>
@@ -121,7 +128,7 @@
 
           <div class="Sort">
             <div class="Sort-title">
-                Сортировать по:
+                {% trans "Сортировать по" %}:
             </div>
             <div class="Sort-variants">
 
@@ -182,7 +189,7 @@
 
             {% empty %}
                 <div>
-                    Продуктов не найдено.
+                    {% trans "Продуктов не найдено" %}.
                 </div>
             {% endfor %}
 
