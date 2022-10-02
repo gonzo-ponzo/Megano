@@ -44,10 +44,12 @@ class Cart(object):
                 item["product_image"] = get_main_pic_by_product(product)
                 item["offer_price"] = get_product_price_by_shop(shop, product)
                 item["limits"] = get_shop_limit(shop, product)
+                for discount in item["discount"]:
+                    if not PromotionOffer.objects.filter(is_active=True, id=int(discount)):
+                        item["discount"][discount] = 0
+                        self.save()
         for shop in self.cart:
             for product in self.cart[shop]:
-                # self.get_discount_price(product, shop)
-                # self.get_total_discount(product, shop)
                 yield self.cart[shop][product]
 
     def __len__(self):
@@ -69,7 +71,6 @@ class Cart(object):
                                                          is_active=True).all()
 
         for promotion in promotion_offers:
-
             # Временная акция на товар
             if promotion.discount_type_id.id == 1:
                 self.cart[shop_id][product_id].setdefault("discount", {promotion.id: 0})
@@ -87,7 +88,7 @@ class Cart(object):
                 if self.cart[shop_id][product_id].get("offer_price"):
                     price = self.cart[shop_id][product_id]["offer_price"]
                 else:
-                    price = int(get_object_or_404(Offer, product_id=product,
+                    price = int(get_object_or_404(Offer, product_id=product_id,
                                               shop_id=shop_id).price)
                 quantity = self.cart[shop_id][product_id]["quantity"]
                 discount_value = promotion.discount_type_value
