@@ -16,15 +16,16 @@ class UserAdmin(BaseUserAdmin):
     list_display = ["email", "role"]
     list_filter = ["role"]
 
-    fieldsets = ((None, {"fields": ("email", "password", "role")}),
-                 (_("Личные данные"), {"fields": ("first_name", "last_name", "middle_name", "phone", "avatar")}),
-                 (_("Разрешения"), {"fields": ("is_active", "is_superuser", "groups", "user_permissions")}),
-                 )
+    fieldsets = (
+        (None, {"fields": ("email", "password", "role")}),
+        (_("Личные данные"), {"fields": ("first_name", "last_name", "middle_name", "phone", "avatar")}),
+        (_("Разрешения"), {"fields": ("is_active", "is_superuser", "groups", "user_permissions")}),
+    )
 
     add_fieldsets = (
-                (None, {"fields": ("email", "password1", "password2", "role")}),
-                (_("Личные данные"), {"fields": ("first_name", "last_name", "middle_name", "phone", "avatar")}),
-                (_("Разрешения"), {"fields": ("is_active", "is_superuser", "groups", "user_permissions")})
+        (None, {"fields": ("email", "password1", "password2", "role")}),
+        (_("Личные данные"), {"fields": ("first_name", "last_name", "middle_name", "phone", "avatar")}),
+        (_("Разрешения"), {"fields": ("is_active", "is_superuser", "groups", "user_permissions")}),
     )
     exclude = ()
 

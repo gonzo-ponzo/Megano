@@ -21,36 +21,25 @@ class CustomUserManager(BaseUserManager):
         return user_obj
 
     def create_staffuser(self, email, password):
-        user = self.create_user(
-            email=email,
-            password=password,
-            is_staff=True
-        )
+        user = self.create_user(email=email, password=password, is_staff=True)
         return user
 
     def create_superuser(self, email, password):
-        user = self.create_user(
-            email=email,
-            password=password,
-            is_staff=True,
-            is_admin=True
-        )
+        user = self.create_user(email=email, password=password, is_staff=True, is_admin=True)
         return user
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     """Кастомизированная модель пользователя"""
 
-    ROLES = (
-        ("Admin", "Admin"),
-        ("Buyer", "Buyer")
-    )
+    ROLES = (("Admin", "Admin"), ("Buyer", "Buyer"))
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
-    phone_regex_validator = RegexValidator(regex=r'\d{3}-\d{3}-\d{2}-\d{2}',
-                                           message=_('Номер телефона должен быть в формате  123-456-78-90'))
+    phone_regex_validator = RegexValidator(
+        regex=r"\d{3}-\d{3}-\d{2}-\d{2}", message=_("Номер телефона должен быть в формате  123-456-78-90")
+    )
 
     email = models.EmailField(max_length=125, unique=True, verbose_name=_("емеил"))
     first_name = models.CharField(max_length=30, verbose_name=_("имя"))
@@ -71,7 +60,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.email
 
     def get_full_name(self):
-        return f'{self.first_name} {self.last_name}'
+        return f"{self.first_name} {self.last_name}"
 
     def has_perm(self, perm, obj=None):
         return True

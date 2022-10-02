@@ -1,7 +1,5 @@
 from timestamps.models import models, Timestampable
 from django.utils.translation import gettext_lazy as _
-from django.db.models import Model
-from shop.models import Shop
 from django.urls import reverse
 
 

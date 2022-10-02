@@ -12,10 +12,10 @@ def cart_add(request, product_id: str, shop_id: str):
         product = get_object_or_404(Product, id=int(product_id))
         if cart.check_limits(product_id, shop_id):
             cart.add(product_id, str(shop_id))
-            messages.success(request, f'{product.name} добавлен в корзину.')
+            messages.success(request, f"{product.name} добавлен в корзину.")
         else:
-            messages.error(request, f'{product.name} превышен остаток.')
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            messages.error(request, f"{product.name} превышен остаток.")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
 def cart_lower(request, product_id: str, shop_id: str):
@@ -23,7 +23,7 @@ def cart_lower(request, product_id: str, shop_id: str):
         cart = Cart(request)
         product = get_object_or_404(Product, id=int(product_id))
         cart.lower(product_id, shop_id)
-        messages.success(request, f'{product.name} убран из корзины.')
+        messages.success(request, f"{product.name} убран из корзины.")
         return redirect("/order/cart/")
 
 
@@ -32,7 +32,7 @@ def cart_remove(request, product_id: str, shop_id: int):
         cart = Cart(request)
         product = get_object_or_404(Product, id=product_id)
         cart.remove(product_id, shop_id)
-        messages.success(request, f'{product.name} удален из корзины.')
+        messages.success(request, f"{product.name} удален из корзины.")
         return redirect("/order/cart/")
 
 
