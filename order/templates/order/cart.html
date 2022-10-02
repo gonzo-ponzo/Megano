@@ -44,10 +44,24 @@
                   </div>
                 {% endif %}
               </div>
+              {% if item.final_price < item.offer_price %}
+                <div class="Cart-block Cart-block_price">
+                  <div class="Cart-price">
+                      {{ item.final_price }}$
+                  </div>
+                </div>
+                <div class="Cart-block Cart-block_price">
+                  <div class="Cart-price">
+                    <s>{{ item.offer_price }}$</s>
+                  </div>
+                </div>
+              {% else %}
               <div class="Cart-block Cart-block_price">
-                <div class="Cart-price">{{ item.offer_price }}$
+                <div class="Cart-price">
+                    {{ item.offer_price }}$
                 </div>
               </div>
+              {% endif %}
             </div>
             <div class="Cart-block Cart-block_row">
               <div class="Cart-block Cart-block_amount">

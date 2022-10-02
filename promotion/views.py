@@ -1,15 +1,19 @@
-from django.views.generic import TemplateView
+from django.core.paginator import Paginator
+from django.shortcuts import render
+from django.views.generic import ListView, DetailView
 from .models import PromotionOffer
+from django.core.cache import cache
+from .services import DetailedPromotion
 
 # Create your views here.
 
 
-class PromotionView(TemplateView):
+class PromotionListView(ListView):
+    model = PromotionOffer
+    template_name = "promotion/promotions.html"
+    paginate_by = 12
+
+
+class PromotionView(DetailView):
     model = PromotionOffer
     template_name = "promotion/promotion.html"
-    context_objects_name = "promotion_list"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["list"] = PromotionOffer.objects.all()
-        return context
