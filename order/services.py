@@ -179,7 +179,7 @@ class Cart(object):
                     self.cart[shop_id][product_id]["discount"][str(promotion.id)] = 0
 
         self.save()
-                    
+
     def get_total_price(self):
         """
         Подсчет стоимости товаров в корзине.
