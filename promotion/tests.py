@@ -26,7 +26,6 @@ class PromotionOfferTest(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertTemplateUsed(resp, "promotion/promotion.html")
 
-
     def test_view_uses_correct_template(self):
         resp = self.client.get(reverse("promotion-list-page"))
         self.assertEqual(resp.status_code, 200)
