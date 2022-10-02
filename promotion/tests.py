@@ -22,7 +22,7 @@ class PromotionOfferTest(TestCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_view_url_accessible(self):
-        resp = self.client.get("/promotion/1/")
+        resp = self.client.get("/promotion/13/")
         self.assertEqual(resp.status_code, 200)
         self.assertTemplateUsed(resp, "promotion/promotion.html")
 
