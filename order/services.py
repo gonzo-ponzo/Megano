@@ -93,7 +93,7 @@ class Cart(object):
             elif promotion.discount_type_id.id == 5:
                 self.get_discount_five(shop_id, product_id)
 
-    def get_discount_one(self, shop_id: str, product_id: str, promotion: PromotionOffer ):
+    def get_discount_one(self, shop_id: str, product_id: str, promotion: PromotionOffer):
         self.cart[shop_id][product_id].setdefault("discount", {promotion.id: 0})
 
         if promotion.discount_decimals != 0:
@@ -106,7 +106,7 @@ class Cart(object):
                     price * (100 - promotion.discount_percentage) / 100
             )
 
-    def get_discount_two(self, shop_id: str, product_id: str, promotion: PromotionOffer ):
+    def get_discount_two(self, shop_id: str, product_id: str, promotion: PromotionOffer):
         self.cart[shop_id][product_id].setdefault("discount", {promotion.id: 0})
         if self.cart[shop_id][product_id].get("offer_price"):
             price = self.cart[shop_id][product_id]["offer_price"]
@@ -123,7 +123,7 @@ class Cart(object):
                     (quantity // discount_value) * price / quantity
             )
 
-    def get_discount_three(self, shop_id: str, product_id: str, promotion: PromotionOffer ):
+    def get_discount_three(self, shop_id: str, product_id: str, promotion: PromotionOffer):
         shop_cart_price = 0
         shop_cart_amount = 0
 
@@ -163,7 +163,7 @@ class Cart(object):
             for product in self.cart[shop_id]:
                 self.cart[shop_id][product]["discount"][str(promotion.id)] = 0
 
-    def get_discount_four(self, shop_id: str, product_id: str, promotion: PromotionOffer ):
+    def get_discount_four(self, shop_id: str, product_id: str, promotion: PromotionOffer):
         shop_cart_amount = 0
 
         for product in self.cart[shop_id]:
@@ -192,7 +192,7 @@ class Cart(object):
             for product in self.cart[shop_id]:
                 self.cart[shop_id][product]["discount"][str(promotion.id)] = 0
 
-    def get_discount_five(self, shop_id: str, product_id: str, promotion: PromotionOffer ):
+    def get_discount_five(self, shop_id: str, product_id: str, promotion: PromotionOffer):
         flag = True
 
         for product in self.cart[shop_id]:
