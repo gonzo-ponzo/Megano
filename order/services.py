@@ -13,6 +13,9 @@ class Cart(object):
     """
 
     def __getitem__(self, item):
+        """
+        Получение атрибутов корзины
+        """
         return self.cart[item]
 
     def __init__(self, request):
