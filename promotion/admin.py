@@ -31,11 +31,28 @@ class BannerAdmin(admin.ModelAdmin):
 
 @admin.register(PromotionOffer)
 class PromotionOfferAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "discount_type_value", "discount_decimals", "discount_percentage", "is_active", "updated_at")
+    list_display = (
+        "id",
+        "name",
+        "discount_type_value",
+        "discount_decimals",
+        "discount_percentage",
+        "is_active",
+        "updated_at",
+    )
     list_display_links = ("id", "name")
     search_fields = ("name",)
-    filter_horizontal = ("offer", )
-    fields = ("name", "discount_type_value", "discount_decimals", "discount_percentage", "is_active", "discount_type_id", "image", "offer")
+    filter_horizontal = ("offer",)
+    fields = (
+        "name",
+        "discount_type_value",
+        "discount_decimals",
+        "discount_percentage",
+        "is_active",
+        "discount_type_id",
+        "image",
+        "offer",
+    )
     readonly_fields = ("created_at", "updated_at")
     actions = ["make_active", "make_inactive"]
 

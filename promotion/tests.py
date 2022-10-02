@@ -1,8 +1,9 @@
-from django.test import TestCase  # noqa: F401
+from django.test import TestCase
 from django.conf import settings
 from product.tests import ProductCategoryCacheCleanTest
 from .models import Banner
 from product.models import Product
+from django.urls import reverse
 
 
 class BannerCacheCleanTest(ProductCategoryCacheCleanTest):
@@ -13,3 +14,18 @@ class BannerCacheCleanTest(ProductCategoryCacheCleanTest):
     def _create_object(cls):
         product = Product.objects.first()
         cls._model.objects.create(name="new", product=product, image="")
+
+
+class PromotionOfferTest(TestCase):
+    def test_view_url_exists_at_desired_location(self):
+        resp = self.client.get("/promotion/")
+        self.assertEqual(resp.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        resp = self.client.get(reverse("catalog-page"))
+        self.assertEqual(resp.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        resp = self.client.get(reverse("promotion-list-page"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp, "product/promotions.html")

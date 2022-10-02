@@ -1,0 +1,50 @@
+[
+  {
+    "model": "promotion.promotionoffer",
+    "pk": 1,
+    "fields": {
+      "created_at": "2022-09-10T20:35:52.606Z",
+      "updated_at": "2022-09-10T20:39:39.168Z",
+      "name": "Скидка на iphone",
+      "discount_type_value": 1,
+      "discount_decimals": 6000,
+      "discount_percentage": 0,
+      "is_active": true,
+      "discount_type_id_id": 1,
+      "image": "banner/2022/09/10/iphone-13-pro.png",
+      "description": "Выгодное предложение для обновления смартфона"
+    }
+  },
+  {
+    "model": "promotion.promotionoffer",
+    "pk": 2,
+    "fields": {
+      "created_at": "2022-09-10T20:35:52.606Z",
+      "updated_at": "2022-09-10T20:39:39.168Z",
+      "name": "Бонусы при покупке холодильника",
+      "discount_type_value": 13,
+      "discount_decimals": 10000,
+      "discount_percentage": 0,
+      "is_active": true,
+      "discount_type_id_id": 2,
+      "image": "banner/2022/09/10/iphone-13-pro.png",
+      "description": "При покупке холодильника - скидка на телевизор"
+    }
+  },
+  {
+    "model": "promotion.promotionoffer",
+    "pk": 3,
+    "fields": {
+      "created_at": "2022-09-10T20:35:52.606Z",
+      "updated_at": "2022-09-10T20:39:39.168Z",
+      "name": "Скидка при покупке от 100000 рублей",
+      "discount_type_value": 100000,
+      "discount_decimals": 0,
+      "discount_percentage": 5,
+      "is_active": true,
+      "discount_type_id_id": 3,
+      "image": "banner/2022/09/10/iphone-13-pro.png",
+      "description": "При покупке от 100 тыс. рублей действует скидка 5%"
+    }
+  }
+]
