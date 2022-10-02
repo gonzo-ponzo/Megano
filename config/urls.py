@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from user.views import UserLoginView, UserRegistrationView
+from user.views import UserLoginView, UserRegistrationView, LogoutView, \
+                       user_page, UserUpdateView, orders_history, views_history
 from product.views import MainPage
 from django.conf import settings
 from django.conf.urls.static import static
@@ -27,10 +28,16 @@ urlpatterns = [
     path("login/", UserLoginView.as_view(), name="login-page"),
     path("register/", UserRegistrationView.as_view(), name="registration-page"),
     path("product/", include("product.urls"), name="product"),
+    path("logout/", LogoutView.as_view(), name="logout"),
+    path("user_page/", user_page, name="account"),
+    path("user_page/update/", UserUpdateView.as_view(), name="profile"),
+    path("orders_history/", orders_history, name="orders_history"),
+    path("history/", views_history, name="views_history"),
     path("catalog/", include("product.urls_catalog")),
-    path("shop/", include("shop.urls"), name="shop"),
-    path("order/", include(("order.urls", "order"), namespace="order"), name="order"),
-    path("promotion/", include("promotion.urls"), name="promotion"),
+    path("shop/", include("shop.urls"), name='shop'),
+    path("order/", include(("order.urls", 'order'), namespace='order'),
+         name='order'),
+    path("promotion/", include("promotion.urls"), name='promotion')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

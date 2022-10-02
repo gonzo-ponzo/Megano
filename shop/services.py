@@ -1,6 +1,6 @@
-from shop.models import Shop
+from shop.models import Shop, ShopImage
 from product.models import Offer
-from config.settings.dev import COUNT_ELEMENTS_BEST_OFFER_SHOP
+from config.settings.base import COUNT_ELEMENTS_BEST_OFFER_SHOP
 
 
 class ShopDetail:
@@ -13,12 +13,13 @@ class ShopDetail:
 
     def get_shop_description(self):
         """Получить описание магазина"""
-        description_shop = Shop.objects.get(id=self.shop)
+        description_shop = Shop.objects.values().get(id=self.shop)
         return description_shop
 
     def get_shop_photos(self):
         """Получить фотографии магазина"""
-        pass
+        shop_photos = list(ShopImage.objects.filter(shop=self.shop).values_list('image'))
+        return shop_photos
 
     def get_shop_address(self):
         """Получить адрес магазина для карт"""
@@ -26,7 +27,9 @@ class ShopDetail:
 
     def get_top_products(self):
         """Получить топ товаров продавца"""
-        top_products = Offer.objects.filter(shop=self.shop)[:COUNT_ELEMENTS_BEST_OFFER_SHOP]
+        top_products = Offer.objects.filter(
+            shop=self.shop
+        )[:COUNT_ELEMENTS_BEST_OFFER_SHOP].select_related('product')
         return top_products
 
 
