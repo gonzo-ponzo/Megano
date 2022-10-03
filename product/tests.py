@@ -231,7 +231,7 @@ class CatalogViewsFilter(TestCase):
 
         p1 = Product.objects.create(name='product_1', limited=False, category=category, manufacturer=man)
         p2 = Product.objects.create(name='product_2', limited=True, category=category, manufacturer=man)
-        Product.objects.create(name='goods_3', limited=True, category=category, manufacturer=man)
+        p3 = Product.objects.create(name='goods_3', limited=True, category=category, manufacturer=man)
 
         user = User.objects.create_user(email="testabcd@abcdtest.net", password="qwerty")
 
@@ -241,8 +241,8 @@ class CatalogViewsFilter(TestCase):
                                      email='store@shop.ru', address='address', user=user)
 
         Offer.objects.create(shop=shop, product=p1, price=1000, amount=10)
-        Offer.objects.create(shop=shop, product=p1, price=2000, amount=10)
-        Offer.objects.create(shop=shop, product=p2, price=3000, amount=0)
+        Offer.objects.create(shop=shop, product=p2, price=2000, amount=10)
+        Offer.objects.create(shop=shop, product=p3, price=3000, amount=0)
 
     @classmethod
     def tearDownClass(cls):
@@ -266,7 +266,8 @@ class CatalogViewsFilter(TestCase):
         resp = self.client.get(url, data)
         self.assertEqual(resp.status_code, 200)
         for product in resp.context['product_list']:
-            self.assertTrue(min_price <= product.min_price <= max_price)
+            self.assertGreaterEqual(product.min_price, min_price)
+            self.assertLessEqual(product.min_price, max_price)
 
     def test_filter_by_title(self):
         search_word = 'prod'

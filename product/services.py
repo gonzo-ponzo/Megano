@@ -1,11 +1,12 @@
 from django.db.models.query import QuerySet
-from django.db.models import F, Min, Max, Sum
+from django.db.models import F, Min, Max, Sum, Count, Avg
 from urllib.parse import urlencode
+
 from django.utils.translation import gettext_lazy as _
 from copy import copy
 from statistics import mean
 from django.core.exceptions import ObjectDoesNotExist
-from .models import Review, Product, ProductProperty
+from .models import Review, Product, ProductProperty, ProductCategory
 
 
 class ReviewForItem:
@@ -156,11 +157,13 @@ class FilterProductsResult:
         'fil_price',
     )
 
-    def __init__(self, products: QuerySet, **get_params):
+    def __init__(self, **get_params):
         """
-        :param products: Queryset подготовленный функцией .utils.get_queryset_for_catalog
+        :param get_params: параметры строки запроса
         """
-        self.products = products
+
+        self.products = self.get_queryset_for_catalog()
+
         self.title = get_params.get('fil_title', None)
         self.actual = bool(get_params.get('fil_actual'))
         self.limit = bool(get_params.get('fil_limit'))
@@ -170,6 +173,21 @@ class FilterProductsResult:
         if len(price) == 2 and price[0].isdigit() and price[1].isdigit():
             self.min_price, self.max_price = map(int, price)
 
+    @staticmethod
+    def get_queryset_for_catalog():
+        queryset = Product.objects.all()
+        queryset = queryset.filter(offer__isnull=False)
+        queryset = queryset.prefetch_related('productimage_set')
+        queryset = queryset.select_related('category')
+        # queryset = queryset.prefetch_related('shop')
+        queryset = queryset.annotate(offer_count=Count('offer'))
+        queryset = queryset.annotate(min_price=Min('offer__price'))
+        queryset = queryset.annotate(rating=Avg('review__rating', default=0))
+        queryset = queryset.annotate(order_count=Sum('offer__orderoffer__amount', default=0))
+        queryset = queryset.order_by('pk')
+        return queryset
+
+
     @classmethod
     def make_filter_part_url(cls, get_params: dict):
         filter_params = {key: get_params.get(key) for key in cls.filter_field_name if key in get_params}
@@ -177,7 +195,7 @@ class FilterProductsResult:
 
     def price_range(self) -> dict:
         """
-        :return: словарь с максимальной и минимальной стоимостью из текущего набора продуктов
+        :return: словарь с максимальной и минимальной стоимостью текущего набора продуктов
         """
         return self.products.aggregate(min=Min('min_price'), max=Max('min_price'))
 
@@ -190,12 +208,14 @@ class FilterProductsResult:
         if self.limit:
             self.only_limited()
 
+    def by_category(self, category: ProductCategory):
+        self.products = self.products.filter(category__in=category.get_descendants(include_self=True))
+
     def by_keywords(self):
         if self.title:
             self.products = self.products.filter(name__icontains=self.title)
 
     def only_actual(self):
-        # self.products = self.products.filter(offer__isnull=False)
         self.products = self.products.annotate(rest=Sum('offer__amount'))
         self.products = self.products.filter(rest__gt=0)
 
@@ -228,11 +248,12 @@ class SortProductsResult:
     css_class_for_increment = 'Sort-sortBy_inc'
     css_class_for_decrement = 'Sort-sortBy_dec'
 
-    def __init__(self, products: QuerySet):
+    def __init__(self, products: QuerySet = None):
         """
-        :param products: Queryset подготовленный функцией .utils.get_queryset_for_catalog
+        :param products: Queryset c необходимыми полями
         """
         self.products = products
+
 
     @classmethod
     def make_sort_part_url(cls, get_params: dict):

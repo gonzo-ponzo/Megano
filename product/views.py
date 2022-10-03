@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import redirect, render, get_object_or_404
-from django.db.models import Min, Avg, Sum, Max
 
 from django.views import View
 from product.forms import ProductForm, ReviewForm
@@ -23,7 +22,6 @@ from .utils import (
     get_description,
     get_property_dict,
     get_offer_list,
-    get_queryset_for_catalog,
 )
 
 
@@ -123,14 +121,13 @@ class CatalogView(ListView):
 
     def get_queryset(self):
 
-        queryset = get_queryset_for_catalog()
+        filter_product = FilterProductsResult(**self.request.GET.dict())
 
         category = self.kwargs.get('category', None)
         if category:
             self.category = get_object_or_404(ProductCategory, slug=category)
-            queryset = queryset.filter(category__in=self.category.get_descendants(include_self=True))
+            filter_product.by_category(self.category)
 
-        filter_product = FilterProductsResult(queryset, **self.request.GET.dict())
         filter_product.all_filter_without_price()
         self.price_range = filter_product.price_range()
         filter_product.by_price()
@@ -138,7 +135,8 @@ class CatalogView(ListView):
 
         self.shops = Shop.objects.filter(product__in=filter_product.products).distinct().values_list('name', flat=True)
 
-        queryset = SortProductsResult(filter_product.products).sort_by_params(**self.request.GET.dict())
+        queryset = SortProductsResult(products=filter_product.products).sort_by_params(**self.request.GET.dict())
+
         return queryset
 
     def get_context_data(self, **kwargs):
