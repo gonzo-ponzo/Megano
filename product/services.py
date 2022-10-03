@@ -297,7 +297,7 @@ class DetailedProduct:
         Получение активного изображения продукта
         """
         try:
-            main_pic = ProductImage.objects.all().filter(product_id=self.product.id)[0].image
+            main_pic = ProductImage.objects.filter(product=self.product)[0].image
         except Exception:
             main_pic = None
         return main_pic
@@ -389,7 +389,7 @@ class DetailedProduct:
         Получение наименований свойств продукта
         """
         try:
-            property_names = [get_object_or_404(Property, id=idx).name for idx in self.get_property_idx()]
+            property_names = [Property.objects.get(id=idx).name for idx in self.get_property_idx()]
         except Property.DoesNotExist:
             property_names = None
         return property_names

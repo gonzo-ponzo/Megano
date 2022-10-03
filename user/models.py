@@ -50,7 +50,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    cart = models.JSONField(default={})
+    cart = models.JSONField(default=dict())
 
     objects = CustomUserManager()
 
