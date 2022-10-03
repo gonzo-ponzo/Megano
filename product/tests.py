@@ -130,7 +130,7 @@ class CatalogViewsSorting(TestCase):
 
         p1 = Product.objects.create(name='product_1', limited=False, category=category, manufacturer=man)
         p2 = Product.objects.create(name='product_2', limited=False, category=category, manufacturer=man)
-        p3 = Product.objects.create(name='product_3', limited=False, category=category, manufacturer=man)
+        Product.objects.create(name='product_3', limited=False, category=category, manufacturer=man)
 
         user = User.objects.create_user(email="testabcd@abcdtest.net", password="qwerty")
         Review.objects.create(product=p1, user=user, text='text', rating=1)
@@ -140,7 +140,7 @@ class CatalogViewsSorting(TestCase):
                                    address='address', user=user)
 
         offer1 = Offer.objects.create(shop=shop, product=p1, price=1000, amount=10)
-        offer2 = Offer.objects.create(shop=shop, product=p1, price=2000, amount=10)
+        Offer.objects.create(shop=shop, product=p1, price=2000, amount=10)
         offer3 = Offer.objects.create(shop=shop, product=p2, price=3000, amount=10)
 
         order = Order.objects.create(user=user, city='city', address='address',
