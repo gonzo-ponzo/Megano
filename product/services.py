@@ -1,5 +1,5 @@
 from django.db.models.query import QuerySet
-from django.db.models import F, Min, Avg, Max, Sum
+from django.db.models import F, Min, Max, Sum
 from urllib.parse import urlencode
 from django.utils.translation import gettext_lazy as _
 from copy import copy
@@ -184,9 +184,11 @@ class FilterProductsResult:
     def all_filter_without_price(self) -> None:
         """Отфильтровать self.products по всем параметрам, кроме цены"""
         self.by_keywords()
-        if self.actual: self.only_actual()
-        if self.limit: self.only_limited()
         self.by_shop()
+        if self.actual:
+            self.only_actual()
+        if self.limit:
+            self.only_limited()
 
     def by_keywords(self):
         if self.title:

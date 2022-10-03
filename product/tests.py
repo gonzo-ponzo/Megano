@@ -231,19 +231,18 @@ class CatalogViewsFilter(TestCase):
 
         p1 = Product.objects.create(name='product_1', limited=False, category=category, manufacturer=man)
         p2 = Product.objects.create(name='product_2', limited=True, category=category, manufacturer=man)
-        p3 = Product.objects.create(name='goods_3', limited=True, category=category, manufacturer=man)
+        Product.objects.create(name='goods_3', limited=True, category=category, manufacturer=man)
 
         user = User.objects.create_user(email="testabcd@abcdtest.net", password="qwerty")
 
         shop = Shop.objects.create(name='shop', description='description', phone='+71234567890', email='shop@shop.ru',
                                    address='address', user=user)
-        shop_2 = Shop.objects.create(name='store', description='description', phone='+71234567891',
+        Shop.objects.create(name='store', description='description', phone='+71234567891',
                                      email='store@shop.ru', address='address', user=user)
 
-        offer1 = Offer.objects.create(shop=shop, product=p1, price=1000, amount=10)
-        offer2 = Offer.objects.create(shop=shop, product=p1, price=2000, amount=10)
-        offer3 = Offer.objects.create(shop=shop, product=p2, price=3000, amount=0)
-
+        Offer.objects.create(shop=shop, product=p1, price=1000, amount=10)
+        Offer.objects.create(shop=shop, product=p1, price=2000, amount=10)
+        Offer.objects.create(shop=shop, product=p2, price=3000, amount=0)
 
     @classmethod
     def tearDownClass(cls):
