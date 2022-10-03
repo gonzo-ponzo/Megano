@@ -180,7 +180,7 @@ STATICFILES_DIRS = ["static"]
 
 STATIC_ROOT = os.path.join("", "staticfiles")
 
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = BASE_DIR.parent / "media"
 MEDIA_URL = "/media/"
 
 LOGIN_URL = "/login/"
