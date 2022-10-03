@@ -154,7 +154,8 @@ class CatalogViewsSorting(TestCase):
         super().tearDownClass()
         with connection.cursor() as cursor:
             # лучше выполнить такую команду
-            # SELECT setval(pg_get_serial_sequence('"user_customuser"','id'), coalesce(max("id"), 1), max("id") IS NOT null) FROM "user_customuser";
+            # SELECT setval(pg_get_serial_sequence('"user_customuser"','id'), coalesce(max("id"), 1),
+            # max("id") IS NOT null) FROM "user_customuser";
             cursor.execute("TRUNCATE user_customuser RESTART IDENTITY CASCADE")
 
     def test_sort_by_newness(self):
@@ -238,7 +239,7 @@ class CatalogViewsFilter(TestCase):
         shop = Shop.objects.create(name='shop', description='description', phone='+71234567890', email='shop@shop.ru',
                                    address='address', user=user)
         Shop.objects.create(name='store', description='description', phone='+71234567891',
-                                     email='store@shop.ru', address='address', user=user)
+                            email='store@shop.ru', address='address', user=user)
 
         Offer.objects.create(shop=shop, product=p1, price=1000, amount=10)
         Offer.objects.create(shop=shop, product=p2, price=2000, amount=10)

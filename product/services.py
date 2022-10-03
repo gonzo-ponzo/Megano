@@ -6,11 +6,10 @@ from django.utils.translation import gettext_lazy as _
 from copy import copy
 from statistics import mean
 from django.core.exceptions import ObjectDoesNotExist
-from .models import Product, ProductImage, Offer, ProductProperty, Property, Review
+from .models import Product, ProductImage, Offer, ProductProperty, Property, Review, ProductCategory
 from shop.models import Shop
 from user.models import CustomUser
 from django.shortcuts import get_object_or_404
-from .models import Review, Product, ProductProperty, ProductCategory
 
 
 class ReviewForItem:
@@ -191,7 +190,6 @@ class FilterProductsResult:
         queryset = queryset.order_by('pk')
         return queryset
 
-
     @classmethod
     def make_filter_part_url(cls, get_params: dict):
         filter_params = {key: get_params.get(key) for key in cls.filter_field_name if key in get_params}
@@ -257,7 +255,6 @@ class SortProductsResult:
         :param products: Queryset c необходимыми полями
         """
         self.products = products
-
 
     @classmethod
     def make_sort_part_url(cls, get_params: dict):
