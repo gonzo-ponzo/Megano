@@ -3,8 +3,10 @@ version: '3.7'
 services:
 
   web:
-    build:
-      context: .
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
     command: python manage.py runserver 0.0.0.0:8000
     env_file:
       - .env
@@ -19,9 +21,6 @@ services:
       - .:/code/
     ports:
       - 8000:8000
-    depends_on:
-      - db
-      - redis_db
     container_name: python_django_team-web  
 
   db:
@@ -38,6 +37,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     container_name: python_django_team-postgres_db  
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
 
   redis_db:
     image: redis:alpine
