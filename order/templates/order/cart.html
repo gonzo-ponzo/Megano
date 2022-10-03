@@ -1,6 +1,13 @@
 {% load static %}
 {% include 'base.html' with title="Cart" %}
 <body class="Site">
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
   {% include 'header.html' with cart_price=cart_price cart_counter=cart_counter %}
   <div class="Middle Middle_top">
     <div class="Middle-top">
@@ -23,16 +30,38 @@
           {% for item in cart %}
           <div class="Cart-product">
             <div class="Cart-block Cart-block_row">
-              <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img class="Cart-img" src=/media/{{ item.image }} alt="card.jpg"/></a>
+              <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img class="Cart-img" src=/media/{{ item.product_image }} alt="card.jpg"/></a>
               </div>
-              <div class="Cart-block Cart-block_info"><a class="Cart-title" href="/product/{{ item.product_id }}">{{ item.name }}</a>
-                <div class="Cart-desc">{{ item.shop }}
+              <div class="Cart-block Cart-block_info"><a class="Cart-title" href="/product/{{ item.product_id }}">{{ item.product_name }}</a>
+                <div class="Cart-desc">{{ item.shop_name }}
                 </div>
+
               </div>
+              <div class="Cart-block Cart-block_info">
+                {% if item.quantity > item.limits %}
+                  <div class="Cart-desc alert alert-error">
+                    Превышен лимит. Доступный остаток: {{ item.limits }}
+                  </div>
+                {% endif %}
+              </div>
+              {% if item.final_price < item.offer_price %}
+                <div class="Cart-block Cart-block_price">
+                  <div class="Cart-price">
+                      {{ item.final_price }}$
+                  </div>
+                </div>
+                <div class="Cart-block Cart-block_price">
+                  <div class="Cart-price">
+                    <s>{{ item.offer_price }}$</s>
+                  </div>
+                </div>
+              {% else %}
               <div class="Cart-block Cart-block_price">
-                <div class="Cart-price">{{ item.price }}$
+                <div class="Cart-price">
+                    {{ item.offer_price }}$
                 </div>
               </div>
+              {% endif %}
             </div>
             <div class="Cart-block Cart-block_row">
               <div class="Cart-block Cart-block_amount">

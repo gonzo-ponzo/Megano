@@ -51,24 +51,23 @@ class ProductCategoryCacheCleanTest(TestCase):
 
 
 class CatalogViewTest(TestCase):
-
     def test_view_url_exists_at_desired_location(self):
-        resp = self.client.get('/catalog/')
+        resp = self.client.get("/catalog/")
         self.assertEqual(resp.status_code, 200)
 
     def test_view_url_accessible_by_name(self):
-        resp = self.client.get(reverse('catalog-page'))
+        resp = self.client.get(reverse("catalog-page"))
         self.assertEqual(resp.status_code, 200)
 
     def test_view_uses_correct_template(self):
-        resp = self.client.get(reverse('catalog-page'))
+        resp = self.client.get(reverse("catalog-page"))
         self.assertEqual(resp.status_code, 200)
-        self.assertTemplateUsed(resp, 'product/catalog.html')
+        self.assertTemplateUsed(resp, "product/catalog.html")
 
 
 class CatalogByCategoryViewTest(TestCase):
 
-    category = 'category'
+    category = "category"
 
     @classmethod
     def setUpTestData(cls):
@@ -76,18 +75,18 @@ class CatalogByCategoryViewTest(TestCase):
 
     def test_view_url_exists_at_desired_location(self):
 
-        resp = self.client.get(f'/catalog/{self.category}/')
+        resp = self.client.get(f"/catalog/{self.category}/")
         self.assertEqual(resp.status_code, 200)
 
     def test_view_url_accessible_by_name(self):
-        resp = self.client.get(reverse('category-catalog-page', args=[self.category]))
+        resp = self.client.get(reverse("category-catalog-page", args=[self.category]))
         self.assertEqual(resp.status_code, 200)
 
     def test_view_uses_correct_template(self):
-        resp = self.client.get(reverse('category-catalog-page', args=[self.category]))
+        resp = self.client.get(reverse("category-catalog-page", args=[self.category]))
         self.assertEqual(resp.status_code, 200)
-        self.assertTemplateUsed(resp, 'product/catalog.html')
+        self.assertTemplateUsed(resp, "product/catalog.html")
 
     def test_404_for_non_exist_category(self):
-        resp = self.client.get(reverse('category-catalog-page', args=['non_exist_category']))
+        resp = self.client.get(reverse("category-catalog-page", args=["non_exist_category"]))
         self.assertEqual(resp.status_code, 404)

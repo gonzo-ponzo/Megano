@@ -8,7 +8,7 @@ from shop.models import Shop
 class ShopDetailView(View):  # добавить проверку, если нет такого ID в бд, то отправлять на список магазинов
     """Страница продавца"""
     def get(self, request, *args, **kwargs):
-        shop = ShopDetail(kwargs['pk'])
+        shop = ShopDetail(kwargs["pk"])
         shop_description = shop.get_shop_description
         top_products = shop.get_top_products
         shop_photos = shop.get_shop_photos
@@ -22,5 +22,5 @@ class ShopDetailView(View):  # добавить проверку, если не�
 class ShopListView(ListView):
     """Список магазинов"""
     model = Shop
-    template_name = 'shop/shop_list.html'
+    template_name = "shop/shop_list.html"
     paginate_by = 20

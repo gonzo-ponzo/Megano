@@ -1,5 +1,5 @@
 from django import template
-from order.cart import Cart
+from order.services import Cart
 from django.conf import settings
 
 register = template.Library()
@@ -7,12 +7,14 @@ register = template.Library()
 
 @register.simple_tag()
 def get_cart_len(request):
-    return len(Cart(request))
+    cart = Cart(request)
+    return len(cart)
 
 
 @register.simple_tag()
 def get_cart_price(request):
-    return Cart(request).get_total_price()
+    cart = Cart(request)
+    return cart.get_total_price()
 
 
 @register.simple_tag()

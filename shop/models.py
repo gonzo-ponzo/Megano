@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from django.core.validators import validate_email
 from timestamps.models import models, Model, Timestampable
+from django.shortcuts import reverse
 
 User = get_user_model()
 
@@ -51,6 +52,12 @@ class Shop(Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        """
+        Получение УРЛа магазина
+        """
+        return reverse("shop-detail", kwargs={"pk": self.pk})
 
     class Meta:
         verbose_name = _("магазин")

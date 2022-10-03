@@ -12,7 +12,15 @@ def clear_cache_product_category_handler(sender, **kwargs):
 
 @receiver(post_save, sender=Product)
 def delete_cache(sender, **kwargs):
-    cache_list = ['main_pic', 'pics', 'low_price', 'top_price', 'discount',
-                  'product_description', 'property_dict', 'offer_dict']
+    cache_list = [
+        "main_pic",
+        "pics",
+        "low_price",
+        "top_price",
+        "discount",
+        "product_description",
+        "property_dict",
+        "offer_dict",
+    ]
     for cache_key in cache_list:
         cache.delete(cache_key)

@@ -1,7 +1,7 @@
 import random
 from django.core.cache import cache
 from django.conf import settings
-from .models import Banner
+from .models import Banner, PromotionOffer
 
 
 class BannerMain:
@@ -101,3 +101,8 @@ class CartDiscount:
     def apply(self):
         """Применить скидку"""
         pass
+
+
+class DetailedPromotion:
+    def __init__(self, promotion_offer: PromotionOffer):
+        self.promotion = promotion_offer

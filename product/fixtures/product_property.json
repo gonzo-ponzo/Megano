@@ -1,0 +1,72 @@
+[
+  {
+    "model": "product.property",
+    "pk": 1,
+    "fields": {
+      "created_at": "2022-09-02T11:28:31.077Z",
+      "updated_at": "2022-09-08T20:36:35.823Z",
+      "name": "Экран",
+      "description": "Диагональ экрана"
+    }
+  },
+  {
+    "model": "product.property",
+    "pk": 2,
+    "fields": {
+      "created_at": "2022-09-02T11:28:31.077Z",
+      "updated_at": "2022-09-08T20:36:35.823Z",
+      "name": "Операционная система",
+      "description": "Предустановленная ОС"
+    }
+  },
+  {
+    "model": "product.property",
+    "pk": 3,
+    "fields": {
+      "created_at": "2022-09-02T11:28:31.077Z",
+      "updated_at": "2022-09-08T20:36:35.823Z",
+      "name": "Процессор",
+      "description": "Модель процессора"
+    }
+  },
+  {
+    "model": "product.property",
+    "pk": 4,
+    "fields": {
+      "created_at": "2022-09-02T11:28:31.077Z",
+      "updated_at": "2022-09-08T20:36:35.823Z",
+      "name": "Вес",
+      "description": "Вес продукта"
+    }
+  },
+  {
+    "model": "product.property",
+    "pk": 5,
+    "fields": {
+      "created_at": "2022-09-02T11:28:31.077Z",
+      "updated_at": "2022-09-08T20:36:35.823Z",
+      "name": "Год",
+      "description": "Год выпуска продукта"
+    }
+  },
+  {
+    "model": "product.property",
+    "pk": 6,
+    "fields": {
+      "created_at": "2022-09-02T11:28:31.077Z",
+      "updated_at": "2022-09-08T20:36:35.823Z",
+      "name": "Материал",
+      "description": "Материал продукта"
+    }
+  },
+  {
+    "model": "product.property",
+    "pk": 7,
+    "fields": {
+      "created_at": "2022-09-02T11:28:31.077Z",
+      "updated_at": "2022-09-08T20:36:35.823Z",
+      "name": "Объем",
+      "description": "Объем холодильной камеры"
+    }
+  }
+]
