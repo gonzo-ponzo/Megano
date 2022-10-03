@@ -220,7 +220,7 @@ class SortProductsResult:
     fields = (
         ('price', _('цене')),
         ('popular', _('популярности')),
-        ('reviews', _('рейтингу')),
+        ('rating', _('рейтингу')),
         ('new', _('новизне')),
     )
     css_class_for_increment = 'Sort-sortBy_inc'
@@ -248,7 +248,7 @@ class SortProductsResult:
             return self.by_price(reverse=sort_revers)
         if sort_by == 'new':
             return self.by_newness(reverse=sort_revers)
-        if sort_by == 'reviews':
+        if sort_by == 'rating':
             return self.by_review(reverse=sort_revers)
         if sort_by == 'popular':
             return self.by_popularity(reverse=sort_revers)

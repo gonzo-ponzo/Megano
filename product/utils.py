@@ -164,6 +164,7 @@ def get_review(obj: Product):
 
 def get_queryset_for_catalog():
     queryset = Product.objects.all()
+    queryset = queryset.filter(offer__isnull=False)
     queryset = queryset.prefetch_related('productimage_set')
     queryset = queryset.select_related('category')
     # queryset = queryset.prefetch_related('shop')
