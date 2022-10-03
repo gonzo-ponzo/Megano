@@ -6,7 +6,7 @@ from .models import PromotionOffer
 class PromotionListView(ListView):
     model = PromotionOffer
     template_name = "promotion/promotions.html"
-    paginate_by = 12 # 12 акций на страницы для комфортного просмотра
+    paginate_by = 12  # 12 акций на страницы для комфортного просмотра
 
 
 class PromotionView(DetailView):
