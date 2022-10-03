@@ -7,22 +7,12 @@ from product.forms import ProductForm, ReviewForm
 from product.models import Product, ProductView, ProductCategory
 from shop.models import Shop
 from promotion.services import BannerMain
-from .services import ReviewForItem, ProductCompareList, SortProductsResult, FilterProductsResult
+from .services import ReviewForItem, ProductCompareList, SortProductsResult, FilterProductsResult, DetailedProduct
 
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import TemplateView, DetailView, CreateView, ListView
-from .utils import (
-    get_main_pic,
-    get_secondary_pics,
-    get_min_price,
-    get_top_price,
-    get_discount,
-    get_description,
-    get_property_dict,
-    get_offer_list,
-)
 
 
 class CompareView(View):
@@ -161,30 +151,7 @@ class DetailedProductView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DetailedProductView, self).get_context_data(**kwargs)
-        context["main_pic"] = cache.get_or_set(
-            f"main_pic{self.object.id}", get_main_pic(self.object)
-        )
-        context["pics"] = cache.get_or_set(
-            f"pics{self.object.id}", get_secondary_pics(self.object)
-        )
-        context["low_price"] = cache.get_or_set(
-            f"low_price{self.object.id}", get_min_price(self.object)
-        )
-        context["top_price"] = cache.get_or_set(
-            f"top_price{self.object.id}", get_top_price(self.object)
-        )
-        context["discount"] = cache.get_or_set(
-            f"discount{self.object.id}", get_discount(self.object)
-        )
-        context["product_description"] = cache.get_or_set(
-            f"product_description{self.object.id}", get_description(self.object)
-        )
-        context["property_dict"] = cache.get_or_set(
-            f"property_dict{self.object.id}", get_property_dict(self.object)
-        )
-        context["offer_list"] = cache.get_or_set(
-            f"offer_list{self.object.id}", get_offer_list(self.object)
-        )
+        context["detailed_product"] = cache.get_or_set(f"product-{self.object.id}", DetailedProduct(self.object))
 
         reviews = ReviewForItem(self.object)
         stars_order_by = reviews.get_stars_order_by()
@@ -200,8 +167,7 @@ class DetailedProductView(DetailView):
         if self.request.user.id:
             # предлагаю создавать просмотр на админа(id=1),
             # если пользователь не авторизован
-            product_view = ProductView(product=self.object,
-                                       user=self.request.user)
+            product_view = ProductView(product=self.object, user=self.request.user)
             product_view.save()
         return context
 
