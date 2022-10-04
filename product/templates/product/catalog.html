@@ -55,52 +55,60 @@
             </header>
             <div class="Section-columnContent">
 
-              <form class="form" action="#" method="get">
+              <form class="form" action="" method="get">
+
                 <div class="form-group">
                   <div class="range Section-columnRange">
-                    <input class="range-line" id="price" name="price" type="text" data-type="double" data-min="7" data-max="50"/>
+                    <input class="range-line" id="price" name="fil_price" type="text" data-type="double" data-min="{{ price_range.min|floatformat:"0" }}" data-max="{{ price_range.max|floatformat:"0" }}"/>
                     <div class="range-price">{% trans 'Цена' %}:
                         <div class="rangePrice"></div>
                     </div>
+                    <div>
+                      {% if request.GET.fil_price %}
+                        {% blocktranslate with min=current_price_range.min max=current_price_range.max %}
+                            Товары отобраны по цене <br> от {{ min }} до {{ max }} руб.
+                        {% endblocktranslate %}
+                      {% endif %}
+                    </div>
                   </div>
                 </div>
+
                 <div class="form-group">
-                  <input class="form-input form-input_full" id="title" name="title" type="text" placeholder="{% trans 'Название' %}"/>
+                  <input class="form-input form-input_full" name="fil_title" type="text" placeholder="{% trans 'Название' %}" value="{{ request.GET.fil_title }}"/>
                 </div>
+
                 <div class="form-group">
-                  <select class="form-select">
-                    <option value="seller" selected="selected" disabled="disabled">{% trans 'Продавец' %}</option>
-                    <option value="kkk">Kkkk</option>
-                    <option value="sdfsdf">sdfsdf</option>
+                  <select name="fil_shop" class="form-select">
+                    <option value = "" selected="selected">{% trans 'Все продавцы' %}</option>
+                    {% for shop in shops %}
+                        <option value="{{ shop }}" {% if request.GET.fil_shop == shop%}selected{% endif %}>{{ shop }}</option>
+                    {% endfor %}
                   </select>
                 </div>
+
                 <div class="form-group">
                   <label class="toggle">
-                    <input type="checkbox"/><span class="toggle-box"></span><span class="toggle-text">{% trans 'Только товары в наличии' %}</span>
+                    <input type="checkbox" name="fil_actual" {% if request.GET.fil_actual %}checked{% endif %}/><span class="toggle-box"></span><span class="toggle-text">{% trans 'Только товары в наличии' %}</span>
                   </label>
                 </div>
+
                 <div class="form-group">
                   <label class="toggle">
-                    <input type="checkbox"/><span class="toggle-box"></span><span class="toggle-text">{% trans 'С бесплатной доставкой' %}</span>
+                    <input type="checkbox" name="fil_limit" {% if request.GET.fil_limit %}checked{% endif %}/><span class="toggle-box"></span><span class="toggle-text">{% trans 'Ограниченный тираж' %}</span>
                   </label>
                 </div>
+
                 <div class="form-group">
+                  <input type="hidden" name="sort_by" value="{{ request.GET.sort_by }}">
+                  <input type="hidden" name="reverse" value="{{ request.GET.reverse }}">
                   <div class="buttons">
-                      <a class="btn btn_square btn_dark btn_narrow" href="#">OK</a>
+                      <input class="btn btn_square btn_dark btn_narrow" type="submit" value="OK">
+                      <a href="{{ request.path }}?{{ sort_part_url }}" class="btn btn_square btn_dark btn_narrow">{% trans "Сбросить" %}</a>
                   </div>
                 </div>
+
               </form>
 
-            </div>
-          </div>
-          <div class="Section-columnSection">
-            <header class="Section-header">
-              <strong class="Section-title">Popular tags
-              </strong>
-            </header>
-            <div class="Section-columnContent">
-              <div class="buttons"><a class="btn btn_default btn_sm" href="#">Video</a><a class="btn btn_default btn_sm" href="#">Development</a><a class="btn btn_default btn_sm" href="#">Gaming</a><a class="btn btn_default btn_sm" href="#">Asus</a><a class="btn btn_default btn_sm" href="#">Development</a><a class="btn btn_default btn_sm" href="#">Video</a>
-              </div>
             </div>
           </div>
         </div>
@@ -110,12 +118,12 @@
 
           <div class="Sort">
             <div class="Sort-title">
-                Сортировать по:
+                {% trans "Сортировать по" %}:
             </div>
             <div class="Sort-variants">
 
                 {% for sort_item in sort_data %}
-                    <a class="Sort-sortBy {{ sort_item.css_class }}" href="{{ request.path }}?{{ sort_item.arg_str }}">{{ sort_item.title|capfirst }}</a>
+                    <a class="Sort-sortBy {{ sort_item.css_class }}" href="{{ request.path }}?{{ sort_item.arg_str }}&{{ filter_part_url }}">{{ sort_item.title|capfirst }}</a>
                 {% endfor %}
 
 
@@ -124,6 +132,8 @@
 
 
           <div class="Cards">
+
+
 
             {% for product in product_list %}
                 <div class="Card">
@@ -143,22 +153,37 @@
                             <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
                         </strong>
                         <div class="Card-description">
+                            <div class="Card-category">
+                                <p>{% trans 'Предложений: ' %} {{ product.offer_count }}</p>
+                            </div>
                             <div class="Card-cost">
-                                <span class="Card-priceOld">$115.00</span>
-                                <span class="Card-price">{{ product.min_price }}</span>
+{#                                <span class="Card-priceOld">$115.00</span>#}
+                                <span class="Card-price">
+
+                                    {% if product.min_price > 0 %}
+                                        от {{ product.min_price|floatformat:"0g" }} руб.
+                                    {% else %}
+                                        нет в продаже
+                                    {% endif %}
+                                </span>
                             </div>
                             <div class="Card-category">
                                 <p>Заказов: {{ product.order_count }}</p>
                                 {{ product.category }}
                             </div>
                             <div class="Card-hover">
-                                <a class="Card-btn" href="#">
+                                <a class="Card-btn" onclick="openWin(url='{% url 'compare_add' product.id %}')">
                                     <img src="{% static 'img/icons/card/change.svg' %}" alt="сравнить"/>
                                 </a>
                             </div>
                         </div>
                     </div>
                     <div class="Card-sale"><img src="{% static 'img/icons/star.svg' %}"> {{ product.rating }}</div>
+                </div>
+
+            {% empty %}
+                <div>
+                    {% trans "Продуктов не найдено" %}.
                 </div>
             {% endfor %}
 

@@ -1,10 +1,12 @@
 from django.db.models.query import QuerySet
-from django.db.models import F, Min, Avg
+from django.db.models import F, Min, Max, Sum, Count, Avg
+from urllib.parse import urlencode
+
 from django.utils.translation import gettext_lazy as _
 from copy import copy
 from statistics import mean
 from django.core.exceptions import ObjectDoesNotExist
-from .models import Product, ProductImage, Offer, ProductProperty, Property, Review
+from .models import Product, ProductImage, Offer, ProductProperty, Property, Review, ProductCategory
 from shop.models import Shop
 from user.models import CustomUser
 from django.shortcuts import get_object_or_404
@@ -146,29 +148,91 @@ class PropertyCompare:
         return self.product_list
 
 
-class ProductsFilter:
+class FilterProductsResult:
     """
     Фильтр для списка продуктов
     """
+    filter_field_name = (
+        'fil_title',
+        'fil_actual',
+        'fil_limit',
+        'fil_shop',
+        'fil_price',
+    )
 
-    def filter(self):
-        """Отфильтровать список по указанным параметрам"""
-        self.by_price()
+    def __init__(self, **get_params):
+        """
+        :param get_params: параметры строки запроса
+        """
+
+        self.products = self.get_queryset_for_catalog()
+
+        self.title = get_params.get('fil_title', None)
+        self.actual = bool(get_params.get('fil_actual'))
+        self.limit = bool(get_params.get('fil_limit'))
+        self.shop = get_params.get('fil_shop', None)
+        price = get_params.get('fil_price', '').split(";")
+        self.min_price = self.max_price = None
+        if len(price) == 2 and price[0].isdigit() and price[1].isdigit():
+            self.min_price, self.max_price = map(int, price)
+
+    @staticmethod
+    def get_queryset_for_catalog():
+        queryset = Product.objects.all()
+        queryset = queryset.filter(offer__isnull=False)
+        queryset = queryset.prefetch_related('productimage_set')
+        queryset = queryset.select_related('category')
+        # queryset = queryset.prefetch_related('shop')
+        queryset = queryset.annotate(offer_count=Count('offer'))
+        queryset = queryset.annotate(min_price=Min('offer__price'))
+        queryset = queryset.annotate(rating=Avg('review__rating', default=0))
+        queryset = queryset.annotate(order_count=Sum('offer__orderoffer__amount', default=0))
+        queryset = queryset.order_by('pk')
+        return queryset
+
+    @classmethod
+    def make_filter_part_url(cls, get_params: dict):
+        filter_params = {key: get_params.get(key) for key in cls.filter_field_name if key in get_params}
+        return urlencode(filter_params)
+
+    def price_range(self) -> dict:
+        """
+        :return: словарь с максимальной и минимальной стоимостью текущего набора продуктов
+        """
+        return self.products.aggregate(min=Min('min_price'), max=Max('min_price'))
+
+    def all_filter_without_price(self) -> None:
+        """Отфильтровать self.products по всем параметрам, кроме цены"""
         self.by_keywords()
-        self.by_seller()
-        return
+        self.by_shop()
+        if self.actual:
+            self.only_actual()
+        if self.limit:
+            self.only_limited()
+
+    def by_category(self, category: ProductCategory):
+        self.products = self.products.filter(category__in=category.get_descendants(include_self=True))
+
+    def by_keywords(self):
+        if self.title:
+            self.products = self.products.filter(name__icontains=self.title)
+
+    def only_actual(self):
+        self.products = self.products.annotate(rest=Sum('offer__amount'))
+        self.products = self.products.filter(rest__gt=0)
+
+    def only_limited(self):
+        self.products = self.products.filter(limited=True)
+
+    def by_shop(self):
+        """Фильтрация по продавцу"""
+        if self.shop:
+            self.products = self.products.filter(shop__name=self.shop)
 
     def by_price(self):
         """Фильтрация по цене"""
-        pass
-
-    def by_keywords(self):
-        """Фильтрация по ключевым словам в названии"""
-        pass
-
-    def by_seller(self):
-        """Фильтрация по продавцу"""
-        pass
+        if self.min_price and self.max_price:
+            self.products = self.products.filter(min_price__gte=self.min_price, min_price__lte=self.max_price)
 
 
 class SortProductsResult:
@@ -180,24 +244,35 @@ class SortProductsResult:
     fields = (
         ('price', _('цене')),
         ('popular', _('популярности')),
-        ('reviews', _('отзывам')),
+        ('rating', _('рейтингу')),
         ('new', _('новизне')),
     )
     css_class_for_increment = 'Sort-sortBy_inc'
     css_class_for_decrement = 'Sort-sortBy_dec'
 
-    def __init__(self, products: QuerySet, **sort_params):
+    def __init__(self, products: QuerySet = None):
+        """
+        :param products: Queryset c необходимыми полями
+        """
         self.products = products
+
+    @classmethod
+    def make_sort_part_url(cls, get_params: dict):
+        sort_params = {
+            'sort_by': get_params.get('sort_by', None),
+            'reverse': get_params.get('reverse', ''),
+        }
+        return urlencode(sort_params)
 
     def sort_by_params(self, **get_params) -> QuerySet:
         sort_by = get_params.get('sort_by', None)
-        sort_revers = bool(get_params.get('reverse', False))
+        sort_revers = bool(get_params.get('reverse'))
 
         if sort_by == 'price':
             return self.by_price(reverse=sort_revers)
         if sort_by == 'new':
             return self.by_newness(reverse=sort_revers)
-        if sort_by == 'reviews':
+        if sort_by == 'rating':
             return self.by_review(reverse=sort_revers)
         if sort_by == 'popular':
             return self.by_popularity(reverse=sort_revers)
@@ -243,8 +318,6 @@ class SortProductsResult:
 
     def by_review(self, reverse=False) -> QuerySet:
         field = 'rating'
-        if field not in self.products.query.annotations:
-            self.products = self.products.annotate(rating=Avg('review__rating', default=0))
         if not reverse:
             field = '-' + field
         return self.products.order_by(field)

@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 env = Env()
@@ -76,7 +76,7 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.jinja2.Jinja2",
-        "DIRS": [BASE_DIR, "templates"],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "environment": "config.jinja2.environment",
@@ -91,7 +91,7 @@ TEMPLATES = [
     },
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ["static", "templates", BASE_DIR.parent],
+        "DIRS": ["static", "templates", BASE_DIR],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -193,6 +193,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 MPTT_ADMIN_LEVEL_INDENT = 20
 
 
-PRODUCT_PER_PAGES = 3
+PRODUCT_PER_PAGES = 10
 
 COUNT_ELEMENTS_BEST_OFFER_SHOP = 6
