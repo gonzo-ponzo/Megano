@@ -130,64 +130,8 @@
             </div>
           </div>
 
-
-          <div class="Cards">
-
-
-
-            {% for product in product_list %}
-                <div class="Card">
-
-                    <a class="Card-picture" href="{{ product.get_absolute_url }}">
-                        <img src=
-                             {% if product.productimage_set.all %}
-                                 "{{ product.productimage_set.all.0.image.url }}"
-                             {% else %}
-                                 "{% static 'img/no_image.png' %}"
-                             {% endif %}
-                        alt="{{ product.name|truncatechars:30 }}">
-                    </a>
-
-                    <div class="Card-content">
-                        <strong class="Card-title">
-                            <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
-                        </strong>
-                        <div class="Card-description">
-                            <div class="Card-category">
-                                <p>{% trans 'Предложений: ' %} {{ product.offer_count }}</p>
-                            </div>
-                            <div class="Card-cost">
-{#                                <span class="Card-priceOld">$115.00</span>#}
-                                <span class="Card-price">
-
-                                    {% if product.min_price > 0 %}
-                                        от {{ product.min_price|floatformat:"0g" }} руб.
-                                    {% else %}
-                                        нет в продаже
-                                    {% endif %}
-                                </span>
-                            </div>
-                            <div class="Card-category">
-                                <p>Заказов: {{ product.order_count }}</p>
-                                {{ product.category }}
-                            </div>
-                            <div class="Card-hover">
-                                <a class="Card-btn" onclick="openWin(url='{% url 'compare_add' product.id %}')">
-                                    <img src="{% static 'img/icons/card/change.svg' %}" alt="сравнить"/>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="Card-sale"><img src="{% static 'img/icons/star.svg' %}"> {{ product.rating }}</div>
-                </div>
-
-            {% empty %}
-                <div>
-                    {% trans "Продуктов не найдено" %}.
-                </div>
-            {% endfor %}
-
-          </div>
+          {# карточки продуктов #}
+          {% include 'product/inc/_product_cards.html' %}
 
           <div class="Pagination">
             <div class="Pagination-ins">

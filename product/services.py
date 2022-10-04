@@ -250,7 +250,7 @@ class SortProductsResult:
     css_class_for_increment = 'Sort-sortBy_inc'
     css_class_for_decrement = 'Sort-sortBy_dec'
 
-    def __init__(self, products: QuerySet = None):
+    def __init__(self, products: QuerySet):
         """
         :param products: Queryset c необходимыми полями
         """
