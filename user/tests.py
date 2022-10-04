@@ -265,25 +265,25 @@ class AccountTest(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        avatar = get_user_model().objects.get(pk=3).avatar
+        avatar = get_user_model().objects.get(email="test@ema.il").avatar
         if os.path.isfile(avatar.path):
             os.remove(avatar.path)
         super(AccountTest, cls).tearDownClass()  # Call parent last
 
     def test_fio(self):
         url = reverse('account')
-        user1 = get_user_model().objects.get(pk=1)
+        user1 = get_user_model().objects.get(email="test@e.mail")
         self.client.force_login(user1)
         response = self.client.get(url)
         self.assertContains(response, user1.get_fio)
-        user2 = get_user_model().objects.get(pk=2)
+        user2 = get_user_model().objects.get(email="test@em.ail")
         self.client.force_login(user2)
         response = self.client.get(url)
         self.assertContains(response, user2.get_fio)
 
     def test_avatar(self):
         url = reverse('account')
-        user3 = get_user_model().objects.get(pk=3)
+        user3 = get_user_model().objects.get(email="test@ema.il")
         self.client.force_login(user3)
         response = self.client.get(url)
         self.assertContains(response, user3.avatar.url)
