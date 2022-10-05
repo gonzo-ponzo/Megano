@@ -29,7 +29,7 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <a href="{% url "registration-page" %}" class="btn btn_primary">{% translate "Зарегистрироваться" %}</a>
+                        <a href="{% url "registration-page" %}?{{ request.META.QUERY_STRING }}" class="btn btn_primary">{% translate "Зарегистрироваться" %}</a>
                     </td>
                 </tr>
             </table>
