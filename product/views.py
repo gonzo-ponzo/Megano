@@ -95,7 +95,7 @@ class MainPage(TemplateView):
         context = super().get_context_data(**kwargs)
         context["banners"] = BannerMain.get_cache_banners()
         products = FilterProductsResult()
-        context['product_list'] = SortProductsResult(products.products).by_popularity()[:8]
+        context['top_product'] = SortProductsResult(products.products).by_popularity()[:8]
         return context
 
 

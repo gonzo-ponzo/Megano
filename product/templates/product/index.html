@@ -105,7 +105,20 @@
           </header>
 
           {# топ товары #}
-          {% include 'product/inc/_product_cards.html' %}
+          <div class="Cards">
+            {% for product in top_product %}
+                {# карточки продуктов #}
+
+                {% cycle '' '' '' '' 'hide_md' 'hide_md' 'hide_md hide_1450' 'hide_md hide_1450' as add_class silent %}
+                {% include 'product/inc/_product_card.html' with card_class=add_class %}
+
+            {% empty %}
+                <div>
+                    {% trans "Продуктов не найдено" %}.
+                </div>
+            {% endfor %}
+          </div>
+
 
         </div>
       </div>
