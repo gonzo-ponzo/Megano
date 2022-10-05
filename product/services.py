@@ -165,7 +165,7 @@ class FilterProductsResult:
         :param get_params: параметры строки запроса
         """
 
-        self.products = self.get_queryset_for_catalog()
+        self.__queryset = self.get_queryset_for_catalog()
 
         self.title = get_params.get('fil_title', None)
         self.actual = bool(get_params.get('fil_actual'))
@@ -190,6 +190,10 @@ class FilterProductsResult:
         queryset = queryset.order_by('pk')
         return queryset
 
+    @property
+    def queryset(self):
+        return self.__queryset
+
     @classmethod
     def make_filter_part_url(cls, get_params: dict):
         filter_params = {key: get_params.get(key) for key in cls.filter_field_name if key in get_params}
@@ -199,7 +203,7 @@ class FilterProductsResult:
         """
         :return: словарь с максимальной и минимальной стоимостью текущего набора продуктов
         """
-        return self.products.aggregate(min=Min('min_price'), max=Max('min_price'))
+        return self.__queryset.aggregate(min=Min('min_price'), max=Max('min_price'))
 
     def all_filter_without_price(self) -> None:
         """Отфильтровать self.products по всем параметрам, кроме цены"""
@@ -211,28 +215,28 @@ class FilterProductsResult:
             self.only_limited()
 
     def by_category(self, category: ProductCategory):
-        self.products = self.products.filter(category__in=category.get_descendants(include_self=True))
+        self.__queryset = self.__queryset.filter(category__in=category.get_descendants(include_self=True))
 
     def by_keywords(self):
         if self.title:
-            self.products = self.products.filter(name__icontains=self.title)
+            self.__queryset = self.__queryset.filter(name__icontains=self.title)
 
     def only_actual(self):
-        self.products = self.products.annotate(rest=Sum('offer__amount'))
-        self.products = self.products.filter(rest__gt=0)
+        self.__queryset = self.__queryset.annotate(rest=Sum('offer__amount'))
+        self.__queryset = self.__queryset.filter(rest__gt=0)
 
     def only_limited(self):
-        self.products = self.products.filter(limited=True)
+        self.__queryset = self.__queryset.filter(limited=True)
 
     def by_shop(self):
         """Фильтрация по продавцу"""
         if self.shop:
-            self.products = self.products.filter(shop__name=self.shop)
+            self.__queryset = self.__queryset.filter(shop__name=self.shop)
 
     def by_price(self):
         """Фильтрация по цене"""
         if self.min_price and self.max_price:
-            self.products = self.products.filter(min_price__gte=self.min_price, min_price__lte=self.max_price)
+            self.__queryset = self.__queryset.filter(min_price__gte=self.min_price, min_price__lte=self.max_price)
 
 
 class SortProductsResult:

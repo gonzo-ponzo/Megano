@@ -95,7 +95,9 @@ class MainPage(TemplateView):
         context = super().get_context_data(**kwargs)
         context["banners"] = BannerMain.get_cache_banners()
         products = FilterProductsResult()
-        context['top_product'] = SortProductsResult(products.products).by_popularity()[:8]
+        context['top_product'] = SortProductsResult(products.queryset).by_popularity()[:8]
+        products.only_limited()
+        context['limited_product'] = products.queryset.order_by('?')[:16]
         return context
 
 
@@ -125,9 +127,9 @@ class CatalogView(ListView):
         filter_product.by_price()
         self.current_price_range = {'min': filter_product.min_price, 'max': filter_product.max_price}
 
-        self.shops = Shop.objects.filter(product__in=filter_product.products).distinct().values_list('name', flat=True)
+        self.shops = Shop.objects.filter(product__in=filter_product.queryset).distinct().values_list('name', flat=True)
 
-        queryset = SortProductsResult(products=filter_product.products).sort_by_params(**self.request.GET.dict())
+        queryset = SortProductsResult(products=filter_product.queryset).sort_by_params(**self.request.GET.dict())
 
         return queryset
 
