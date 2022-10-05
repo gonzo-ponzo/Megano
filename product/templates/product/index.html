@@ -130,7 +130,7 @@
         <div class="Section-content">
           <div class="Slider Slider_carousel">
             <header class="Section-header">
-              <h2 class="Section-title">{% trans 'Горячие предложения' %}</h2>
+              <h2 class="Section-title">{% trans 'Акции!!!' %}</h2>
               <div class="Section-control">
                 <div class="Slider-navigate">
                 </div>
@@ -138,27 +138,8 @@
             </header>
 
               <div class="Slider-box Cards Cards_hz">
-              <div class="Slider-item">
-                <div class="Slider-content">
-                  <div class="Card"><a class="Card-picture" href="#"><img src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/></a>
-                    <div class="Card-content">
-                      <strong class="Card-title"><a href="#">Corsair Carbide Series Arctic White Steel</a>
-                      </strong>
-                      <div class="Card-description">
-                        <div class="Card-cost"><span class="Card-priceOld">$115.00</span><span class="Card-price">$85.00</span>
-                        </div>
-                        <div class="Card-category">Games / xbox
-                        </div>
-                        <div class="Card-hover"><a class="Card-btn" href="#"><img src="{% static 'img/icons/card/bookmark.svg' %}" alt="bookmark.svg"/></a><a class="Card-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Card-btn" href="{% static 'compare.html' %}"><img src="{% static 'img/icons/card/change.svg' %}" alt="change.svg"/></a>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="Card-sale">-60%
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="Slider-item">
+
+               <div class="Slider-item">
                 <div class="Slider-content">
                   <div class="Card"><a class="Card-picture" href="#"><img src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/></a>
                     <div class="Card-content">
@@ -178,9 +159,10 @@
                   </div>
                 </div>
               </div>
-              <div class="Slider-item">
+
+               <div class="Slider-item">
                 <div class="Slider-content">
-                  <div class="Card"><a class="Card-picture" href="#"><img src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/></a>
+                  <div class="Card"><a class="Card-picture" href="#"><img src="{% static 'img/no_image.png' %}" alt="card.jpg"/></a>
                     <div class="Card-content">
                       <strong class="Card-title"><a href="#">Corsair Carbide Series Arctic White Steel</a>
                       </strong>
@@ -198,66 +180,21 @@
                   </div>
                 </div>
               </div>
-              <div class="Slider-item">
-                <div class="Slider-content">
-                  <div class="Card"><a class="Card-picture" href="#"><img src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/></a>
-                    <div class="Card-content">
-                      <strong class="Card-title"><a href="#">Corsair Carbide Series Arctic White Steel</a>
-                      </strong>
-                      <div class="Card-description">
-                        <div class="Card-cost"><span class="Card-priceOld">$115.00</span><span class="Card-price">$85.00</span>
-                        </div>
-                        <div class="Card-category">Games / xbox
-                        </div>
-                        <div class="Card-hover"><a class="Card-btn" href="#"><img src="{% static 'img/icons/card/bookmark.svg' %}" alt="bookmark.svg"/></a><a class="Card-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Card-btn" href="compare.html"><img src="{% static 'img/icons/card/change.svg' %}" alt="change.svg"/></a>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="Card-sale">-60%
+
+
+
+
+                {% for product in hot_product %}
+                  <div class="Slider-item">
+                    <div class="Slider-content">
+                        {# карточки продуктов #}
+                        {% include 'product/inc/_product_card.html' %}
                     </div>
                   </div>
-                </div>
-              </div>
-              <div class="Slider-item">
-                <div class="Slider-content">
-                  <div class="Card"><a class="Card-picture" href="#"><img src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/></a>
-                    <div class="Card-content">
-                      <strong class="Card-title"><a href="#">Corsair Carbide Series Arctic White Steel</a>
-                      </strong>
-                      <div class="Card-description">
-                        <div class="Card-cost"><span class="Card-priceOld">$115.00</span><span class="Card-price">$85.00</span>
-                        </div>
-                        <div class="Card-category">Games / xbox
-                        </div>
-                        <div class="Card-hover"><a class="Card-btn" href="#"><img src="{% static 'img/icons/card/bookmark.svg' %}" alt="bookmark.svg"/></a><a class="Card-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Card-btn" href="compare.html"><img src="{% static 'img/icons/card/change.svg' %}" alt="change.svg"/></a>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="Card-sale">-60%
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="Slider-item">
-                <div class="Slider-content">
-                  <div class="Card"><a class="Card-picture" href="#"><img src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/></a>
-                    <div class="Card-content">
-                      <strong class="Card-title"><a href="#">Corsair Carbide Series Arctic White Steel</a>
-                      </strong>
-                      <div class="Card-description">
-                        <div class="Card-cost"><span class="Card-priceOld">$115.00</span><span class="Card-price">$85.00</span>
-                        </div>
-                        <div class="Card-category">Games / xbox
-                        </div>
-                        <div class="Card-hover"><a class="Card-btn" href="#"><img src="{% static 'img/icons/card/bookmark.svg' %}" alt="bookmark.svg"/></a><a class="Card-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Card-btn" href="compare.html"><img src="{% static 'img/icons/card/change.svg' %}" alt="change.svg"/></a>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="Card-sale">-60%
-                    </div>
-                  </div>
-                </div>
-              </div>
+                {% empty %}
+                    <div>{% trans "Продуктов не найдено" %}.</div>
+                {% endfor %}
+
             </div>
           </div>
         </div>

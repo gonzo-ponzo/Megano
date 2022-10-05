@@ -98,6 +98,9 @@ class MainPage(TemplateView):
         context['top_product'] = SortProductsResult(products.queryset).by_popularity()[:8]
         products.only_limited()
         context['limited_product'] = products.queryset.order_by('?')[:16]
+        hot_product = FilterProductsResult()
+        hot_product.with_promo()
+        context['hot_product'] = hot_product.queryset[:9]
         return context
 
 

@@ -221,6 +221,9 @@ class FilterProductsResult:
         if self.title:
             self.__queryset = self.__queryset.filter(name__icontains=self.title)
 
+    def with_promo(self):
+        pass
+
     def only_actual(self):
         self.__queryset = self.__queryset.annotate(rest=Sum('offer__amount'))
         self.__queryset = self.__queryset.filter(rest__gt=0)
