@@ -37,7 +37,8 @@ urlpatterns = [
     path("shop/", include("shop.urls"), name='shop'),
     path("order/", include(("order.urls", 'order'), namespace='order'),
          name='order'),
-    path("promotion/", include("promotion.urls"), name='promotion')
+    path("promotion/", include("promotion.urls"), name='promotion'),
+    path("payment/", include("payment.urls"), name='payment'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
