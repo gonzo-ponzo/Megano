@@ -3,6 +3,7 @@ from django.urls import reverse
 from decimal import Decimal
 
 from .models import Payment
+from .services import Pay
 
 
 class TestAddBill2Payment(TestCase):
@@ -132,3 +133,43 @@ class TestCheckBill(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "error")
+
+
+class TestValidateCardNumber(TestCase):
+    def test_correct_numbers(self):
+        pay = Pay()
+        res, info = pay.validate_number("1111 2222")
+        self.assertTrue(res)
+        res, info = pay.validate_number("4")
+        self.assertTrue(res)
+        res, info = pay.validate_number("12 4 6 8")
+        self.assertTrue(res)
+
+    def test_incorrect_numbers(self):
+        pay = Pay()
+        res, info = pay.validate_number("1111 2220")
+        self.assertFalse(res)
+        res, info = pay.validate_number("4999 9009")
+        self.assertFalse(res)
+        res, info = pay.validate_number("12q4q6q8")
+        self.assertFalse(res)
+
+
+class TestPayOneBill(TestCase):
+    def test_pay_correct_bill(self):
+        payment = Payment.objects.create(order_number=29, card_number="8613 3334",
+                                         sum_to_pay=52.6, status=0)
+        pay = Pay()
+        res = pay.pay(payment)
+        payment.refresh_from_db()
+        self.assertTrue(res)
+        self.assertEqual(payment.status, 1)
+
+    def test_nopay_not_correct_bill(self):
+        payment = Payment.objects.create(order_number=29, card_number="8613 3337",
+                                         sum_to_pay=52.6, status=0)
+        pay = Pay()
+        res = pay.pay(payment)
+        payment.refresh_from_db()
+        self.assertFalse(res)
+        self.assertTrue(payment.status > 1)
