@@ -32,7 +32,8 @@
             </span>
             </div>
             <div class="Card-category">
-                <p>Заказов: {{ product.order_count }}</p>
+                <p>{% trans 'Продано' %}: {{ product.order_count }}<br>
+                   {% trans 'Отзывов' %}: {{ product.review_count }}</p>
                 {{ product.category }}
             </div>
             <div class="Card-hover">

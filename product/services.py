@@ -183,10 +183,11 @@ class FilterProductsResult:
         queryset = queryset.prefetch_related('productimage_set')
         queryset = queryset.select_related('category')
         # queryset = queryset.prefetch_related('shop')
-        queryset = queryset.annotate(offer_count=Count('offer'))
+        queryset = queryset.annotate(offer_count=Count('offer', distinct=True))
         queryset = queryset.annotate(min_price=Min('offer__price'))
+        queryset = queryset.annotate(review_count=Count('review', distinct=True))
         queryset = queryset.annotate(rating=Avg('review__rating', default=0))
-        queryset = queryset.annotate(order_count=Sum('offer__orderoffer__amount', default=0))
+        queryset = queryset.annotate(order_count=Sum('offer__orderoffer__amount', default=0, distinct=True))
         queryset = queryset.order_by('pk')
         return queryset
 
