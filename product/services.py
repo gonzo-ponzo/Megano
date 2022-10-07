@@ -1,3 +1,5 @@
+from random import randint
+
 from django.db.models.query import QuerySet
 from django.db.models import F, Min, Max, Sum, Count, Avg
 from urllib.parse import urlencode
@@ -187,6 +189,7 @@ class FilterProductsResult:
         queryset = queryset.annotate(min_price=Min('offer__price'))
         queryset = queryset.annotate(review_count=Count('review', distinct=True))
         queryset = queryset.annotate(rating=Avg('review__rating', default=0))
+        queryset = queryset.annotate(rest=Sum('offer__amount', distinct=True))
         queryset = queryset.annotate(order_count=Sum('offer__orderoffer__amount', default=0, distinct=True))
         queryset = queryset.order_by('pk')
         return queryset
@@ -226,7 +229,6 @@ class FilterProductsResult:
         pass
 
     def only_actual(self):
-        self.__queryset = self.__queryset.annotate(rest=Sum('offer__amount'))
         self.__queryset = self.__queryset.filter(rest__gt=0)
 
     def only_limited(self):
@@ -335,6 +337,29 @@ class SortProductsResult:
         if reverse:
             field = '-' + field
         return self.products.order_by(field)
+
+
+class DailyOffer:
+
+    def __init__(self):
+        self.__product: Product = self.__get_random_product()
+
+    @staticmethod
+    def __get_random_product():
+        queryset = FilterProductsResult.get_queryset_for_catalog()
+        queryset = queryset.only('id', 'name', 'category__name')
+        queryset = queryset.filter(limited=True).filter(rest__gt=0)
+        count = queryset.count()
+        n = 0 if count == 1 else randint(0, count - 1)
+        return queryset[n]
+
+    @property
+    def product(self) -> Product:
+        return self.__product
+
+    @property
+    def product_id(self):
+        return self.__product.id
 
 
 class SearchProduct:

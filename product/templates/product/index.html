@@ -55,20 +55,36 @@
       <div class="wrap">
         <div class="Section-column">
           <div class="Section-columnSection Section-columnSection_mark">
+
             <header class="Section-columnHeader">
-              <strong class="Section-columnTitle">Limited Deals
-              </strong>
+              <strong class="Section-columnTitle">{% trans 'предложение дня' %}</strong>
             </header>
-            <div class="Card"><a class="Card-picture" href="#"><img src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/></a>
+
+            <div class="Card">
+                <a class="Card-picture" href="{{ daily_offer.get_absolute_url }}">
+                    <img src=
+                     {% if daily_offer.productimage_set.all %}
+                         "{{ daily_offer.productimage_set.all.0.image.url }}"
+                     {% else %}
+                         "{% static 'img/no_image.png' %}"
+                     {% endif %}
+                    alt="{{ daily_offer.name|truncatechars:30 }}">
+                </a>
               <div class="Card-content">
-                <strong class="Card-title"><a href="#">Corsair Carbide Series Arctic White Steel</a>
-                </strong>
-                <div class="Card-description">
-                  <div class="Card-cost"><span class="Card-priceOld">$115.00</span><span class="Card-price">$85.00</span>
+                  <strong class="Card-title">
+                    <a href="{{ daily_offer.get_absolute_url }}">{{ daily_offer.name }}</a>
+                  </strong>
+                  <div class="Card-description">
+                    <div class="Card-cost">
+{#                      <span class="Card-priceOld">$115.00</span>#}
+                        <span class="Card-price">от {{ daily_offer.min_price|floatformat:"0g" }} руб.</span>
+                    </div>
+                  <div class="Card-category">
+                      <p>{% trans 'Продано' %}: {{ daily_offer.order_count }}<br>
+                         {% trans 'Отзывов' %}: {{ daily_offer.review_count }}</p>
+                         {{ daily_offer.category }}
                   </div>
-                  <div class="Card-category">News / xbox
-                  </div>
-                </div>
+              </div>
                 <div class="CountDown" data-date="31.09.2020 03:59">
                   <div class="CountDown-block">
                     <div class="CountDown-wrap">
@@ -97,6 +113,7 @@
                 </div>
               </div>
             </div>
+
           </div>
         </div>
         <div class="Section-content">

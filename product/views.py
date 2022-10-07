@@ -8,11 +8,15 @@ from product.models import Product, ProductView, ProductCategory
 from shop.models import Shop
 from promotion.services import BannerMain
 from .services import ReviewForItem, ProductCompareList, SortProductsResult, FilterProductsResult, DetailedProduct
+from .services import DailyOffer
 
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import TemplateView, DetailView, CreateView, ListView
+
+
+daily_offer = DailyOffer()
 
 
 class CompareView(View):
@@ -97,10 +101,12 @@ class MainPage(TemplateView):
         products = FilterProductsResult()
         context['top_product'] = SortProductsResult(products.queryset).by_popularity()[:8]
         products.only_limited()
-        context['limited_product'] = products.queryset.order_by('?')[:16]
+        context['limited_product'] = products.queryset.exclude(id=daily_offer.product_id).order_by('?')[:16]
         hot_product = FilterProductsResult()
         hot_product.with_promo()
         context['hot_product'] = hot_product.queryset[:9]
+        context['daily_offer'] = daily_offer.product
+
         return context
 
 
