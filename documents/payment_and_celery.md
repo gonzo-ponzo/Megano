@@ -22,7 +22,7 @@
 В requirements новые пакеты, в payment/fixtures - файл с задачей в расписании celery.
 
 Для запуска обработчика событий можно использовать команду (внутри контейнера с кодом):
-`celery -A payment worker --beat --scheduler django --loglevel=info`
+    celery -A payment worker --beat --scheduler django --loglevel=info
 
 Для экспериментов - добавлять новые записи [тут](http://127.0.0.1:8000/admin/payment/payment/), и смотреть как celery будет им статусы менять.
 
