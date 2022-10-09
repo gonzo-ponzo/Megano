@@ -1,12 +1,9 @@
-from celery import Celery
-
+from .celery import app
 from .models import Payment
 from .services import Pay
 
 
-app = Celery('payment', broker='redis://redis_db')
-
-@app.task
+@app.task(name="pay_actual_bills")
 def pay_actual_bills():
     curr_payments = Payment.objects.filter(status=0)
     for payment in curr_payments:

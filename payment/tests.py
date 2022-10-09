@@ -138,7 +138,6 @@ class TestCheckBill(TestCase):
 
 class TestValidateCardNumber(TestCase):
     def test_correct_numbers(self):
-        #pay = Pay()
         res, info = Pay.validate_number("1111 2222")
         self.assertTrue(res)
         res, info = Pay.validate_number("4")
@@ -147,7 +146,6 @@ class TestValidateCardNumber(TestCase):
         self.assertTrue(res)
 
     def test_incorrect_numbers(self):
-        #pay = Pay()
         res, info = Pay.validate_number("1111 2220")
         self.assertFalse(res)
         res, info = Pay.validate_number("4999 9009")
@@ -160,7 +158,6 @@ class TestPayOneBill(TestCase):
     def test_pay_correct_bill(self):
         payment = Payment.objects.create(order_number=29, card_number="8613 3334",
                                          sum_to_pay=52.6, status=0)
-        # pay = Pay()
         res = Pay.pay(payment)
         payment.refresh_from_db()
         self.assertTrue(res)
@@ -169,7 +166,6 @@ class TestPayOneBill(TestCase):
     def test_nopay_not_correct_bill(self):
         payment = Payment.objects.create(order_number=29, card_number="8613 3337",
                                          sum_to_pay=52.6, status=0)
-        #pay = Pay()
         res = Pay.pay(payment)
         payment.refresh_from_db()
         self.assertFalse(res)
