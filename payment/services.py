@@ -20,22 +20,25 @@ class Pay:
     Оплата заказа
     """
 
-    def pay(self, payment):
+    @staticmethod
+    def pay(payment):
         if payment.status != 0:
             return False
-        res, info = self.validate_number(payment.card_number)
+        res, info = Pay.validate_number(payment.card_number)
         payment.status = info[0]
         payment.save()
         return res
 
-    def generate_random_score(self):
-        """ аналог $('.Payment-generate') из scripts.js """
+    @staticmethod
+    def generate_random_score():
+        """ (избыточный) аналог $('.Payment-generate') из scripts.js """
         bill_number = random.randint(10000000, 99999999)
         bill_number = str(bill_number)
         bill_number = f'{bill_number[:4]} {bill_number[4:]}'
         return bill_number
 
-    def validate_number(self, bill_number):
+    @staticmethod
+    def validate_number(bill_number):
         """ успешно, если номер четный, не больше 8ми символов и не заканчивается на ноль """
         error_messages = CONST_STATUS_CHOICES[2:]
         bill_number = "".join(bill_number.split())

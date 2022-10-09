@@ -4,6 +4,7 @@ from decimal import Decimal
 
 from .models import Payment
 from .services import Pay
+from .tasks import pay_actual_bills
 
 
 class TestAddBill2Payment(TestCase):
@@ -137,21 +138,21 @@ class TestCheckBill(TestCase):
 
 class TestValidateCardNumber(TestCase):
     def test_correct_numbers(self):
-        pay = Pay()
-        res, info = pay.validate_number("1111 2222")
+        #pay = Pay()
+        res, info = Pay.validate_number("1111 2222")
         self.assertTrue(res)
-        res, info = pay.validate_number("4")
+        res, info = Pay.validate_number("4")
         self.assertTrue(res)
-        res, info = pay.validate_number("12 4 6 8")
+        res, info = Pay.validate_number("12 4 6 8")
         self.assertTrue(res)
 
     def test_incorrect_numbers(self):
-        pay = Pay()
-        res, info = pay.validate_number("1111 2220")
+        #pay = Pay()
+        res, info = Pay.validate_number("1111 2220")
         self.assertFalse(res)
-        res, info = pay.validate_number("4999 9009")
+        res, info = Pay.validate_number("4999 9009")
         self.assertFalse(res)
-        res, info = pay.validate_number("12q4q6q8")
+        res, info = Pay.validate_number("12q4q6q8")
         self.assertFalse(res)
 
 
@@ -159,8 +160,8 @@ class TestPayOneBill(TestCase):
     def test_pay_correct_bill(self):
         payment = Payment.objects.create(order_number=29, card_number="8613 3334",
                                          sum_to_pay=52.6, status=0)
-        pay = Pay()
-        res = pay.pay(payment)
+        # pay = Pay()
+        res = Pay.pay(payment)
         payment.refresh_from_db()
         self.assertTrue(res)
         self.assertEqual(payment.status, 1)
@@ -168,8 +169,35 @@ class TestPayOneBill(TestCase):
     def test_nopay_not_correct_bill(self):
         payment = Payment.objects.create(order_number=29, card_number="8613 3337",
                                          sum_to_pay=52.6, status=0)
-        pay = Pay()
-        res = pay.pay(payment)
+        #pay = Pay()
+        res = Pay.pay(payment)
         payment.refresh_from_db()
         self.assertFalse(res)
         self.assertTrue(payment.status > 1)
+
+
+class TestTask(TestCase):
+    def test_empty_line(self):
+        pay_actual_bills()
+        self.assertEqual(Payment.objects.count(), 0)
+
+    def test_curr_bills(self):
+        # несколько счетов в базе данных - "новым" должны поменяться статусы, на правильные
+        # ненужным - статус не должен трогаться (даже если изначально записан неверный код)
+        p1 = Payment.objects.create(order_number=29, card_number="8613 3334",
+                                    sum_to_pay=52.6, status=0)
+        p2 = Payment.objects.create(order_number=35, card_number="8613 3337",
+                                    sum_to_pay=52.6, status=0)
+        p3 = Payment.objects.create(order_number=42, card_number="8613 3334",
+                                    sum_to_pay=52.6, status=42)
+        p4 = Payment.objects.create(order_number=66, card_number="8613 3331",
+                                    sum_to_pay=52.6, status=1)
+        pay_actual_bills()
+        p1.refresh_from_db()
+        self.assertTrue(p1.status == 1)
+        p2.refresh_from_db()
+        self.assertTrue(p2.status > 1)
+        p3.refresh_from_db()
+        self.assertTrue(p3.status == 42)
+        p4.refresh_from_db()
+        self.assertTrue(p4.status == 1)
