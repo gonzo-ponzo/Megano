@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.db import connection
 from django.contrib.auth import get_user_model
 from product.models import ProductCategory, Product, Manufacturer, Offer, Review
 from shop.models import Shop
@@ -149,15 +148,6 @@ class CatalogViewsSorting(TestCase):
         OrderOffer.objects.create(order=order, offer=offer1, price=1000, amount=10)
         OrderOffer.objects.create(order=order, offer=offer3, price=1000, amount=1)
 
-    @classmethod
-    def tearDownClass(cls):
-        super().tearDownClass()
-        with connection.cursor() as cursor:
-            # лучше выполнить такую команду
-            # SELECT setval(pg_get_serial_sequence('"user_customuser"','id'), coalesce(max("id"), 1),
-            # max("id") IS NOT null) FROM "user_customuser";
-            cursor.execute("TRUNCATE user_customuser RESTART IDENTITY CASCADE")
-
     def test_sort_by_newness(self):
         url = reverse('catalog-page')
         data = {'sort_by': 'new'}
@@ -245,12 +235,6 @@ class CatalogViewsFilter(TestCase):
         Offer.objects.create(shop=shop, product=p2, price=2000, amount=10)
         Offer.objects.create(shop=shop, product=p3, price=3000, amount=0)
 
-    @classmethod
-    def tearDownClass(cls):
-        super().tearDownClass()
-        with connection.cursor() as cursor:
-            cursor.execute("TRUNCATE user_customuser RESTART IDENTITY CASCADE")
-
     def test_filter_by_limited(self):
         url = reverse('catalog-page')
         data = {'fil_limit': 'on'}
@@ -296,3 +280,39 @@ class CatalogViewsFilter(TestCase):
         self.assertEqual(resp.status_code, 200)
         for product in resp.context['product_list']:
             self.assertGreater(product.rest, 0)
+
+
+class MainPageView(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        category = ProductCategory.objects.create(name='category', slug='category')
+        man = Manufacturer.objects.create(name='Manufacturer')
+
+        p1 = Product.objects.create(name='product_111', limited=False, category=category, manufacturer=man)
+        p2 = Product.objects.create(name='product_222', limited=True, category=category, manufacturer=man)
+        p3 = Product.objects.create(name='product_333', limited=True, category=category, manufacturer=man)
+
+        user = User.objects.create_user(email="testabcd@abcdtest.net", password="qwerty")
+        shop = Shop.objects.create(name='shop', description='description', phone='+71234567890', email='shop@shop.ru',
+                                   address='address', user=user)
+        offer1 = Offer.objects.create(shop=shop, product=p1, price=1000, amount=10)
+        Offer.objects.create(shop=shop, product=p2, price=1000, amount=10)
+        Offer.objects.create(shop=shop, product=p3, price=1000, amount=10)
+        order = Order.objects.create(user=user, city='city', address='address',
+                                     delivery_type=1, payment_type=1, status_type=1)
+
+        OrderOffer.objects.create(order=order, offer=offer1, price=1000, amount=5)
+
+    def test_view_url_exists_at_desired_location(self):
+        resp = self.client.get('')
+        self.assertEqual(resp.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        resp = self.client.get(reverse('main-page'))
+        self.assertEqual(resp.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        resp = self.client.get(reverse('main-page'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp, 'product/index.html')

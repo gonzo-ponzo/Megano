@@ -98,14 +98,17 @@ class MainPage(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["banners"] = BannerMain.get_cache_banners()
+
         products = FilterProductsResult()
         context['top_product'] = SortProductsResult(products.queryset).by_popularity()[:8]
+        context['daily_offer'] = daily_offer.product
+
         products.only_limited()
         context['limited_product'] = products.queryset.exclude(id=daily_offer.product_id).order_by('?')[:16]
+
         hot_product = FilterProductsResult()
         hot_product.with_promo()
         context['hot_product'] = hot_product.queryset[:9]
-        context['daily_offer'] = daily_offer.product
 
         return context
 

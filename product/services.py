@@ -1,17 +1,18 @@
 from random import randint
+from urllib.parse import urlencode
+from copy import copy
+from statistics import mean
 
 from django.db.models.query import QuerySet
 from django.db.models import F, Min, Max, Sum, Count, Avg
-from urllib.parse import urlencode
-
 from django.utils.translation import gettext_lazy as _
-from copy import copy
-from statistics import mean
+from django.utils import timezone
+from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
+
 from .models import Product, ProductImage, Offer, ProductProperty, Property, Review, ProductCategory
 from shop.models import Shop
 from user.models import CustomUser
-from django.shortcuts import get_object_or_404
 
 
 class ReviewForItem:
@@ -226,7 +227,7 @@ class FilterProductsResult:
             self.__queryset = self.__queryset.filter(name__icontains=self.title)
 
     def with_promo(self):
-        pass
+        self.__queryset = self.__queryset.filter(offer__promotionoffer__isnull=False)
 
     def only_actual(self):
         self.__queryset = self.__queryset.filter(rest__gt=0)
@@ -342,24 +343,49 @@ class SortProductsResult:
 class DailyOffer:
 
     def __init__(self):
-        self.__product: Product = self.__get_random_product()
+        self.__product = None
+        self.__day = None
+        self.__date_expired = None
+        self.change_product()
 
     @staticmethod
     def __get_random_product():
         queryset = FilterProductsResult.get_queryset_for_catalog()
         queryset = queryset.only('id', 'name', 'category__name')
-        queryset = queryset.filter(limited=True).filter(rest__gt=0)
-        count = queryset.count()
+        queryset_for_choice = queryset.filter(limited=True).filter(rest__gt=0)
+        if not queryset_for_choice:
+            queryset_for_choice = queryset
+        count = queryset_for_choice.count()
+        if count == 0:
+            return
         n = 0 if count == 1 else randint(0, count - 1)
         return queryset[n]
 
+    def change_product(self):
+        self.__product: Product = self.__get_random_product()
+        self.__date_expired = self.get_date_expired()
+        if self.__product:
+            self.__product.expired = (self.__date_expired + timezone.timedelta(days=1)).strftime('%d.%m.%Y %H:%M')
+
+    @staticmethod
+    def get_date_expired():
+        current_local_time = timezone.localtime(timezone=timezone.get_fixed_timezone(180))
+        tomorrow = current_local_time + timezone.timedelta(days=1)
+        date_exp = tomorrow.replace(hour=0, minute=0, second=0, microsecond=0)
+        # example of how to change expired date
+        # date_exp = (current_local_time + timezone.timedelta(minutes=1)).replace(second=0, microsecond=0)
+        return date_exp
+
     @property
     def product(self) -> Product:
+        if self.__date_expired < timezone.now():
+            self.change_product()
         return self.__product
 
     @property
     def product_id(self):
-        return self.__product.id
+        if self.__product:
+            return self.__product.id
 
 
 class SearchProduct:
