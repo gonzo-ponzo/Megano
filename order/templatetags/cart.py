@@ -14,6 +14,8 @@ def get_cart_len(request):
 @register.simple_tag()
 def get_cart_price(request):
     cart = Cart(request)
+    cart.refresh()
+
     return cart.get_total_price()
 
 

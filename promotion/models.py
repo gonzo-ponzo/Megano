@@ -44,7 +44,7 @@ class PromotionOffer(Timestampable):
     name = models.CharField(max_length=255, verbose_name=_("Название"))
     description = models.CharField(max_length=255, verbose_name=_("Описание"))
     discount_type_value = models.PositiveIntegerField(verbose_name=_("Значение правила акции"))
-    discount_decimals = models.PositiveIntegerField(default=0, verbose_name=_("Скидка"))
+    discount_decimals = models.DecimalField(default=0, max_digits=11, decimal_places=2, verbose_name=_("Скидка"))
     discount_percentage = models.PositiveIntegerField(default=0, verbose_name=_("%"))
     is_active = models.BooleanField(default=False, verbose_name=_("активная"))
     discount_type_id = models.ForeignKey(DiscountType, on_delete=models.DO_NOTHING, verbose_name=_("Тип акции"))
