@@ -16,9 +16,6 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import TemplateView, DetailView, CreateView, ListView
 
 
-daily_offer = DailyOffer()
-
-
 class CompareView(View):
     """
     Получение листа сравнений
@@ -96,9 +93,11 @@ class MainPage(TemplateView):
     template_name = "product/index.html"
 
     def get_context_data(self, **kwargs):
+
         context = super().get_context_data(**kwargs)
         context["banners"] = BannerMain.get_cache_banners()
 
+        daily_offer = DailyOffer()
         products = FilterProductsResult()
         context['top_product'] = SortProductsResult(products.queryset).by_popularity()[:8]
         context['daily_offer'] = daily_offer.product

@@ -342,11 +342,22 @@ class SortProductsResult:
 
 class DailyOffer:
 
-    def __init__(self):
-        self.__product = None
-        self.__day = None
-        self.__date_expired = None
-        self.change_product()
+    __instance = None
+    __not_use = True
+
+    def __new__(cls, *args, **kwargs):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+        return cls.__instance
+
+    def __init__(self) -> None:
+        if self.__class__.__not_use:
+            # Задаем атрибуты для инициализации первого и единственного экземпляра
+            self.__class__.__not_use = False
+            self.__product = None
+            self.__day = None
+            self.__date_expired = None
+            self.change_product()
 
     @staticmethod
     def __get_random_product():
@@ -359,7 +370,7 @@ class DailyOffer:
         if count == 0:
             return
         n = 0 if count == 1 else randint(0, count - 1)
-        return queryset[n]
+        return queryset_for_choice[n]
 
     def change_product(self):
         self.__product: Product = self.__get_random_product()
@@ -373,7 +384,7 @@ class DailyOffer:
         tomorrow = current_local_time + timezone.timedelta(days=1)
         date_exp = tomorrow.replace(hour=0, minute=0, second=0, microsecond=0)
         # example of how to change expired date
-        # date_exp = (current_local_time + timezone.timedelta(minutes=1)).replace(second=0, microsecond=0)
+        date_exp = (current_local_time + timezone.timedelta(minutes=1)).replace(second=0, microsecond=0)
         return date_exp
 
     @property
