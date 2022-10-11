@@ -46,6 +46,7 @@ def cart_clear(request):
 def cart_view(request):
     if request.method == "GET":
         cart = Cart(request)
+        print(cart.cart)
 
         return render(
             request, "order/cart.html", {"cart": cart, "cart_counter": len(cart), "cart_price": cart.get_total_price()}
