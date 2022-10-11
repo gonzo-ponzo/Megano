@@ -384,7 +384,7 @@ class DailyOffer:
         tomorrow = current_local_time + timezone.timedelta(days=1)
         date_exp = tomorrow.replace(hour=0, minute=0, second=0, microsecond=0)
         # example of how to change expired date
-        date_exp = (current_local_time + timezone.timedelta(minutes=1)).replace(second=0, microsecond=0)
+        # date_exp = (current_local_time + timezone.timedelta(minutes=1)).replace(second=0, microsecond=0)
         return date_exp
 
     @property

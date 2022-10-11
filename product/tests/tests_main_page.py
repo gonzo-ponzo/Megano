@@ -18,6 +18,9 @@ class MainPageView(TestCase):
         p1 = Product.objects.create(name='product_111', limited=False, category=category, manufacturer=man)
         p2 = Product.objects.create(name='product_222', limited=True, category=category, manufacturer=man)
         p3 = Product.objects.create(name='product_333', limited=True, category=category, manufacturer=man)
+        for i in range(32):
+            Product.objects.create(name=f'product_lim_{i}', limited=True, category=category, manufacturer=man)
+            Product.objects.create(name=f'product_{i}', limited=False, category=category, manufacturer=man)
 
         user = User.objects.create_user(email="testabcd@abcdtest.net", password="qwerty")
         shop = Shop.objects.create(name='shop', description='description', phone='+71234567890', email='shop@shop.ru',
@@ -42,3 +45,19 @@ class MainPageView(TestCase):
         resp = self.client.get(reverse('main-page'))
         self.assertEqual(resp.status_code, 200)
         self.assertTemplateUsed(resp, 'product/index.html')
+
+    def test_need_context_in_response(self):
+        resp = self.client.get(reverse('main-page'))
+        context = resp.context
+        self.assertIsNotNone(context.get('banners'))
+        self.assertIsNotNone(context.get('top_product'))
+        self.assertIsNotNone(context.get('daily_offer'))
+        self.assertIsNotNone(context.get('limited_product'))
+        self.assertIsNotNone(context.get('hot_product'))
+
+    def test_top_product_count(self):
+        top_product_count = 8
+        resp = self.client.get(reverse('main-page'))
+        top_product = resp.context['top_product']
+        self.assertLessEqual(len(top_product), top_product_count)
+
