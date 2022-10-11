@@ -1,6 +1,8 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from product.models import ProductCategory, Product, Manufacturer, Offer
+from promotion.models import DiscountType, PromotionOffer
+from product.services import DailyOffer
 from shop.models import Shop
 from order.models import Order, OrderOffer
 from django.urls import reverse
@@ -18,13 +20,24 @@ class MainPageView(TestCase):
         p1 = Product.objects.create(name='product_111', limited=False, category=category, manufacturer=man)
         p2 = Product.objects.create(name='product_222', limited=True, category=category, manufacturer=man)
         p3 = Product.objects.create(name='product_333', limited=True, category=category, manufacturer=man)
-        for i in range(32):
-            Product.objects.create(name=f'product_lim_{i}', limited=True, category=category, manufacturer=man)
-            Product.objects.create(name=f'product_{i}', limited=False, category=category, manufacturer=man)
-
         user = User.objects.create_user(email="testabcd@abcdtest.net", password="qwerty")
         shop = Shop.objects.create(name='shop', description='description', phone='+71234567890', email='shop@shop.ru',
                                    address='address', user=user)
+        discount_type = DiscountType.objects.create(description='description')
+        active_promotion = PromotionOffer.objects.create(name='active_promo', description='description',
+                                                         discount_type_value=1, is_active=True,
+                                                         discount_type_id=discount_type)
+        non_active_promotion = PromotionOffer.objects.create(name='non_active_promo', description='description',
+                                                             discount_type_value=1, is_active=False,
+                                                             discount_type_id=discount_type)
+        for i in range(32):
+            p_lim = Product.objects.create(name=f'product_lim_{i}', limited=True, category=category, manufacturer=man)
+            p = Product.objects.create(name=f'product_{i}', limited=False, category=category, manufacturer=man)
+            of1 = Offer.objects.create(shop=shop, product=p_lim, price=1000, amount=10)
+            of2 = Offer.objects.create(shop=shop, product=p, price=1000, amount=10)
+            non_active_promotion.offer.add(of1)
+            active_promotion.offer.add(of2)
+
         offer1 = Offer.objects.create(shop=shop, product=p1, price=1000, amount=10)
         Offer.objects.create(shop=shop, product=p2, price=1000, amount=10)
         Offer.objects.create(shop=shop, product=p3, price=1000, amount=10)
@@ -59,5 +72,41 @@ class MainPageView(TestCase):
         top_product_count = 8
         resp = self.client.get(reverse('main-page'))
         top_product = resp.context['top_product']
-        self.assertLessEqual(len(top_product), top_product_count)
+        self.assertEqual(len(top_product), top_product_count)
 
+    def test_limited_product_count(self):
+        limited_product_count = 16
+        resp = self.client.get(reverse('main-page'))
+        limited_product = resp.context['limited_product']
+        self.assertEqual(len(limited_product), limited_product_count)
+
+    def test_hot_product_count(self):
+        hot_product_count = 9
+        resp = self.client.get(reverse('main-page'))
+        hot_product = resp.context['hot_product']
+        self.assertEqual(len(hot_product), hot_product_count)
+
+    def test_sort_top_product_by_popularity(self):
+        resp = self.client.get(reverse('main-page'))
+        top_product = resp.context['top_product']
+        self.assertTrue(top_product[0].order_count > top_product[1].order_count)
+
+    def test_if_limited_product_relly_limited(self):
+        resp = self.client.get(reverse('main-page'))
+        limited_product = resp.context['limited_product']
+        for product in limited_product:
+            self.assertTrue(product.limited)
+
+    def test_daily_offer_not_in_limited_product(self):
+        daily_offer_id = DailyOffer().product_id
+        resp = self.client.get(reverse('main-page'))
+        limited_product = resp.context['limited_product']
+        for product in limited_product:
+            self.assertNotEqual(daily_offer_id, product.id)
+
+    def test_hot_product_is_relly_hot_and_promo_active(self):
+        resp = self.client.get(reverse('main-page'))
+        hot_product = resp.context['hot_product']
+        for product in hot_product:
+            promo = PromotionOffer.objects.filter(is_active=True).filter(offer__product_id=product.id)
+            self.assertGreaterEqual(promo.count(), 1)

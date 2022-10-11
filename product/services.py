@@ -227,7 +227,7 @@ class FilterProductsResult:
             self.__queryset = self.__queryset.filter(name__icontains=self.title)
 
     def with_promo(self):
-        self.__queryset = self.__queryset.filter(offer__promotionoffer__isnull=False)
+        self.__queryset = self.__queryset.filter(offer__promotionoffer__is_active=True)
 
     def only_actual(self):
         self.__queryset = self.__queryset.filter(rest__gt=0)
@@ -353,7 +353,6 @@ class DailyOffer:
     def __init__(self) -> None:
         if self.__class__.__not_use:
             # Задаем атрибуты для инициализации первого и единственного экземпляра
-            self.__class__.__not_use = False
             self.__product = None
             self.__day = None
             self.__date_expired = None
@@ -376,7 +375,10 @@ class DailyOffer:
         self.__product: Product = self.__get_random_product()
         self.__date_expired = self.get_date_expired()
         if self.__product:
+            self.__class__.__not_use = False
             self.__product.expired = (self.__date_expired + timezone.timedelta(days=1)).strftime('%d.%m.%Y %H:%M')
+        else:
+            self.__class__.__not_use = True
 
     @staticmethod
     def get_date_expired():
