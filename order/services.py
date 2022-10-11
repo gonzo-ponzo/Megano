@@ -1,4 +1,3 @@
-from decimal import Decimal
 from django.conf import settings
 from order.models import Offer
 from product.models import ProductImage, Product
@@ -22,16 +21,31 @@ class Cart(object):
         """
         Инициализация корзины
         """
-        if request.user.is_authenticated:
-            cart = request.user.cart
-        else:
-            self.session = request.session
-            cart = self.session.get(settings.CART_SESSION_ID)
-            if not cart:
-                cart = self.session[settings.CART_SESSION_ID] = {}
-
         self.request = request
-        self.cart = cart
+
+        self.session = request.session
+        cart = self.session.get(settings.CART_SESSION_ID)
+        if not cart:
+            cart = self.session[settings.CART_SESSION_ID] = {}
+
+        if request.user.is_authenticated:
+            self.cart = request.user.cart
+            if not cart == {}:
+                for shop in cart.keys():
+                    for product in cart[shop]:
+                        quantity = cart[shop][product]["quantity"]
+                        if self.cart.get(shop):
+                            if self.cart[shop].get(product):
+                                if self.cart[shop][product]["quantity"] < quantity:
+                                    self.cart[shop][product] = cart[shop][product]
+                            else:
+                                self.cart[shop][product] = cart[shop][product]
+                        else:
+                            self.cart[shop] = cart[shop]
+                self.save()
+                self.session[settings.CART_SESSION_ID] = {}
+        else:
+            self.cart = cart
 
     def __iter__(self):
         """
@@ -39,20 +53,6 @@ class Cart(object):
         """
         for shop in self.cart:
             for product in self.cart[shop].keys():
-                item = self.cart[shop][product]
-                item["shop_id"] = shop
-                item["shop_name"] = get_shop_by_id(shop)
-                item["product_id"] = product
-                item["product_name"] = get_name_by_product(product)
-                item["product_image"] = get_main_pic_by_product(product)
-                item["offer_price"] = get_product_price_by_shop(shop, product)
-                item["limits"] = get_shop_limit(shop, product)
-                for discount in item["discount"]:
-                    if not PromotionOffer.objects.filter(is_active=True, id=int(discount)):
-                        item["discount"][discount] = 0
-                        self.save()
-        for shop in self.cart:
-            for product in self.cart[shop]:
                 yield self.cart[shop][product]
 
     def __len__(self):
@@ -70,7 +70,7 @@ class Cart(object):
         Получение величины скидки на основе корзины
         """
         offer = get_object_or_404(Offer, product_id=product_id, shop_id=shop_id)
-        promotion_offers = PromotionOffer.objects.filter(offer=offer, is_active=True).all()
+        promotion_offers = PromotionOffer.objects.prefetch_related().filter(offer=offer, is_active=True).all()
 
         for promotion in promotion_offers:
             # Временная акция на товар
@@ -83,27 +83,27 @@ class Cart(object):
 
             # Скидка на сумму корзины
             elif promotion.discount_type_id.id == 3:
-                self.get_discount_three(shop_id, product_id, promotion)
+                self.get_discount_three(shop_id, promotion)
 
             # Скидка при покупке более N товаров в корзине
             elif promotion.discount_type_id.id == 4:
-                self.get_discount_four(shop_id, product_id, promotion)
+                self.get_discount_four(shop_id, promotion)
 
             # Скидка при покупке с товаром из N категории
             elif promotion.discount_type_id.id == 5:
-                self.get_discount_five(shop_id, product_id)
+                self.get_discount_five(shop_id, product_id, promotion)
 
     def get_discount_one(self, shop_id: str, product_id: str, promotion: PromotionOffer):
         self.cart[shop_id][product_id].setdefault("discount", {promotion.id: 0})
 
         if promotion.discount_decimals != 0:
             self.cart[shop_id][product_id]["discount"][
-                str(promotion.id)] = promotion.discount_decimals
+                str(promotion.id)] = round(float(promotion.discount_decimals), 2)
 
         else:
             price = self.cart[shop_id][product_id]["price"]
             self.cart[shop_id][product_id]["discount"][str(promotion.id)] = (
-                    price * (100 - promotion.discount_percentage) / 100
+                round(float(price * (100 - promotion.discount_percentage) / 100, 2))
             )
 
     def get_discount_two(self, shop_id: str, product_id: str, promotion: PromotionOffer):
@@ -120,10 +120,10 @@ class Cart(object):
             self.cart[shop_id][product_id]["discount"][str(promotion.id)] = 0
         else:
             self.cart[shop_id][product_id]["discount"][str(promotion.id)] = (
-                    (quantity // discount_value) * price / quantity
+                round(float((quantity // discount_value) * price / quantity, 2))
             )
 
-    def get_discount_three(self, shop_id: str, product_id: str, promotion: PromotionOffer):
+    def get_discount_three(self, shop_id: str, promotion: PromotionOffer):
         shop_cart_price = 0
         shop_cart_amount = 0
 
@@ -145,7 +145,7 @@ class Cart(object):
                 if promotion.discount_decimals != 0:
                     self.cart[shop_id][product]["discount"][
                         str(promotion.id)] = (
-                            promotion.discount_decimals // shop_cart_amount
+                        round(float(promotion.discount_decimals // shop_cart_amount, 2))
                     )
 
                 else:
@@ -156,14 +156,14 @@ class Cart(object):
                                                       shop_id=shop_id).price)
                     self.cart[shop_id][product]["discount"][
                         str(promotion.id)] = int(
-                        price * promotion.discount_percentage / 100
+                        round(float(price * promotion.discount_percentage / 100), 2)
                     )
 
         else:
             for product in self.cart[shop_id]:
                 self.cart[shop_id][product]["discount"][str(promotion.id)] = 0
 
-    def get_discount_four(self, shop_id: str, product_id: str, promotion: PromotionOffer):
+    def get_discount_four(self, shop_id: str, promotion: PromotionOffer):
         shop_cart_amount = 0
 
         for product in self.cart[shop_id]:
@@ -178,23 +178,22 @@ class Cart(object):
                 if promotion.discount_decimals != 0:
                     self.cart[shop_id][product]["discount"][
                         str(promotion.id)] = (
-                            promotion.discount_decimals / shop_cart_amount
+                        round(float(promotion.discount_decimals / shop_cart_amount, 2))
                     )
 
                 else:
                     price = self.cart[shop_id][product]["offer_price"]
                     self.cart[shop_id][product]["discount"][
                         str(promotion.id)] = (
-                            price * (100 - promotion.discount_percentage) / 100
+                        round(float(price * (100 - promotion.discount_percentage) / 100, 2))
                     )
 
         else:
             for product in self.cart[shop_id]:
                 self.cart[shop_id][product]["discount"][str(promotion.id)] = 0
 
-    def get_discount_five(self, shop_id: str, product_id: str, promotion: PromotionOffer):
+    def get_discount_five(self, shop_id: str, product_id: str, promotion):
         flag = True
-
         for product in self.cart[shop_id]:
             if get_product_category_id(
                     product) == promotion.discount_type_value:
@@ -202,14 +201,14 @@ class Cart(object):
 
                 if promotion.discount_decimals != 0:
                     self.cart[shop_id][product_id]["discount"][
-                        str(promotion.id)] = promotion.discount_decimals
+                        str(promotion.id)] = round(float(promotion.discount_decimals), 2)
                     break
 
                 else:
                     price = self.cart[shop_id][product_id]["price"]
                     self.cart[shop_id][product_id]["discount"][
                         str(promotion.id)] = (
-                            price * (100 - promotion.discount_percentage) / 100
+                        round(float(price * (100 - promotion.discount_percentage) / 100, 2))
                     )
                     break
 
@@ -236,7 +235,7 @@ class Cart(object):
 
                 total_price += price * amount
 
-        return Decimal(total_price)
+        return round(total_price, 2)
 
     def check_limits(self, product_id: str, shop_id: str):
         """
@@ -254,13 +253,44 @@ class Cart(object):
         Подсчет итоговой скидки продукта в корзине
         """
         if self.cart[shop][product].get("offer_price"):
-            self.cart[shop][product]["final_price"] = int(self.cart[shop][product]["offer_price"])
+            self.cart[shop][product]["final_price"] = round(float(self.cart[shop][product]["offer_price"]), 2)
         else:
-            self.cart[shop][product]["final_price"] = int(get_object_or_404(Offer, product=product, shop=shop).price)
+            self.cart[shop][product]["final_price"] = round(
+                float(get_object_or_404(Offer, product=product, shop=shop).price), 2)
 
         self.cart[shop][product].setdefault("discount", {"0": 0})
         for discount in self.cart[shop][product]["discount"].values():
-            self.cart[shop][product]["final_price"] -= int(discount)
+            self.cart[shop][product]["final_price"] -= round(float(discount), 2)
+        self.save()
+
+    def update(self, product_id: int, shop_id: int):
+        """
+        Обновление данных в корзине
+        """
+        self.cart[shop_id].setdefault(product_id, {"quantity": 1})
+        self.cart[shop_id][product_id].setdefault("discount", {0: 0})
+        item = self.cart[shop_id][product_id]
+        item["offer_id"] = get_offer_id(shop_id, product_id)
+        item["shop_id"] = shop_id
+        item["shop_name"] = get_shop_by_id(shop_id)
+        item["product_id"] = product_id
+        item["product_name"] = get_name_by_product(product_id)
+        item["product_image"] = get_main_pic_by_product(product_id)
+        item["offer_price"] = get_product_price_by_shop(shop_id, product_id)
+        item["limits"] = get_shop_limit(shop_id, product_id)
+        for discount in item["discount"]:
+            if not PromotionOffer.objects.filter(is_active=True, id=int(discount)):
+                item["discount"][discount] = 0
+        for shop in self.cart:
+            for product in self.cart[shop]:
+                self.get_discount_price(product, shop)
+                self.get_total_discount(product, shop)
+        self.save()
+
+    def refresh(self):
+        for shop in self.cart.keys():
+            for product in self.cart[shop].keys():
+                self.update(product, shop)
         self.save()
 
     def add(self, product_id: str, shop_id: str, quantity: int = 1, update_quantity: bool = False):
@@ -273,12 +303,11 @@ class Cart(object):
             self.cart[shop_id][product_id] = {"quantity": quantity}
 
         if product_id not in self.cart[shop_id]:
-            self.cart[shop_id].setdefault(product_id, {"quantity": 1})
+            self.update(product_id, shop_id)
         else:
             self.cart[shop_id][product_id]["quantity"] += 1
+            self.update(product_id, shop_id)
 
-        self.get_discount_price(product_id, shop_id)
-        self.get_total_discount(product_id, shop_id)
         self.save()
 
     def lower(self, product_id: str, shop_id: str):
@@ -287,14 +316,16 @@ class Cart(object):
         """
         if self.cart[shop_id][product_id]["quantity"] > 0:
             self.cart[shop_id][product_id]["quantity"] -= 1
-            self.get_discount_price(product_id, shop_id)
-            self.get_total_discount(product_id, shop_id)
 
         if self.cart[shop_id][product_id]["quantity"] == 0:
             del self.cart[shop_id][product_id]
             if self.cart[shop_id] == {}:
                 del self.cart[shop_id]
 
+        for shop in self.cart:
+            for product in self.cart[shop]:
+                self.get_discount_price(product, shop)
+                self.get_total_discount(product, shop)
         self.save()
 
     def save(self):
@@ -316,6 +347,10 @@ class Cart(object):
             if self.cart[shop_id] == {}:
                 del self.cart[shop_id]
 
+        for shop in self.cart.keys():
+            for product in self.cart[shop].keys():
+                self.get_discount_price(product, shop)
+                self.get_total_discount(product, shop)
         self.save()
 
     def clear(self):
@@ -404,6 +439,10 @@ def get_shop_limit(shop_id: int, product_id: int):
     Получение остатка по предложению магазина
     """
     return get_object_or_404(Offer, shop_id=shop_id, product_id=product_id).amount
+
+
+def get_offer_id(shop: int, product: int):
+    return get_object_or_404(Offer, product=product, shop=shop).id
 
 
 def get_product_category(product_id: str):
