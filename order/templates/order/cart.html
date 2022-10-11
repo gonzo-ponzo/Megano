@@ -85,7 +85,8 @@
               <strong class="Cart-title">Итого:
               </strong><span class="Cart-price">{{ cart_price }}$</span>
             </div>
-            <div class="Cart-block"><a class="btn btn_success btn_lg" href="/order">Оформить заказ</a>
+            <div class="Cart-block">
+                <a class="btn btn_success btn_lg" href="{% url 'order:create-order' %}">Оформить заказ</a>
             </div>
           </div>
         </form>

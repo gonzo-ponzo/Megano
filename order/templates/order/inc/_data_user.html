@@ -1,0 +1,23 @@
+<div class="row-block">
+    <div class="Order-info">
+        <div class="Order-infoType">ФИО:
+        </div>
+        <div class="Order-infoContent">
+            {{ request.user.last_name }} {{ request.user.first_name }} {% firstof request.user.middle_name %}
+        </div>
+    </div>
+    <div class="Order-info">
+        <div class="Order-infoType">Телефон:
+        </div>
+        <div class="Order-infoContent">
+            {{ request.user.phone }}
+        </div>
+    </div>
+    <div class="Order-info">
+        <div class="Order-infoType">E-mail:
+        </div>
+        <div class="Order-infoContent">
+            {{ request.user.email }}
+        </div>
+    </div>
+</div>
