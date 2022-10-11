@@ -1,9 +1,11 @@
+from decimal import Decimal
 from django.conf import settings
-from order.models import Offer
+from order.models import Offer, Delivery
 from product.models import ProductImage, Product
 from shop.models import Shop
 from django.shortcuts import get_object_or_404
 from promotion.models import PromotionOffer
+from typing import Dict, Tuple
 
 
 class Cart(object):
@@ -365,10 +367,62 @@ class Cart(object):
             self.session.modified = True
 
 
-class Order:
-    """
-    Составление заказа
-    """
+class OrderFormation:
+    """Составление заказа"""
+
+    @classmethod
+    def get_data_from_cart(cls, shops: Dict) -> Dict:
+        """Формирование данных из корзины"""
+        data_products = []
+        full_total_price = 0
+        total_price = 0
+
+        for products in shops.values():
+            for product in products.values():
+                product["discount"] = Decimal(str(sum(product.pop("discount").values())))
+
+                # пока Никита не добавит в структуру корзины offer_id
+                if product.get("offer_id") is None:
+                    offer = (
+                        Offer.objects.values("pk")
+                        .filter(shop_id=int(product.get("shop_id")), product_id=int(product.get("product_id")))
+                        .first()
+                    )
+                    product["offer_id"] = offer.get("pk")
+
+                full_total_price += product.get("quantity", 1) * Decimal(str(product.get("offer_price")))
+                total_price += product.get("quantity", 1) * Decimal(str(product.get("final_price")))
+                data_products.append(product)
+
+        delivery_id, total = cls._get_data_delivery(
+            shop_cnt=len(shops), full_total_price=full_total_price, total_price=total_price
+        )
+        order = {"products": data_products, "delivery_id": delivery_id, "total": total}
+        return order
+
+    @staticmethod
+    def _get_data_delivery(shop_cnt: int, full_total_price: Decimal, total_price: Decimal) -> Tuple[int, Dict]:
+        """Формирования итоговых цен с учетом доставки"""
+        delivery_key = ("normal", "express")
+        delivery = Delivery.objects.order_by("-updated_at").first()
+        total = {}
+
+        for key in delivery_key:
+            if key == delivery_key[0]:
+                if shop_cnt == 1 and total_price > delivery.sum_order:
+                    delivery_price = 0
+                else:
+                    delivery_price = delivery.price
+            else:
+                delivery_price = delivery.price + delivery.express_price
+
+            total[key] = {
+                "delivery_price": delivery_price,
+                "full_total_price": full_total_price + delivery_price,
+                "total_price": total_price + delivery_price,
+            }
+
+        return delivery.pk, total
 
     def set_user_param(self):
         """Уточнить параметры пользователя"""
