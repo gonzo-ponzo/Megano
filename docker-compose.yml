@@ -47,6 +47,21 @@ services:
       - web_net
     container_name: python_django_team-redis_db  
 
+  celery:
+    restart: always
+    build:
+      context: .
+    command: celery -A app worker -l info
+    volumes:
+      - .:/code/
+    depends_on:
+      - db
+      - redis_db
+      - web
+    networks:
+      - web_net  
+    container_name: python_django_team-celery  
+
 volumes:
   postgres_data:
   redis_data:
