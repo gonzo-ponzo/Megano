@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.conf import settings
-from product.tests import ProductCategoryCacheCleanTest
+from product.tests.test_product_category import ProductCategoryCacheCleanTest
 from .models import Banner
 from product.models import Product
 from django.urls import reverse
