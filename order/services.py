@@ -380,16 +380,6 @@ class OrderFormation:
         for products in shops.values():
             for product in products.values():
                 product["discount"] = Decimal(str(sum(product.pop("discount").values())))
-
-                # пока Никита не добавит в структуру корзины offer_id
-                if product.get("offer_id") is None:
-                    offer = (
-                        Offer.objects.values("pk")
-                        .filter(shop_id=int(product.get("shop_id")), product_id=int(product.get("product_id")))
-                        .first()
-                    )
-                    product["offer_id"] = offer.get("pk")
-
                 full_total_price += product.get("quantity", 1) * Decimal(str(product.get("offer_price")))
                 total_price += product.get("quantity", 1) * Decimal(str(product.get("final_price")))
                 data_products.append(product)
