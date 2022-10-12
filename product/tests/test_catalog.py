@@ -1,59 +1,11 @@
 from django.test import TestCase
-from django.db import connection
 from django.contrib.auth import get_user_model
 from product.models import ProductCategory, Product, Manufacturer, Offer, Review
 from shop.models import Shop
 from order.models import Order, OrderOffer
-from django.core.cache import cache
-from django.conf import settings
 from django.urls import reverse
 
 User = get_user_model()
-
-
-class ProductCategoryTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        parent_name = "parent"
-        parent = ProductCategory.objects.create(name=parent_name, slug=parent_name)
-        for i in range(3):
-            child_name = f"child{i}"
-            ProductCategory.objects.create(name=child_name, slug=child_name, parent=parent)
-
-    def test_check_delete_parent_with_child(self):
-        category = ProductCategory.objects
-        category.get(name="child1").delete()
-        self.assertEquals(category.count(), 3)
-        category.filter(name="parent").delete()
-        self.assertEquals(category.count(), 0)
-
-
-class ProductCategoryCacheCleanTest(TestCase):
-    fixtures = ["product_category.json", "manufacturer.json", "product.json", "banner.json"]
-    _model = ProductCategory
-    _cache_key = settings.CACHE_KEY_PRODUCT_CATEGORY
-
-    @classmethod
-    def _create_object(cls):
-        cls._model.objects.create(name="new")
-
-    @classmethod
-    def _update_object(cls):
-        obj = cls._model.objects.first()
-        obj.name = "new"
-        obj.save()
-
-    @classmethod
-    def _delete_object(cls):
-        cls._model.objects.first().delete()
-
-    def test_cache_clean_model(self):
-        funcs = (self._create_object, self._update_object, self._delete_object)
-        for func in funcs:
-            self.client.get(reverse("main-page"))
-            self.assertTrue(cache.get(self._cache_key))
-            func()
-            self.assertFalse(cache.get(self._cache_key))
 
 
 class CatalogViewTest(TestCase):
@@ -149,15 +101,6 @@ class CatalogViewsSorting(TestCase):
         OrderOffer.objects.create(order=order, offer=offer1, price=1000, amount=10)
         OrderOffer.objects.create(order=order, offer=offer3, price=1000, amount=1)
 
-    @classmethod
-    def tearDownClass(cls):
-        super().tearDownClass()
-        with connection.cursor() as cursor:
-            # лучше выполнить такую команду
-            # SELECT setval(pg_get_serial_sequence('"user_customuser"','id'), coalesce(max("id"), 1),
-            # max("id") IS NOT null) FROM "user_customuser";
-            cursor.execute("TRUNCATE user_customuser RESTART IDENTITY CASCADE")
-
     def test_sort_by_newness(self):
         url = reverse('catalog-page')
         data = {'sort_by': 'new'}
@@ -244,12 +187,6 @@ class CatalogViewsFilter(TestCase):
         Offer.objects.create(shop=shop, product=p1, price=1000, amount=10)
         Offer.objects.create(shop=shop, product=p2, price=2000, amount=10)
         Offer.objects.create(shop=shop, product=p3, price=3000, amount=0)
-
-    @classmethod
-    def tearDownClass(cls):
-        super().tearDownClass()
-        with connection.cursor() as cursor:
-            cursor.execute("TRUNCATE user_customuser RESTART IDENTITY CASCADE")
 
     def test_filter_by_limited(self):
         url = reverse('catalog-page')

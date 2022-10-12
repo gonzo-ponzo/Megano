@@ -1,15 +1,18 @@
-from django.db.models.query import QuerySet
-from django.db.models import F, Min, Max, Sum, Count, Avg
+from random import randint
 from urllib.parse import urlencode
-
-from django.utils.translation import gettext_lazy as _
 from copy import copy
 from statistics import mean
+
+from django.db.models.query import QuerySet
+from django.db.models import F, Min, Max, Sum, Count, Avg
+from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
+from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
+
 from .models import Product, ProductImage, Offer, ProductProperty, Property, Review, ProductCategory
 from shop.models import Shop
 from user.models import CustomUser
-from django.shortcuts import get_object_or_404
 
 
 class ReviewForItem:
@@ -165,7 +168,7 @@ class FilterProductsResult:
         :param get_params: параметры строки запроса
         """
 
-        self.products = self.get_queryset_for_catalog()
+        self.__queryset = self.get_queryset_for_catalog()
 
         self.title = get_params.get('fil_title', None)
         self.actual = bool(get_params.get('fil_actual'))
@@ -183,12 +186,18 @@ class FilterProductsResult:
         queryset = queryset.prefetch_related('productimage_set')
         queryset = queryset.select_related('category')
         # queryset = queryset.prefetch_related('shop')
-        queryset = queryset.annotate(offer_count=Count('offer'))
+        queryset = queryset.annotate(offer_count=Count('offer', distinct=True))
         queryset = queryset.annotate(min_price=Min('offer__price'))
+        queryset = queryset.annotate(review_count=Count('review', distinct=True))
         queryset = queryset.annotate(rating=Avg('review__rating', default=0))
-        queryset = queryset.annotate(order_count=Sum('offer__orderoffer__amount', default=0))
+        queryset = queryset.annotate(rest=Sum('offer__amount', distinct=True))
+        queryset = queryset.annotate(order_count=Sum('offer__orderoffer__amount', default=0, distinct=True))
         queryset = queryset.order_by('pk')
         return queryset
+
+    @property
+    def queryset(self):
+        return self.__queryset
 
     @classmethod
     def make_filter_part_url(cls, get_params: dict):
@@ -199,7 +208,7 @@ class FilterProductsResult:
         """
         :return: словарь с максимальной и минимальной стоимостью текущего набора продуктов
         """
-        return self.products.aggregate(min=Min('min_price'), max=Max('min_price'))
+        return self.__queryset.aggregate(min=Min('min_price'), max=Max('min_price'))
 
     def all_filter_without_price(self) -> None:
         """Отфильтровать self.products по всем параметрам, кроме цены"""
@@ -211,28 +220,30 @@ class FilterProductsResult:
             self.only_limited()
 
     def by_category(self, category: ProductCategory):
-        self.products = self.products.filter(category__in=category.get_descendants(include_self=True))
+        self.__queryset = self.__queryset.filter(category__in=category.get_descendants(include_self=True))
 
     def by_keywords(self):
         if self.title:
-            self.products = self.products.filter(name__icontains=self.title)
+            self.__queryset = self.__queryset.filter(name__icontains=self.title)
+
+    def with_promo(self):
+        self.__queryset = self.__queryset.filter(offer__promotionoffer__is_active=True)
 
     def only_actual(self):
-        self.products = self.products.annotate(rest=Sum('offer__amount'))
-        self.products = self.products.filter(rest__gt=0)
+        self.__queryset = self.__queryset.filter(rest__gt=0)
 
     def only_limited(self):
-        self.products = self.products.filter(limited=True)
+        self.__queryset = self.__queryset.filter(limited=True)
 
     def by_shop(self):
         """Фильтрация по продавцу"""
         if self.shop:
-            self.products = self.products.filter(shop__name=self.shop)
+            self.__queryset = self.__queryset.filter(shop__name=self.shop)
 
     def by_price(self):
         """Фильтрация по цене"""
         if self.min_price and self.max_price:
-            self.products = self.products.filter(min_price__gte=self.min_price, min_price__lte=self.max_price)
+            self.__queryset = self.__queryset.filter(min_price__gte=self.min_price, min_price__lte=self.max_price)
 
 
 class SortProductsResult:
@@ -250,7 +261,7 @@ class SortProductsResult:
     css_class_for_increment = 'Sort-sortBy_inc'
     css_class_for_decrement = 'Sort-sortBy_dec'
 
-    def __init__(self, products: QuerySet = None):
+    def __init__(self, products: QuerySet):
         """
         :param products: Queryset c необходимыми полями
         """
@@ -327,6 +338,67 @@ class SortProductsResult:
         if reverse:
             field = '-' + field
         return self.products.order_by(field)
+
+
+class DailyOffer:
+
+    __instance = None
+    __not_use = True
+
+    def __new__(cls, *args, **kwargs):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+        return cls.__instance
+
+    def __init__(self) -> None:
+        if self.__class__.__not_use:
+            # Задаем атрибуты для инициализации первого и единственного экземпляра
+            self.__product = None
+            self.__day = None
+            self.__date_expired = None
+            self.change_product()
+
+    @staticmethod
+    def __get_random_product():
+        queryset = FilterProductsResult.get_queryset_for_catalog()
+        queryset = queryset.only('id', 'name', 'category__name')
+        queryset_for_choice = queryset.filter(limited=True).filter(rest__gt=0)
+        if not queryset_for_choice:
+            queryset_for_choice = queryset
+        count = queryset_for_choice.count()
+        if count == 0:
+            return
+        n = 0 if count == 1 else randint(0, count - 1)
+        return queryset_for_choice[n]
+
+    def change_product(self):
+        self.__product: Product = self.__get_random_product()
+        self.__date_expired = self.get_date_expired()
+        if self.__product:
+            self.__class__.__not_use = False
+            self.__product.expired = (self.__date_expired + timezone.timedelta(days=1)).strftime('%d.%m.%Y %H:%M')
+        else:
+            self.__class__.__not_use = True
+
+    @staticmethod
+    def get_date_expired():
+        current_local_time = timezone.localtime(timezone=timezone.get_fixed_timezone(180))
+        tomorrow = current_local_time + timezone.timedelta(days=1)
+        date_exp = tomorrow.replace(hour=0, minute=0, second=0, microsecond=0)
+        # example of how to change expired date
+        # date_exp = (current_local_time + timezone.timedelta(minutes=1)).replace(second=0, microsecond=0)
+        return date_exp
+
+    @property
+    def product(self) -> Product:
+        if self.__date_expired < timezone.now():
+            self.change_product()
+        return self.__product
+
+    @property
+    def product_id(self):
+        if self.__product:
+            return self.__product.id
 
 
 class SearchProduct:
