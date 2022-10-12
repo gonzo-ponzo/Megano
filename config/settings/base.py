@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     "user",
     "order",
     "payment",
+    "django_celery_beat",
+    "django_celery_results",
 ]
 
 AUTH_USER_MODEL = "user.CustomUser"
@@ -138,6 +140,8 @@ DATABASES = {
         "PORT": 5432,
     }
 }
+
+CELERY_RESULT_BACKEND = 'django-db'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
