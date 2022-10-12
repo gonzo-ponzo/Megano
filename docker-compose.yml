@@ -41,17 +41,18 @@ services:
 
   redis_db:
     image: redis:alpine
+    restart: always
     volumes:
       - redis_data:/data
     networks:
       - web_net
     container_name: python_django_team-redis_db  
 
-  celery:
+  celeryw:
     restart: always
     build:
       context: .
-    command: celery -A app worker -l info
+    command: celery -A payment worker -l info
     volumes:
       - .:/code/
     depends_on:
@@ -60,7 +61,22 @@ services:
       - web
     networks:
       - web_net  
-    container_name: python_django_team-celery  
+    container_name: python_django_team-celery_worker
+
+  celeryb:
+    restart: always
+    build:
+      context: .
+    command: celery -A payment beat -l info -S django
+    volumes:
+      - .:/code/
+    depends_on:
+      - db
+      - redis_db
+      - web
+    networks:
+      - web_net  
+    container_name: python_django_team-celery_beat
 
 volumes:
   postgres_data:
