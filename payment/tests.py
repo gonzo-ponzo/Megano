@@ -11,7 +11,7 @@ class TestAddBill2Payment(TestCase):
     def test_correct_new_bill(self):
         url = reverse("one_payment", args=[77])
         data = {"card_number": "1111 2223",
-                "sum_to_pay": 22.33}
+                "sum_to_pay": "22.33"}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "status")
@@ -26,7 +26,7 @@ class TestAddBill2Payment(TestCase):
 
     def test_correct_new_bill_int_sum(self):
         url = reverse("one_payment", args=[34])
-        data = {"card_number": "1234 5678",
+        data = {"card_number": 12345678,
                 "sum_to_pay": 22}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
@@ -36,7 +36,7 @@ class TestAddBill2Payment(TestCase):
         self.assertEqual(payments.count(), 1)
         payment = payments.first()
         self.assertEqual(payment.order_number, 34)
-        self.assertEqual(payment.card_number, "1234 5678")
+        self.assertEqual(payment.card_number, "12345678")
         self.assertEqual(payment.sum_to_pay, Decimal("22"))
         self.assertEqual(payment.status, 0)
 
