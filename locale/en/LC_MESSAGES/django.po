@@ -8,23 +8,28 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-13 12:21+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2022-10-13 15:58+0000\n"
+"PO-Revision-Date: 2022-10-13 15:58+0000\n"
+"Last-Translator: Алексеевич Денис <admin@admin.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Translated-Using: django-rosetta 0.9.8\n"
 
-#: config/settings/base.py:175
+#: config/settings/base.py:176
 msgid "Русский"
 msgstr "Russian"
 
-#: config/settings/base.py:176
+#: config/settings/base.py:177
 msgid "Английский"
 msgstr "English"
+
+#: order/apps.py:8 order/models.py:35
+msgid "заказы"
+msgstr "orders"
 
 #: order/models.py:12
 msgid "Доставка"
@@ -36,27 +41,30 @@ msgstr "Express delivery"
 
 #: order/models.py:13
 msgid "Онлайн картой"
-msgstr ""
+msgstr "By card online"
 
 #: order/models.py:13
 msgid "Онлайн со случайного чужого счёта"
-msgstr ""
+msgstr "Online from a random someone else's account"
 
 #: order/models.py:14
 msgid "Оплачен"
-msgstr ""
+msgstr "Paid"
 
 #: order/models.py:14
 msgid "Не оплачен"
-msgstr ""
+msgstr "Not paid"
 
 #: order/models.py:16
 msgid "Оплата не выполнена, на вашем счёте не хватает средств"
 msgstr ""
+"The payment has not been completed, there are not enough funds on your "
+"account"
 
 #: order/models.py:17
 msgid "Оплата не выполнена, произошел сбой при списании средств"
 msgstr ""
+"The payment was not completed, there was a failure when debiting funds"
 
 #: order/models.py:20 product/models.py:155 product/models.py:167
 #: user/models.py:90
@@ -103,210 +111,231 @@ msgstr "ordered products"
 msgid "заказ"
 msgstr "order"
 
-#: order/models.py:35
-msgid "заказы"
-msgstr "orders"
-
 #: order/models.py:42 product/models.py:45
 msgid "предложение магазина"
-msgstr ""
+msgstr "store offer"
 
 #: order/models.py:43 order/models.py:54 product/models.py:38
 msgid "цена"
-msgstr ""
+msgstr "price"
 
 #: order/models.py:44 product/models.py:39
 msgid "количество"
-msgstr ""
+msgstr "amount"
 
 #: order/models.py:47
 msgid "товар в заказе"
-msgstr ""
+msgstr "product in the order"
 
 #: order/models.py:48
 msgid "товары в заказе"
-msgstr ""
+msgstr "products in the order"
 
 #: order/models.py:55
 msgid "экспресс-цена"
-msgstr ""
+msgstr "express price"
 
 #: order/models.py:56
 msgid "мин. цена корзины"
-msgstr ""
+msgstr "min. cart price"
 
 #: order/models.py:59
 msgid "цена доставки"
-msgstr ""
+msgstr "shipping cost"
 
 #: order/models.py:60
 msgid "цены доставки"
-msgstr ""
+msgstr "shipping prices"
+
+#: payment/apps.py:8 payment/models.py:24
+msgid "платежи"
+msgstr "payments"
+
+#: payment/models.py:13
+msgid "номер заказа"
+msgstr "order number"
+
+#: payment/models.py:14
+msgid "номер карты"
+msgstr "card number"
+
+#: payment/models.py:15
+msgid "сумма к оплате"
+msgstr "amount to be paid"
+
+#: payment/models.py:16
+msgid "статус платежа"
+msgstr "payment status"
+
+#: payment/models.py:23
+msgid "платеж"
+msgstr "payment"
 
 #: product/admin.py:50
 msgid "сделать ограниченный тираж"
-msgstr ""
+msgstr "make a limited edition"
 
 #: product/admin.py:54
 msgid "отменить ограниченный тираж"
-msgstr ""
+msgstr "cancel the limited edition"
 
 #: product/admin.py:74
 msgid "количество продуктов"
-msgstr ""
+msgstr "number of products"
+
+#: product/apps.py:8 product/models.py:30
+msgid "продукты"
+msgstr "products"
 
 #: product/models.py:14 product/models.py:109
 msgid "наименование"
-msgstr ""
+msgstr "name"
 
 #: product/models.py:15 product/models.py:72 product/models.py:110
 #: product/models.py:137 promotion/models.py:13 promotion/models.py:28
-#: shop/models.py:21
+#: promotion/models.py:45 shop/models.py:21
 msgid "описание"
-msgstr ""
+msgstr "description"
 
 #: product/models.py:16
 msgid "ограниченный тираж"
-msgstr ""
+msgstr "limited edition"
 
 #: product/models.py:17 product/models.py:143
 msgid "производитель"
-msgstr ""
+msgstr "manufacturer"
 
 #: product/models.py:18 product/models.py:102
 msgid "категория"
-msgstr ""
+msgstr "category"
 
 #: product/models.py:19
 msgid "характеристики"
-msgstr ""
+msgstr "parameters"
 
 #: product/models.py:20 shop/models.py:64
 msgid "магазины"
-msgstr ""
+msgstr "shops"
 
 #: product/models.py:29 product/models.py:37 product/models.py:52
 #: product/models.py:123 product/models.py:154 product/models.py:168
 #: promotion/models.py:11
 msgid "продукт"
-msgstr ""
+msgstr "product"
 
-#: product/models.py:30
-msgid "продукты"
-msgstr ""
-
-#: product/models.py:36 shop/models.py:63 shop/models.py:78
+#: product/models.py:36 shop/apps.py:8 shop/models.py:63 shop/models.py:78
 msgid "магазин"
-msgstr ""
+msgstr "shop"
 
 #: product/models.py:46
 msgid "предложения магазина"
-msgstr ""
+msgstr "store offers"
 
-#: product/models.py:53 shop/models.py:73 user/models.py:48
+#: product/models.py:53 promotion/models.py:51 shop/models.py:73
+#: user/models.py:48
 msgid "фото"
-msgstr ""
+msgstr "photo"
 
 #: product/models.py:56
 msgid "изображение продукта"
-msgstr ""
+msgstr "product image"
 
 #: product/models.py:57
 msgid "изображения продукта"
-msgstr ""
+msgstr "product images"
 
 #: product/models.py:71 product/models.py:135 promotion/models.py:12
-#: shop/models.py:16
+#: promotion/models.py:44 shop/models.py:16
 msgid "название"
-msgstr ""
+msgstr "title"
 
 #: product/models.py:80
 msgid "родительская категория"
-msgstr ""
+msgstr "parent category"
 
 #: product/models.py:103
 msgid "категории"
-msgstr ""
+msgstr "categories"
 
 #: product/models.py:116
 msgid "свойство продукта"
-msgstr ""
+msgstr "product property"
 
 #: product/models.py:117
 msgid "свойства продукта"
-msgstr ""
+msgstr "product properties"
 
 #: product/models.py:124
 msgid "свойство"
-msgstr ""
+msgstr "property"
 
 #: product/models.py:125
 msgid "значение"
-msgstr ""
+msgstr "value"
 
 #: product/models.py:128
 msgid "значение свойства продукта"
-msgstr ""
+msgstr "value of the product property"
 
 #: product/models.py:129
 msgid "значения свойства продукта"
-msgstr ""
+msgstr "product property values"
 
 #: product/models.py:136 shop/models.py:45
 msgid "логотип"
-msgstr ""
+msgstr "logo"
 
 #: product/models.py:144
 msgid "производители"
-msgstr ""
+msgstr "manufacturers"
 
 #: product/models.py:156
 msgid "текст"
-msgstr ""
+msgstr "text"
 
 #: product/models.py:157
 msgid "рейтинг"
-msgstr ""
+msgstr "rating"
 
 #: product/models.py:160
 msgid "отзыв"
-msgstr ""
+msgstr "feedback"
 
 #: product/models.py:161
 msgid "отзывы"
-msgstr ""
+msgstr "reviews"
 
 #: product/models.py:171
 msgid "просмотренный продукт"
-msgstr ""
+msgstr "viewed product"
 
 #: product/models.py:172
 msgid "просмотренные продукты"
-msgstr ""
+msgstr "viewed products"
 
 #: product/services.py:256
 msgid "цене"
-msgstr ""
+msgstr "price"
 
 #: product/services.py:257
 msgid "популярности"
-msgstr ""
+msgstr "popularity"
 
 #: product/services.py:258
 msgid "рейтингу"
-msgstr ""
+msgstr "rating"
 
 #: product/services.py:259
 msgid "новизне"
-msgstr ""
+msgstr "newness"
 
 #: product/templates/product/catalog.html:19
 msgid "Каталог Megano"
-msgstr ""
+msgstr "Megano Catalog"
 
 #: product/templates/product/catalog.html:54
 msgid "Фильтры"
-msgstr ""
+msgstr "Filters"
 
 #: product/templates/product/catalog.html:63
 msgid "Цена"
@@ -316,12 +345,11 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"                            Товары отобраны по цене <br> от %(min)s до "
-"%(max)s руб.\n"
+"                            Товары отобраны по цене <br> от %(min)s до %(max)s руб.\n"
 "                        "
 msgstr ""
 
-#: product/templates/product/catalog.html:77 promotion/models.py:44
+#: product/templates/product/catalog.html:77
 msgid "Название"
 msgstr ""
 
@@ -421,7 +449,7 @@ msgstr ""
 msgid "Тэги"
 msgstr ""
 
-#: product/templates/product/product.html:73 promotion/models.py:45
+#: product/templates/product/product.html:73
 msgid "Описание"
 msgstr ""
 
@@ -447,72 +475,72 @@ msgstr ""
 
 #: promotion/admin.py:16
 msgid "сделать активным(и)"
-msgstr ""
+msgstr "make active"
 
 #: promotion/admin.py:20
 msgid "сделать неактивным(и)"
-msgstr ""
+msgstr "make inactive"
+
+#: promotion/admin.py:29
+msgid "миниатюра"
+msgstr "thumbnail"
 
 #: promotion/admin.py:59
 msgid "Активировать"
-msgstr ""
+msgstr "Activate"
 
 #: promotion/admin.py:63
 msgid "Деактивировать"
-msgstr ""
+msgstr "Deactivate"
+
+#: promotion/apps.py:8 promotion/models.py:62
+msgid "акции"
+msgstr "promotions"
 
 #: promotion/models.py:14 promotion/models.py:21
 msgid "баннер"
-msgstr ""
+msgstr "banner"
 
-#: promotion/models.py:15
+#: promotion/models.py:15 user/models.py:50
 msgid "активный"
-msgstr ""
+msgstr "active"
 
 #: promotion/models.py:22
 msgid "баннеры"
-msgstr ""
+msgstr "banners"
 
 #: promotion/models.py:31 promotion/models.py:50
-msgid "Тип акции"
-msgstr ""
+msgid "тип акции"
+msgstr "type of promotion"
 
 #: promotion/models.py:32
-msgid "Типы акций"
-msgstr ""
+msgid "типы акций"
+msgstr "types of promotions"
 
 #: promotion/models.py:46
-msgid "Значение правила акции"
-msgstr ""
+msgid "значение правила акции"
+msgstr "meaning of the promotion rule"
 
 #: promotion/models.py:47
-msgid "Скидка"
-msgstr ""
-
-#: promotion/models.py:48
-msgid "%"
-msgstr ""
+msgid "скидка"
+msgstr "discount"
 
 #: promotion/models.py:49
 msgid "активная"
-msgstr ""
+msgstr "active"
 
-#: promotion/models.py:51
-msgid "Фото"
-msgstr ""
+#: promotion/models.py:52
+msgid "предложения"
+msgstr "offers"
 
 #: promotion/models.py:61
 msgid "акция"
-msgstr ""
-
-#: promotion/models.py:62
-msgid "акции"
-msgstr ""
+msgstr "promotion"
 
 #: promotion/templates/promotion/promotion.html:15
 #: promotion/templates/promotion/promotions.html:16
 msgid "Акции"
-msgstr ""
+msgstr "promotions"
 
 #: promotion/templates/promotion/promotions.html:11
 msgid "Megano акции"
@@ -520,23 +548,23 @@ msgstr ""
 
 #: shop/models.py:27 user/models.py:46
 msgid "телефон"
-msgstr ""
+msgstr "telephone"
 
 #: shop/models.py:35 user/models.py:39
 msgid "электронная почта"
-msgstr ""
+msgstr "e-mail"
 
 #: shop/models.py:50
 msgid "владелец"
-msgstr ""
+msgstr "owner"
 
 #: shop/models.py:82
 msgid "фотография"
-msgstr ""
+msgstr "photo"
 
 #: shop/models.py:83
 msgid "фотографии"
-msgstr ""
+msgstr "photo"
 
 #: templates/admin/base_site.html:4
 msgid "Django site admin"
@@ -568,19 +596,23 @@ msgstr ""
 
 #: user/admin.py:21 user/admin.py:27
 msgid "Личные данные"
-msgstr ""
+msgstr "Personal data"
 
 #: user/admin.py:22
 msgid "Разрешения"
-msgstr ""
+msgstr "Permissions"
+
+#: user/apps.py:8 user/models.py:91
+msgid "пользователи"
+msgstr "users"
 
 #: user/forms.py:17 user/forms.py:59 user/forms.py:80 user/forms.py:112
 msgid "Пароль"
-msgstr ""
+msgstr "Password"
 
 #: user/forms.py:18 user/forms.py:86
 msgid "Подтвердите пароль"
-msgstr ""
+msgstr "Confirm password"
 
 #: user/forms.py:30
 msgid "Введенные пароли должны совпадать"
@@ -624,27 +656,35 @@ msgstr ""
 
 #: user/models.py:10
 msgid "Емейл должен быть указан."
-msgstr ""
+msgstr "Email is required"
 
 #: user/models.py:12
 msgid "Должен быть указан пароль"
-msgstr ""
+msgstr "Password is required"
 
 #: user/models.py:40
 msgid "имя"
-msgstr ""
+msgstr "name"
 
 #: user/models.py:41
 msgid "фамилия"
-msgstr ""
+msgstr "surname"
 
 #: user/models.py:42
 msgid "отчество"
-msgstr ""
+msgstr "patronymic"
 
-#: user/models.py:91
-msgid "пользователи"
-msgstr ""
+#: user/models.py:51
+msgid "персонал"
+msgstr "staff"
+
+#: user/models.py:52
+msgid "суперпользователь"
+msgstr "superuser"
+
+#: user/models.py:53
+msgid "корзина"
+msgstr "cart"
 
 #: user/templates/user/login.html:11
 msgid "Вход"

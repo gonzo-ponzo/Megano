@@ -28,8 +28,8 @@ class DiscountType(Timestampable):
     description = models.CharField(max_length=512, verbose_name=_("описание"))
 
     class Meta:
-        verbose_name = _("Тип акции")
-        verbose_name_plural = _("Типы акций")
+        verbose_name = _("тип акции")
+        verbose_name_plural = _("типы акций")
         managed = True
 
     def __str__(self):
@@ -41,15 +41,15 @@ class PromotionOffer(Timestampable):
 
     from product.models import Offer
 
-    name = models.CharField(max_length=255, verbose_name=_("Название"))
-    description = models.CharField(max_length=255, verbose_name=_("Описание"))
-    discount_type_value = models.PositiveIntegerField(verbose_name=_("Значение правила акции"))
-    discount_decimals = models.DecimalField(default=0, max_digits=11, decimal_places=2, verbose_name=_("Скидка"))
-    discount_percentage = models.PositiveIntegerField(default=0, verbose_name=_("%"))
+    name = models.CharField(max_length=255, verbose_name=_("название"))
+    description = models.CharField(max_length=255, verbose_name=_("описание"))
+    discount_type_value = models.PositiveIntegerField(verbose_name=_("значение правила акции"))
+    discount_decimals = models.DecimalField(default=0, max_digits=11, decimal_places=2, verbose_name=_("скидка"))
+    discount_percentage = models.PositiveIntegerField(default=0, verbose_name="%")
     is_active = models.BooleanField(default=False, verbose_name=_("активная"))
-    discount_type_id = models.ForeignKey(DiscountType, on_delete=models.DO_NOTHING, verbose_name=_("Тип акции"))
-    image = models.ImageField(blank=True, upload_to="shop_logo/%Y/%m/%d", verbose_name=_("Фото"))
-    offer = models.ManyToManyField(Offer)
+    discount_type_id = models.ForeignKey(DiscountType, on_delete=models.DO_NOTHING, verbose_name=_("тип акции"))
+    image = models.ImageField(blank=True, upload_to="shop_logo/%Y/%m/%d", verbose_name=_("фото"))
+    offer = models.ManyToManyField(Offer, verbose_name=_('предложения'))
 
     def __str__(self):
         return self.name

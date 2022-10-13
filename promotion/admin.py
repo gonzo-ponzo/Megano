@@ -26,7 +26,7 @@ class BannerAdmin(admin.ModelAdmin):
             return mark_safe(f'<img src="{obj.image.url}" width="150">')
         return "-"
 
-    get_image.short_description = "миниатюра"
+    get_image.short_description = _("миниатюра")
 
 
 @admin.register(PromotionOffer)
