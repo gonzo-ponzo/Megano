@@ -22,13 +22,13 @@ class Order(Model):
     address = models.CharField(max_length=512, verbose_name=_("адрес"))
     comment = models.TextField(blank=True, verbose_name=_("комментарий"))
     delivery_type = models.IntegerField(
-        choices=DELIVERY_CHOICES, verbose_name=_("тип доставки"), default=DELIVERY_CHOICES[0]
+        choices=DELIVERY_CHOICES, verbose_name=_("тип доставки"), default=DELIVERY_CHOICES[0][0]
     )
     payment_type = models.IntegerField(
-        choices=PAYMENT_CHOICES, verbose_name=_("способ оплаты"), default=PAYMENT_CHOICES[0]
+        choices=PAYMENT_CHOICES, verbose_name=_("способ оплаты"), default=PAYMENT_CHOICES[0][0]
     )
     status_type = models.IntegerField(
-        choices=STATUS_CHOICES, verbose_name=_("статус заказа"), default=STATUS_CHOICES[0]
+        choices=STATUS_CHOICES, verbose_name=_("статус заказа"), default=STATUS_CHOICES[0][0]
     )
     error_type = models.IntegerField(blank=True, null=True, choices=ERROR_CHOICES, verbose_name=_("ошибка заказа"))
     delivery = models.ForeignKey("Delivery", on_delete=models.DO_NOTHING, verbose_name=_("доставка"))

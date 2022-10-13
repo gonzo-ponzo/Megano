@@ -1,8 +1,9 @@
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.core.cache import cache
+from django.db import transaction, DatabaseError
 from django.core.serializers.json import DjangoJSONEncoder
-from order.models import Offer, Delivery
+from order.models import Offer, Delivery, Order, OrderOffer
 from product.models import ProductImage, Product
 from shop.models import Shop
 from promotion.models import PromotionOffer
@@ -109,7 +110,7 @@ class Cart(object):
         else:
             price = self.cart[shop_id][product_id]["price"]
             self.cart[shop_id][product_id]["discount"][str(promotion.id)] = round(
-                float(price * (100 - promotion.discount_percentage) / 100, 2)
+                float(price * (100 - promotion.discount_percentage) / 100), 2
             )
 
     def get_discount_two(self, shop_id: str, product_id: str, promotion: PromotionOffer):
@@ -125,7 +126,7 @@ class Cart(object):
             self.cart[shop_id][product_id]["discount"][str(promotion.id)] = 0
         else:
             self.cart[shop_id][product_id]["discount"][str(promotion.id)] = round(
-                float((quantity // discount_value) * price / quantity, 2)
+                float((quantity // discount_value) * price / quantity), 2
             )
 
     def get_discount_three(self, shop_id: str, promotion: PromotionOffer):
@@ -147,7 +148,7 @@ class Cart(object):
 
                 if promotion.discount_decimals != 0:
                     self.cart[shop_id][product]["discount"][str(promotion.id)] = round(
-                        float(promotion.discount_decimals // shop_cart_amount, 2)
+                        float(promotion.discount_decimals // shop_cart_amount), 2
                     )
 
                 else:
@@ -176,13 +177,13 @@ class Cart(object):
 
                 if promotion.discount_decimals != 0:
                     self.cart[shop_id][product]["discount"][str(promotion.id)] = round(
-                        float(promotion.discount_decimals / shop_cart_amount, 2)
+                        float(promotion.discount_decimals / shop_cart_amount), 2
                     )
 
                 else:
                     price = self.cart[shop_id][product]["offer_price"]
                     self.cart[shop_id][product]["discount"][str(promotion.id)] = round(
-                        float(price * (100 - promotion.discount_percentage) / 100, 2)
+                        float(price * (100 - promotion.discount_percentage) / 100), 2
                     )
 
         else:
@@ -204,7 +205,7 @@ class Cart(object):
                 else:
                     price = self.cart[shop_id][product_id]["price"]
                     self.cart[shop_id][product_id]["discount"][str(promotion.id)] = round(
-                        float(price * (100 - promotion.discount_percentage) / 100, 2)
+                        float(price * (100 - promotion.discount_percentage) / 100), 2
                     )
                     break
 
@@ -384,8 +385,9 @@ class Checkout:
         )
 
         order = {"products": data_products, "delivery_id": delivery_id, "total": total}
-        cls.set_data_from_cache(order, user_id)
-
+        SerializersCache.set_data_in_cache(
+            f"{settings.CACHE_KEY_CHECKOUT}{user_id}", order, settings.CACHE_TIMEOUT.get(settings.CACHE_KEY_CHECKOUT)
+        )
         return order
 
     @staticmethod
@@ -412,39 +414,71 @@ class Checkout:
 
         return delivery.pk, total
 
+
+class SerializersCache:
     @staticmethod
-    def set_data_from_cache(order: Dict, user_id: int) -> None:
-        cache.set(
-            f"{settings.CACHE_KEY_CHECKOUT}{user_id}",
-            json.dumps(order, cls=DjangoJSONEncoder),
-            settings.CACHE_TIMEOUT.get(settings.CACHE_KEY_CHECKOUT),
-        )
+    def set_data_in_cache(cache_key: str, data: Dict, cache_ttl: int) -> None:
+        cache.set(cache_key, json.dumps(data, cls=DjangoJSONEncoder), cache_ttl)
 
     @staticmethod
-    def get_data_from_cache(user_id: int) -> Dict | None:
-        order = cache.get(f"{settings.CACHE_KEY_CHECKOUT}{user_id}")
-        if order:
-            return json.loads(order)
+    def get_data_from_cache(cache_key: str) -> Dict | None:
+        data = cache.get(cache_key)
+        if data:
+            return json.loads(data)
         return None
 
-    def set_user_param(self):
-        """Уточнить параметры пользователя"""
-        pass
+    @staticmethod
+    def clean_data_from_cache(cache_key: str) -> None:
+        cache.delete(cache_key)
 
-    def set_shipping_param(self):
-        """Установить параметры доставки"""
-        pass
 
-    def set_pay_param(self):
-        """Установить параметры доставки"""
-        pass
+class CheckoutDB:
+    """Сохранение заказа в БД"""
 
-    def get_order_status(self):
-        """Получить статус заказа"""
-        pass
+    def __init__(self, user_id: int, order_info: Dict, order_data: Dict, cart: Cart):
+        self.user_id = user_id
+        self.order_info = order_info
+        self.order_data = order_data
+        self.cart = cart
+
+    def _add_data_order(self) -> Order:
+        order = Order.objects.create(
+            user_id=self.user_id, delivery_id=self.order_data.get("delivery_id"), **self.order_info
+        )
+        return order
+
+    def _add_data_order_offer(self, order: Order) -> None:
+        order_offer = []
+        for product in self.order_data.get("products"):
+            order_offer.append(
+                OrderOffer(
+                    order=order,
+                    offer_id=product.get("offer_id"),
+                    price=product.get("offer_price"),
+                    discount=product.get("discount"),
+                    amount=product.get("quantity"),
+                )
+            )
+        OrderOffer.objects.bulk_create(order_offer)
+
+    def save_order(self):
+        try:
+            with transaction.atomic():
+                order = self._add_data_order()
+                self._add_data_order_offer(order)
+        except DatabaseError:
+            return False, "Ошибка сервера"
+
+        SerializersCache.clean_data_from_cache(f"{settings.CACHE_KEY_CHECKOUT}{self.user_id}")
+        self.cart.clear()
+        return True, "Заказ сформирован"
 
     def set_order_status(self):
         """Изменить статус заказа"""
+        pass
+
+    def set_order_error(self):
+        """Добавить ошибку"""
         pass
 
 
