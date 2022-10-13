@@ -1,0 +1,684 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-10-13 12:21+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: config/settings/base.py:175
+msgid "Русский"
+msgstr "Russian"
+
+#: config/settings/base.py:176
+msgid "Английский"
+msgstr "English"
+
+#: order/models.py:12
+msgid "Доставка"
+msgstr "Delivery"
+
+#: order/models.py:12
+msgid "Экспресс-доставка"
+msgstr "Express delivery"
+
+#: order/models.py:13
+msgid "Онлайн картой"
+msgstr ""
+
+#: order/models.py:13
+msgid "Онлайн со случайного чужого счёта"
+msgstr ""
+
+#: order/models.py:14
+msgid "Оплачен"
+msgstr ""
+
+#: order/models.py:14
+msgid "Не оплачен"
+msgstr ""
+
+#: order/models.py:16
+msgid "Оплата не выполнена, на вашем счёте не хватает средств"
+msgstr ""
+
+#: order/models.py:17
+msgid "Оплата не выполнена, произошел сбой при списании средств"
+msgstr ""
+
+#: order/models.py:20 product/models.py:155 product/models.py:167
+#: user/models.py:90
+msgid "пользователь"
+msgstr "user"
+
+#: order/models.py:21
+msgid "город"
+msgstr "city"
+
+#: order/models.py:22 shop/models.py:40
+msgid "адрес"
+msgstr "address"
+
+#: order/models.py:23
+msgid "комментарий"
+msgstr "comment"
+
+#: order/models.py:24
+msgid "тип доставки"
+msgstr "delivery method"
+
+#: order/models.py:25
+msgid "способ оплаты"
+msgstr "payment method"
+
+#: order/models.py:26
+msgid "статус заказа"
+msgstr "order status"
+
+#: order/models.py:27
+msgid "ошибка заказа"
+msgstr "order error"
+
+#: order/models.py:29
+msgid "доставка"
+msgstr "delivery"
+
+#: order/models.py:31
+msgid "заказанные продукты"
+msgstr "ordered products"
+
+#: order/models.py:34 order/models.py:41
+msgid "заказ"
+msgstr "order"
+
+#: order/models.py:35
+msgid "заказы"
+msgstr "orders"
+
+#: order/models.py:42 product/models.py:45
+msgid "предложение магазина"
+msgstr ""
+
+#: order/models.py:43 order/models.py:54 product/models.py:38
+msgid "цена"
+msgstr ""
+
+#: order/models.py:44 product/models.py:39
+msgid "количество"
+msgstr ""
+
+#: order/models.py:47
+msgid "товар в заказе"
+msgstr ""
+
+#: order/models.py:48
+msgid "товары в заказе"
+msgstr ""
+
+#: order/models.py:55
+msgid "экспресс-цена"
+msgstr ""
+
+#: order/models.py:56
+msgid "мин. цена корзины"
+msgstr ""
+
+#: order/models.py:59
+msgid "цена доставки"
+msgstr ""
+
+#: order/models.py:60
+msgid "цены доставки"
+msgstr ""
+
+#: product/admin.py:50
+msgid "сделать ограниченный тираж"
+msgstr ""
+
+#: product/admin.py:54
+msgid "отменить ограниченный тираж"
+msgstr ""
+
+#: product/admin.py:74
+msgid "количество продуктов"
+msgstr ""
+
+#: product/models.py:14 product/models.py:109
+msgid "наименование"
+msgstr ""
+
+#: product/models.py:15 product/models.py:72 product/models.py:110
+#: product/models.py:137 promotion/models.py:13 promotion/models.py:28
+#: shop/models.py:21
+msgid "описание"
+msgstr ""
+
+#: product/models.py:16
+msgid "ограниченный тираж"
+msgstr ""
+
+#: product/models.py:17 product/models.py:143
+msgid "производитель"
+msgstr ""
+
+#: product/models.py:18 product/models.py:102
+msgid "категория"
+msgstr ""
+
+#: product/models.py:19
+msgid "характеристики"
+msgstr ""
+
+#: product/models.py:20 shop/models.py:64
+msgid "магазины"
+msgstr ""
+
+#: product/models.py:29 product/models.py:37 product/models.py:52
+#: product/models.py:123 product/models.py:154 product/models.py:168
+#: promotion/models.py:11
+msgid "продукт"
+msgstr ""
+
+#: product/models.py:30
+msgid "продукты"
+msgstr ""
+
+#: product/models.py:36 shop/models.py:63 shop/models.py:78
+msgid "магазин"
+msgstr ""
+
+#: product/models.py:46
+msgid "предложения магазина"
+msgstr ""
+
+#: product/models.py:53 shop/models.py:73 user/models.py:48
+msgid "фото"
+msgstr ""
+
+#: product/models.py:56
+msgid "изображение продукта"
+msgstr ""
+
+#: product/models.py:57
+msgid "изображения продукта"
+msgstr ""
+
+#: product/models.py:71 product/models.py:135 promotion/models.py:12
+#: shop/models.py:16
+msgid "название"
+msgstr ""
+
+#: product/models.py:80
+msgid "родительская категория"
+msgstr ""
+
+#: product/models.py:103
+msgid "категории"
+msgstr ""
+
+#: product/models.py:116
+msgid "свойство продукта"
+msgstr ""
+
+#: product/models.py:117
+msgid "свойства продукта"
+msgstr ""
+
+#: product/models.py:124
+msgid "свойство"
+msgstr ""
+
+#: product/models.py:125
+msgid "значение"
+msgstr ""
+
+#: product/models.py:128
+msgid "значение свойства продукта"
+msgstr ""
+
+#: product/models.py:129
+msgid "значения свойства продукта"
+msgstr ""
+
+#: product/models.py:136 shop/models.py:45
+msgid "логотип"
+msgstr ""
+
+#: product/models.py:144
+msgid "производители"
+msgstr ""
+
+#: product/models.py:156
+msgid "текст"
+msgstr ""
+
+#: product/models.py:157
+msgid "рейтинг"
+msgstr ""
+
+#: product/models.py:160
+msgid "отзыв"
+msgstr ""
+
+#: product/models.py:161
+msgid "отзывы"
+msgstr ""
+
+#: product/models.py:171
+msgid "просмотренный продукт"
+msgstr ""
+
+#: product/models.py:172
+msgid "просмотренные продукты"
+msgstr ""
+
+#: product/services.py:256
+msgid "цене"
+msgstr ""
+
+#: product/services.py:257
+msgid "популярности"
+msgstr ""
+
+#: product/services.py:258
+msgid "рейтингу"
+msgstr ""
+
+#: product/services.py:259
+msgid "новизне"
+msgstr ""
+
+#: product/templates/product/catalog.html:19
+msgid "Каталог Megano"
+msgstr ""
+
+#: product/templates/product/catalog.html:54
+msgid "Фильтры"
+msgstr ""
+
+#: product/templates/product/catalog.html:63
+msgid "Цена"
+msgstr ""
+
+#: product/templates/product/catalog.html:68
+#, python-format
+msgid ""
+"\n"
+"                            Товары отобраны по цене <br> от %(min)s до "
+"%(max)s руб.\n"
+"                        "
+msgstr ""
+
+#: product/templates/product/catalog.html:77 promotion/models.py:44
+msgid "Название"
+msgstr ""
+
+#: product/templates/product/catalog.html:82
+msgid "Все продавцы"
+msgstr ""
+
+#: product/templates/product/catalog.html:91
+msgid "Только товары в наличии"
+msgstr ""
+
+#: product/templates/product/catalog.html:97
+msgid "Ограниченный тираж"
+msgstr ""
+
+#: product/templates/product/catalog.html:106
+msgid "Сбросить"
+msgstr ""
+
+#: product/templates/product/catalog.html:121
+msgid "Сортировать по"
+msgstr ""
+
+#: product/templates/product/catalog.html:136
+#: product/templates/product/index.html:136
+#: product/templates/product/index.html:169
+#: product/templates/product/index.html:252
+msgid "Продуктов не найдено"
+msgstr ""
+
+#: product/templates/product/inc/_product_card.html:21
+msgid "Предложений: "
+msgstr ""
+
+#: product/templates/product/inc/_product_card.html:35
+#: product/templates/product/index.html:84
+msgid "Продано"
+msgstr ""
+
+#: product/templates/product/inc/_product_card.html:36
+#: product/templates/product/index.html:85
+msgid "Отзывов"
+msgstr ""
+
+#: product/templates/product/inc/_review.html:5
+msgid "Отзывы"
+msgstr ""
+
+#: product/templates/product/inc/_review.html:104
+#: product/templates/product/inc/_review.html:139
+msgid "Добавить отзыв"
+msgstr ""
+
+#: product/templates/product/inc/_review.html:134
+msgid "Отзыв"
+msgstr ""
+
+#: product/templates/product/inc/_review.html:146
+msgid "Чтобы оставить отзыв, Вы должны "
+msgstr ""
+
+#: product/templates/product/inc/_review.html:147
+msgid "авторизоваться"
+msgstr ""
+
+#: product/templates/product/index.html:60
+msgid "предложение дня"
+msgstr ""
+
+#: product/templates/product/index.html:123
+msgid "Популярные товары"
+msgstr ""
+
+#: product/templates/product/index.html:152
+msgid "Акции!!!"
+msgstr ""
+
+#: product/templates/product/index.html:236
+msgid "Ограниченное предложение"
+msgstr ""
+
+#: product/templates/product/product.html:10
+msgid "О продукте"
+msgstr ""
+
+#: product/templates/product/product.html:13
+#: promotion/templates/promotion/promotion.html:13
+#: promotion/templates/promotion/promotions.html:14
+msgid "На главную"
+msgstr ""
+
+#: product/templates/product/product.html:15
+msgid "Продукт"
+msgstr ""
+
+#: product/templates/product/product.html:66
+msgid "Тэги"
+msgstr ""
+
+#: product/templates/product/product.html:73 promotion/models.py:45
+msgid "Описание"
+msgstr ""
+
+#: product/templates/product/product.html:86
+msgid "Характеристика"
+msgstr ""
+
+#: product/templates/product/product.html:88
+msgid "Значение"
+msgstr ""
+
+#: product/views.py:201
+msgid "Отзыв удален."
+msgstr ""
+
+#: product/views.py:209
+msgid "Отзыв добавлен."
+msgstr ""
+
+#: product/views.py:214
+msgid "Отзыв не добавлен, проверьте корректность ввода."
+msgstr ""
+
+#: promotion/admin.py:16
+msgid "сделать активным(и)"
+msgstr ""
+
+#: promotion/admin.py:20
+msgid "сделать неактивным(и)"
+msgstr ""
+
+#: promotion/admin.py:59
+msgid "Активировать"
+msgstr ""
+
+#: promotion/admin.py:63
+msgid "Деактивировать"
+msgstr ""
+
+#: promotion/models.py:14 promotion/models.py:21
+msgid "баннер"
+msgstr ""
+
+#: promotion/models.py:15
+msgid "активный"
+msgstr ""
+
+#: promotion/models.py:22
+msgid "баннеры"
+msgstr ""
+
+#: promotion/models.py:31 promotion/models.py:50
+msgid "Тип акции"
+msgstr ""
+
+#: promotion/models.py:32
+msgid "Типы акций"
+msgstr ""
+
+#: promotion/models.py:46
+msgid "Значение правила акции"
+msgstr ""
+
+#: promotion/models.py:47
+msgid "Скидка"
+msgstr ""
+
+#: promotion/models.py:48
+msgid "%"
+msgstr ""
+
+#: promotion/models.py:49
+msgid "активная"
+msgstr ""
+
+#: promotion/models.py:51
+msgid "Фото"
+msgstr ""
+
+#: promotion/models.py:61
+msgid "акция"
+msgstr ""
+
+#: promotion/models.py:62
+msgid "акции"
+msgstr ""
+
+#: promotion/templates/promotion/promotion.html:15
+#: promotion/templates/promotion/promotions.html:16
+msgid "Акции"
+msgstr ""
+
+#: promotion/templates/promotion/promotions.html:11
+msgid "Megano акции"
+msgstr ""
+
+#: shop/models.py:27 user/models.py:46
+msgid "телефон"
+msgstr ""
+
+#: shop/models.py:35 user/models.py:39
+msgid "электронная почта"
+msgstr ""
+
+#: shop/models.py:50
+msgid "владелец"
+msgstr ""
+
+#: shop/models.py:82
+msgid "фотография"
+msgstr ""
+
+#: shop/models.py:83
+msgid "фотографии"
+msgstr ""
+
+#: templates/admin/base_site.html:4
+msgid "Django site admin"
+msgstr ""
+
+#: templates/admin/base_site.html:7
+msgid "Django administration"
+msgstr ""
+
+#: templates/header.html:51
+msgid "добро пожаловать"
+msgstr ""
+
+#: templates/header.html:52
+msgid "выход"
+msgstr ""
+
+#: templates/header.html:54
+msgid "вход/регистрация"
+msgstr ""
+
+#: templates/inc/_product_category.html:10
+msgid "Каталог"
+msgstr ""
+
+#: templates/slider.html:18
+msgid "Посмотреть"
+msgstr ""
+
+#: user/admin.py:21 user/admin.py:27
+msgid "Личные данные"
+msgstr ""
+
+#: user/admin.py:22
+msgid "Разрешения"
+msgstr ""
+
+#: user/forms.py:17 user/forms.py:59 user/forms.py:80 user/forms.py:112
+msgid "Пароль"
+msgstr ""
+
+#: user/forms.py:18 user/forms.py:86
+msgid "Подтвердите пароль"
+msgstr ""
+
+#: user/forms.py:30
+msgid "Введенные пароли должны совпадать"
+msgstr ""
+
+#: user/forms.py:66
+msgid "Введенные данные некоректны. Попробуйте еще раз."
+msgstr ""
+
+#: user/forms.py:68
+msgid "Пользователь неактивен."
+msgstr ""
+
+#: user/forms.py:75 user/tests.py:134
+msgid "Пользователь с таким емейлом уже зарегистрирован"
+msgstr ""
+
+#: user/forms.py:89
+msgid "Для верификации введите такой же пароль как ранее."
+msgstr ""
+
+#: user/forms.py:95 user/tests.py:118
+msgid "Пароли не совпадают"
+msgstr ""
+
+#: user/forms.py:118
+msgid "Подтверждение пароля"
+msgstr ""
+
+#: user/forms.py:121
+msgid "Введите пароль повторно"
+msgstr ""
+
+#: user/forms.py:130 user/tests.py:324
+msgid "Нужно написать Фамилию Имя"
+msgstr ""
+
+#: user/forms.py:134
+msgid "Для смены пароля введите новый пароль два раза"
+msgstr ""
+
+#: user/models.py:10
+msgid "Емейл должен быть указан."
+msgstr ""
+
+#: user/models.py:12
+msgid "Должен быть указан пароль"
+msgstr ""
+
+#: user/models.py:40
+msgid "имя"
+msgstr ""
+
+#: user/models.py:41
+msgid "фамилия"
+msgstr ""
+
+#: user/models.py:42
+msgid "отчество"
+msgstr ""
+
+#: user/models.py:91
+msgid "пользователи"
+msgstr ""
+
+#: user/templates/user/login.html:11
+msgid "Вход"
+msgstr ""
+
+#: user/templates/user/login.html:16 user/tests.py:192 user/tests.py:200
+msgid "Данные не корректны. Пожалуйста, попробуйте еще раз."
+msgstr ""
+
+#: user/templates/user/login.html:28
+msgid "Войти"
+msgstr ""
+
+#: user/templates/user/login.html:32 user/templates/user/register.html:26
+msgid "Зарегистрироваться"
+msgstr ""
+
+#: user/templates/user/register.html:11
+msgid "Регистрация"
+msgstr ""
+
+#: user/tests.py:150 user/tests.py:323
+msgid "Enter a valid phone number"
+msgstr ""
+
+#: user/tests.py:165
+msgid "required"
+msgstr ""
+
+#: user/tests.py:307 user/tests.py:321 user/tests.py:337 user/tests.py:348
+#: user/tests.py:355 user/tests.py:369 user/tests.py:379
+msgid "Профиль успешно сохранен"
+msgstr ""
+
+#: user/tests.py:322
+msgid "Введите правильный адрес электронной почты."
+msgstr ""

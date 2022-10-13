@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "payment",
     "django_celery_beat",
     "django_celery_results",
+    "rosetta",
 ]
 
 AUTH_USER_MODEL = "user.CustomUser"
@@ -211,3 +212,9 @@ MPTT_ADMIN_LEVEL_INDENT = 20
 PRODUCT_PER_PAGES = 10
 
 COUNT_ELEMENTS_BEST_OFFER_SHOP = 6
+
+# setting for Rosetta application that eases the translation process
+ROSETTA_MESSAGES_PER_PAGE = 50
+ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE = 'ru'
+ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME = 'Русский'
+ROSETTA_SHOW_AT_ADMIN_PANEL = True

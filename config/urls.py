@@ -43,6 +43,11 @@ urlpatterns = [
     path("payment/<int:order_number>", api_one_bill, name='one_payment'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
+if 'rosetta' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        path('rosetta/', include('rosetta.urls'))
+    ]
+
 if settings.DEBUG:
     urlpatterns += [
         path("__debug__/", include("debug_toolbar.urls")),
