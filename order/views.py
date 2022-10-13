@@ -1,5 +1,3 @@
-import json
-
 from django.views import View
 from django.conf import settings
 from order.services import Cart, Checkout

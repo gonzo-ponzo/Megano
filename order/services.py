@@ -392,7 +392,7 @@ class Checkout:
     def _get_data_delivery(shop_cnt: int, full_total_price: Decimal, total_price: Decimal) -> Tuple[int, Dict]:
         """Формирования итоговых цен с учетом доставки"""
         delivery_key = ("normal", "express")
-        delivery = Delivery.objects.order_by("-updated_at").first()
+        delivery = Delivery.objects.order_by("-created_at").first()
         total = {}
 
         for key in delivery_key:
