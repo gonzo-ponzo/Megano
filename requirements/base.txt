@@ -12,4 +12,4 @@ django-phonenumber-field==6.1.0
 phonenumbers==8.12.54
 phonenumberslite==8.12.44
 jsonfield==3.1.0
-
+hiredis==2.0.0

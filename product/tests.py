@@ -3,7 +3,7 @@ from django.db import connection
 from django.contrib.auth import get_user_model
 from product.models import ProductCategory, Product, Manufacturer, Offer, Review
 from shop.models import Shop
-from order.models import Order, OrderOffer
+from order.models import Order, OrderOffer, Delivery
 from django.core.cache import cache
 from django.conf import settings
 from django.urls import reverse
@@ -143,8 +143,11 @@ class CatalogViewsSorting(TestCase):
         Offer.objects.create(shop=shop, product=p1, price=2000, amount=10)
         offer3 = Offer.objects.create(shop=shop, product=p2, price=3000, amount=10)
 
+        delivery = Delivery.objects.create(price=200, express_price=500, sum_order=2000)
+
         order = Order.objects.create(user=user, city='city', address='address',
-                                     delivery_type=1, payment_type=1, status_type=1)
+                                     delivery_type=1, payment_type=1, status_type=1,
+                                     delivery=delivery)
 
         OrderOffer.objects.create(order=order, offer=offer1, price=1000, amount=10)
         OrderOffer.objects.create(order=order, offer=offer3, price=1000, amount=1)

@@ -16,7 +16,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-
 env = Env()
 env.read_env()
 
@@ -106,24 +105,26 @@ TEMPLATES = [
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis_db:6379",
     }
 }
 
 CACHE_KEY_PRODUCT_CATEGORY = "product_category"
 CACHE_KEY_BANNER = "banner"
 CACHE_KEY_COMPARISON = "comparison"
+CACHE_KEY_CHECKOUT = "checkout"
 
 CACHE_TIMEOUT = {
     CACHE_KEY_PRODUCT_CATEGORY: 60 * 60 * 24,
     CACHE_KEY_BANNER: 60 * 10,
-    CACHE_KEY_COMPARISON: 60 * 60 * 24 * 30
+    CACHE_KEY_COMPARISON: 60 * 60 * 24 * 30,
+    CACHE_KEY_CHECKOUT: 60 * 60,
 }
 CART_SESSION_ID = "cart"
 SESSION_COOKIE_AGE = 24 * 60 * 60
 
 WSGI_APPLICATION = "config.wsgi.application"
-
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -157,7 +158,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -169,7 +169,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -191,7 +190,6 @@ LOGIN_URL = "/login/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MPTT_ADMIN_LEVEL_INDENT = 20
-
 
 PRODUCT_PER_PAGES = 10
 

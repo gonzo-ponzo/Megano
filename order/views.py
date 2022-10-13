@@ -1,5 +1,8 @@
+import json
+
 from django.views import View
-from order.services import Cart, OrderFormation
+from django.conf import settings
+from order.services import Cart, Checkout
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from product.models import Product
 from django.contrib import messages
@@ -60,25 +63,36 @@ class CreateOrderView(View):
     """Оформление заказа"""
 
     def get(self, request, *args, **kwargs):
-        cart = deepcopy(request.user.cart)
+        is_authenticated = request.user.is_authenticated
+        cart = request.user.cart if is_authenticated else request.session.get(settings.CART_SESSION_ID)
+
         if not cart:
             raise PermissionDenied()
 
-        if request.user.is_authenticated:
-            context = {"order_form": OrderForm(), "order": OrderFormation.get_data_from_cart(cart)}
-            print(context.get("order"))
+        if is_authenticated:
+            context = {
+                "order_form": OrderForm(),
+                "order": Checkout.get_data_from_cart(deepcopy(cart), request.user.id),
+            }
             return render(request, "order/order.html", context=context)
 
         login_url = f"{reverse('login-page')}?next={reverse('order:create-order')}"
         return redirect(login_url)
 
     def post(self, request, *args, **kwargs):
+        user_id = request.user.id
+        order = Checkout.get_data_from_cache(user_id)
+
+        if order is None:
+            messages.error(request, "Ошибка, попробуйте повторить оформление заказа")
+            return redirect(reverse("order:cart-page"))
+
         order_form = OrderForm(request.POST)
-        context = {"order_form": order_form}
+        context = {"order_form": order_form, "order": order}
+
         if order_form.is_valid():
-            print(order_form.cleaned_data)
             messages.success(request, "Хорошо")
             return render(request, "order/order.html", context=context)
 
-        messages.error(request, "Ошибка")
+        messages.error(request, "Ошибка, проверьте заполнение данных")
         return render(request, "order/order.html", context=context)
