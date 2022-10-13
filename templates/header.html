@@ -1,5 +1,7 @@
 {% load static %}
 {% load get_cart_len get_cart_price get_cart_len get_cart_price get_compare_len from cart %}
+{% load i18n %}
+
 <header class="Header">
     <div class="ControlPanel">
       <div class="wrap">
@@ -27,13 +29,31 @@
           <nav class="row-block">
             <div class="row ControlPanel-rowSplit">
               {% if request.user.is_authenticated %}
-                <div class="row-block"><a class="ControlPanel-title" href="{% url 'account' %}">Добро пожаловать, {{ request.user.email }}</a></div>
-                <div class="row-block"><a class="ControlPanel-title" href="{% url 'logout' %}">LogOut</a></div>
+                <div class="row-block"><a class="ControlPanel-title" href="{% url 'account' %}">{% trans "добро пожаловать" %}, {{ request.user.email }}</a></div>
+                <div class="row-block"><a class="ControlPanel-title" href="{% url 'logout' %}">{% trans "выход" %}</a></div>
               {% else %}
-                <div class="row-block"><a class="ControlPanel-title" href="/login">Login / Register</a></div>
+                <div class="row-block"><a class="ControlPanel-title" href="/login">{% trans "вход/регистрация" %}</a></div>
               {% endif %}
             </div>
           </nav>
+
+          <div class="row-block header_language_menu">
+            <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+                <input name="next" type="hidden" value="{{ redirect_to }}">
+                <select class="ControlPanel-title" name="language">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% get_language_info_list for LANGUAGES as languages %}
+                    {% for language in languages %}
+                        <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                            {{ language.name_local }} ({{ language.code }})
+                        </option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="->">
+            </form>
+          </div>
+
         </div>
       </div>
 
