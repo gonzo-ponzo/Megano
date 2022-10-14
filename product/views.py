@@ -8,6 +8,7 @@ from product.models import Product, ProductView, ProductCategory
 from shop.models import Shop
 from promotion.services import BannerMain
 from .services import ReviewForItem, ProductCompareList, SortProductsResult, FilterProductsResult, DetailedProduct
+from .services import DailyOffer
 
 from django.core.paginator import Paginator
 from django.contrib import messages
@@ -92,8 +93,22 @@ class MainPage(TemplateView):
     template_name = "product/index.html"
 
     def get_context_data(self, **kwargs):
+
         context = super().get_context_data(**kwargs)
         context["banners"] = BannerMain.get_cache_banners()
+
+        daily_offer = DailyOffer()
+        products = FilterProductsResult()
+        context['top_product'] = SortProductsResult(products.queryset).by_popularity()[:8]
+        context['daily_offer'] = daily_offer.product
+
+        products.only_limited()
+        context['limited_product'] = products.queryset.exclude(id=daily_offer.product_id).order_by('?')[:16]
+
+        hot_product = FilterProductsResult()
+        hot_product.with_promo()
+        context['hot_product'] = hot_product.queryset[:9]
+
         return context
 
 
@@ -123,9 +138,9 @@ class CatalogView(ListView):
         filter_product.by_price()
         self.current_price_range = {'min': filter_product.min_price, 'max': filter_product.max_price}
 
-        self.shops = Shop.objects.filter(product__in=filter_product.products).distinct().values_list('name', flat=True)
+        self.shops = Shop.objects.filter(product__in=filter_product.queryset).distinct().values_list('name', flat=True)
 
-        queryset = SortProductsResult(products=filter_product.products).sort_by_params(**self.request.GET.dict())
+        queryset = SortProductsResult(products=filter_product.queryset).sort_by_params(**self.request.GET.dict())
 
         return queryset
 
