@@ -7,7 +7,11 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: python manage.py runserver 0.0.0.0:8000
+    command: bash -c "
+        celery -A payment worker -l info --detach
+        && celery -A payment beat -l info -S django --detach
+        && python manage.py runserver 0.0.0.0:8000
+      "
     env_file:
       - .env
     environment:
@@ -51,36 +55,6 @@ services:
     networks:
       - web_net
     container_name: python_django_team-redis_db  
-
-  celeryw:
-    restart: always
-    build:
-      context: .
-    command: celery -A payment worker -l info
-    volumes:
-      - .:/code/
-    depends_on:
-      - db
-      - redis_db
-      - web
-    networks:
-      - web_net  
-    container_name: python_django_team-celery_worker
-
-  celeryb:
-    restart: always
-    build:
-      context: .
-    command: celery -A payment beat -l info -S django
-    volumes:
-      - .:/code/
-    depends_on:
-      - db
-      - redis_db
-      - web
-    networks:
-      - web_net  
-    container_name: python_django_team-celery_beat
 
 volumes:
   postgres_data:
