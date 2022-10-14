@@ -415,6 +415,7 @@ class Checkout:
         """Установить параметры доставки"""
         pass
 
+
 class SerializersCache:
     @staticmethod
     def set_data_in_cache(cache_key: str, data: Dict, cache_ttl: int) -> None:

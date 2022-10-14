@@ -2,10 +2,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from product.models import ProductCategory, Product, Manufacturer, Offer, Review
 from shop.models import Shop
-from order.models import Order, OrderOffer
 from order.models import Order, OrderOffer, Delivery
-from django.core.cache import cache
-from django.conf import settings
 from django.urls import reverse
 
 User = get_user_model()
