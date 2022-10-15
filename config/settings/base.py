@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "payment",
     "django_celery_beat",
     "django_celery_results",
+    "jobs",
 ]
 
 AUTH_USER_MODEL = "user.CustomUser"
