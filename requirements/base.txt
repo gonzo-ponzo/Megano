@@ -5,7 +5,7 @@ djangorestframework==3.13.1
 redis==4.3.1
 celery==5.2.7
 django-celery-beat==2.1.0
-django-celery-results==2.4.0
+django-celery-results==2.3.1
 environs==9.3.0
 psycopg2==2.9.3
 django-timestampable==1.0.3
