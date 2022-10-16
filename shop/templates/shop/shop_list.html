@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <head>
   <title>Megano</title>
     {% include 'base.html' %}
@@ -10,12 +11,12 @@
     <div class="Middle-top">
       <div class="wrap">
         <div class="Middle-header">
-          <h1 class="Middle-title">About Megano
+          <h1 class="Middle-title">{% trans "О Megano" %}
           </h1>
           <ul class="breadcrumbs Middle-breadcrumbs">
-            <li class="breadcrumbs-item"><a href="/">home</a>
+            <li class="breadcrumbs-item"><a href="/">{% trans "Главная" %}</a>
             </li>
-            <li class="breadcrumbs-item breadcrumbs-item_current"><span>Shop</span>
+            <li class="breadcrumbs-item breadcrumbs-item_current"><span>{% trans "магазины" %}</span>
             </li>
           </ul>
         </div>
@@ -76,8 +77,8 @@
             <div class="media media_middle">
               <div class="media-image"><img src="{% static 'img/icons/contacts/phone.svg' %}" alt="phone.svg"/>
               </div>
-              <div class="media-content">Phone:&#32;
-                <nobr>+8 (200) 800-2000-600</nobr><br>Mobile:&#32;
+              <div class="media-content">{% trans "Телефон" %}:&#32;
+                <nobr>+8 (200) 800-2000-600</nobr><br>{% trans "Мобильный" %}:&#32;
                 <nobr>+8 (200) 800-2000-650</nobr>
               </div>
             </div>
@@ -103,7 +104,7 @@
           </div>
           <div class="Section-columnSection">
             <header class="Section-header">
-              <strong class="Section-title">Follow Us
+              <strong class="Section-title">{% trans "Мы здесь" %}
               </strong>
             </header>
             <div class="Section-columnContent">
@@ -128,7 +129,7 @@
 
         <div class="Section-content">
             <header class="Section-header">
-                <h2 class="Section-title">Магазины
+                <h2 class="Section-title">{% trans "магазины" %}
                 </h2>
             </header>
             <div class="shops-list">

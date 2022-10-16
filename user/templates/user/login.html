@@ -1,6 +1,8 @@
 {% load static %}
 {% load i18n %}
-{% include 'base.html' with title="Вход" %}
+{% translate "Вход" as trans_login %}
+
+{% include 'base.html' with title=trans_login %}
 <body class="Site">
     <div class="login-form-container">
         <form class="login-form" method="post">
@@ -8,7 +10,7 @@
             <table class="login-form-table">
                 <thead>
                 <tr>
-                    <th colspan="2">{% translate "Вход" %}</th>
+                    <th colspan="2">{{ trans_login }}</th>
                 </tr>
                 </thead>
                 {% if form.errors %}

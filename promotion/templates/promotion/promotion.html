@@ -28,14 +28,14 @@
             </div>
             <div class="row-block">
                 <h2>{{ promotionoffer.name }}</h2>
-                <p><strong>Магазины, участвующие в акции:</strong>
+                <p><strong>{% trans "Магазины, участвующие в акции" %}:</strong>
                 {{ promotionoffer.offer.prefetch_related.first.shop.name }}</p>
                 <p>{{ promotionoffer.description }}</p>
             </div>
           </div>
             {% if promotionoffer.offer.prefetch_related.first %}
                 <header class="Section-header">
-                    <h2 class="Section-title">Товары, участвующие в акции
+                    <h2 class="Section-title">{% trans "Товары, участвующие в акции" %}
                     </h2>
                 </header>
                 <div class="Cards">

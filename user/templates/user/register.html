@@ -1,6 +1,8 @@
 {% load static %}
 {% load i18n %}
-{% include 'base.html' with title="Регистрация" %}
+{% translate "Регистрация" as trans_register %}
+
+{% include 'base.html' with title=trans_register %}
 <body class="Site">
 <div class="login-form-container">
     <form class="registration-form" method="post" enctype="multipart/form-data">
@@ -8,7 +10,7 @@
         <table class="login-form-table">
             <thead>
             <tr>
-                <th colspan="2">{% translate "Регистрация" %}</th>
+                <th colspan="2">{{ trans_register }}</th>
             </tr>
             </thead>
             {% for field in form %}

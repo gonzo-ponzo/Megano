@@ -1,6 +1,6 @@
 {% load static %}
 {% load i18n %}
-{% trans "Корзина" as trans_cart%}
+{% trans "Корзина" as trans_cart %}
 {% include 'base.html' with title=trans_cart %}
 
 
@@ -86,7 +86,7 @@
           {% endfor %}
           <div class="Cart-total">
             <div class="Cart-block Cart-block_total">
-              <strong class="Cart-title">Итого:
+              <strong class="Cart-title">{% trans "Итого" %}:
               </strong><span class="Cart-price">{{ cart_price }}$</span>
             </div>
             <div class="Cart-block"><a class="btn btn_success btn_lg" href="/order">{% trans "Оформить заказ" %}</a>
