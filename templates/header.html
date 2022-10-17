@@ -1,14 +1,17 @@
 {% load static %}
 {% load get_cart_len get_cart_price get_cart_len get_cart_price get_compare_len from cart %}
+{% load i18n %}
+
 <header class="Header">
     <div class="ControlPanel">
       <div class="wrap">
         <div class="row ControlPanel-row">
+
           <div class="row-block">
             <div class="row ControlPanel-rowSplit">
-              <div class="row-block"><a class="ControlPanel-title" href="#">Free Delivery</a>
+              <div class="row-block"><a class="ControlPanel-title" href="#">{%  trans "Доставка" %}</a>
               </div>
-              <div class="row-block hide_700"><span class="ControlPanel-title">Follow Us</span>
+              <div class="row-block hide_700"><span class="ControlPanel-title">{% trans "Мы здесь" %}</span>
                 <ul class="menu menu_img menu_smallImg ControlPanel-menu">
                   <li class="menu-item"><a class="menu-link" href="https://facebook.com/megano"><img src="{% static 'img/icons/socialHeader/fb.svg' %}" alt="fb.svg"/></a>
                   </li>
@@ -24,16 +27,35 @@
               </div>
             </div>
           </div>
+
+          <div class="row-block header_language_menu">
+            <form action="{% url 'set_language' %}" method="post">
+                {% csrf_token %}
+                <select class="ControlPanel-title" name="language">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% get_language_info_list for LANGUAGES as languages %}
+                    {% for language in languages %}
+                        <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                            {{ language.name_local }} ({{ language.code }})
+                        </option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="->">
+            </form>
+          </div>
+
           <nav class="row-block">
             <div class="row ControlPanel-rowSplit">
               {% if request.user.is_authenticated %}
-                <div class="row-block"><a class="ControlPanel-title" href="{% url 'account' %}">Добро пожаловать, {{ request.user.email }}</a></div>
-                <div class="row-block"><a class="ControlPanel-title" href="{% url 'logout' %}">LogOut</a></div>
+                <div class="row-block"><a class="ControlPanel-title" href="{% url 'account' %}">{% trans "добро пожаловать" %}, {{ request.user.email }}</a></div>
+                <div class="row-block"><a class="ControlPanel-title" href="{% url 'logout' %}">{% trans "выход" %}</a></div>
               {% else %}
-                <div class="row-block"><a class="ControlPanel-title" href="/login">Login / Register</a></div>
+                <div class="row-block"><a class="ControlPanel-title" href="/login">{% trans "вход/регистрация" %}</a></div>
               {% endif %}
             </div>
           </nav>
+
         </div>
       </div>
 
@@ -45,12 +67,12 @@
         <nav class="row-block row-block_right Header-menu">
           <div class="menuModal" id="navigate">
             <ul class="menu menu_main">
-              <li class="menu-item"><a class="menu-link" href="/">Home</a></li>
-              <li class="menu-item"><span class="menu-label menu-label_danger">New</span><a class="menu-link" href="/shop">Shop</a></li>
-              <li class="menu-item"><a class="menu-link" href="{% url 'catalog-page' %}">Catalog</a></li>
-              <li class="menu-item"><span class="menu-label menu-label_success">Hot</span><a class="menu-link" href="/promotion">Promotion</a></li>
+              <li class="menu-item"><a class="menu-link" href="/">{% trans "главная" %}</a></li>
+              <li class="menu-item"><span class="menu-label menu-label_danger">New</span><a class="menu-link" href="/shop">{% trans "магазины" %}</a></li>
+              <li class="menu-item"><a class="menu-link" href="{% url 'catalog-page' %}">{% trans "каталог" %}</a></li>
+              <li class="menu-item"><span class="menu-label menu-label_success">Hot</span><a class="menu-link" href="/promotion">{% trans "акции" %}</a></li>
               {% if request.user.is_authenticated %}
-                  <li class="menu-item"><a class="menu-link" href="{% url 'account' %}">Profile</a></li>
+                  <li class="menu-item"><a class="menu-link" href="{% url 'account' %}">{% trans "профиль" %}</a></li>
               {% endif %}
             </ul>
           </div>
@@ -70,7 +92,7 @@
           </div>
         </div>
         <div class="row-block Header-trigger"><a class="menuTrigger" href="#navigate">
-            <div class="menuTrigger-content">Показать навигацию
+            <div class="menuTrigger-content">{% trans "Показать навигацию" %}
             </div><span></span><span></span><span></span></a>
         </div>
       </div>
@@ -83,8 +105,8 @@
         <div class="Header-search">
           <div class="search">
             <form class="form form_search" action="#" method="post">
-              <input class="search-input" id="query" name="query" type="text" placeholder="What are you looking for ..."/>
-              <button class="search-button" type="submit" name="search" id="search"><img src="{% static 'img/icons/search.svg' %}" alt="search.svg"/>Search
+              <input class="search-input" id="query" name="query" type="text" placeholder="{% trans "Введите текст для поиска..." %}"/>
+              <button class="search-button" type="submit" name="search" id="search"><img src="{% static 'img/icons/search.svg' %}" alt="search.svg"/>{% trans "поиск" %}
               </button>
             </form>
           </div>

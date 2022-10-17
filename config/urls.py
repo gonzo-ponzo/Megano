@@ -26,6 +26,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", MainPage.as_view(), name="main-page"),
+    path('i18n/', include('django.conf.urls.i18n')),
     path("login/", UserLoginView.as_view(), name="login-page"),
     path("register/", UserRegistrationView.as_view(), name="registration-page"),
     path("product/", include("product.urls"), name="product"),
@@ -41,6 +42,11 @@ urlpatterns = [
     path("promotion/", include("promotion.urls"), name='promotion'),
     path("payment/<int:order_number>", api_one_bill, name='one_payment'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+if 'rosetta' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        path('rosetta/', include('rosetta.urls'))
+    ]
 
 if settings.DEBUG:
     urlpatterns += [

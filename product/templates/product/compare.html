@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 {% include 'base.html' with title="Compare" %}
 <body class="Site">
   {% include 'header.html' %}
@@ -6,12 +7,12 @@
     <div class="Middle-top">
       <div class="wrap">
         <div class="Middle-header">
-          <h1 class="Middle-title">Сравнение товаров
+          <h1 class="Middle-title">{% trans "Сравнение товаров" %}
           </h1>
           <ul class="breadcrumbs Middle-breadcrumbs">
-            <li class="breadcrumbs-item"><a href="/static">home</a>
+            <li class="breadcrumbs-item"><a href="/static">{% trans "Главная" %}</a>
             </li>
-            <li class="breadcrumbs-item breadcrumbs-item_current"><span>Сравнение товаров</span>
+            <li class="breadcrumbs-item breadcrumbs-item_current"><span>{% trans "Сравнение товаров" %}</span>
             </li>
           </ul>
         </div>
@@ -20,7 +21,8 @@
     <div class="Section">
       <div class="wrap">
         <article class="Article">
-          <p>Разнообразный и богатый опыт постоянный количественный рост и сфера нашей активности обеспечивает широкому кругу (специалистов) участие в формировании системы обучения кадров, соответствует насущным потребностям. Идейные соображения высшего порядка, а также консультация с широким активом требуют определения и уточнения соответствующий условий активизации.
+          <p>
+              {% trans "Разнообразный и богатый опыт постоянный количественный рост и сфера нашей активности обеспечивает широкому кругу (специалистов) участие в формировании системы обучения кадров, соответствует насущным потребностям. Идейные соображения высшего порядка, а также консультация с широким активом требуют определения и уточнения соответствующий условий активизации." %}
           </p>
         </article>
 
@@ -32,7 +34,7 @@
                     <label class="toggle Compare-checkDifferent">
                         <input type="checkbox" name="differentFeature" {% if compare_list.short_list  %}checked="checked" value="True"{% else %}value="False"{% endif %}/>
                         <span class="toggle-box"></span>
-                        <span class="toggle-text">Только различающиеся характеристики</span>
+                        <span class="toggle-text">{% trans "Только различающиеся характеристики" %}</span>
                     </label>
                 <select name="ChoiceCategory">
                     <option value="None">Все</option>
@@ -41,7 +43,7 @@
                     {% endfor %}
                 </select>
 
-                    <br><input type="submit" value="применить" />
+                    <br><input type="submit" value="{% trans "применить" %}" />
                 </form>
             </div>
             <div class="Compare-row">
@@ -69,7 +71,7 @@
                   {% endfor %}
           </div>
             <div class="Compare-row">
-            <div class="Compare-title">Рейтинг
+            <div class="Compare-title">{% trans "Рейтинг" %}
             </div>
             <div class="Compare-products">
 
@@ -102,7 +104,7 @@
                             <div class="Compare-feature">
                                 <div class="Rating">
                                     <div class="Rating-stars">
-                                        Нет оценок
+                                        {% trans "Нет оценок" %}
                                     </div>
                                 </div>
                             </div>
@@ -130,7 +132,7 @@
             {% endfor %}
             <div class="Compare-row">
               <div class="Compare-title">
-                  Цена от
+                  {% trans "Цена от" %}
               </div>
               <div class="Compare-products">
                   {% for product in compare_list.get_product_list %}
@@ -144,10 +146,10 @@
                   {% endfor %}
               </div>
           </div>
-            <a href="{% url 'compare_clear' %}">Очистить лист сравнений</a>
+            <a href="{% url 'compare_clear' %}">{% trans "Очистить лист сравнений" %}</a>
         </div>
       {% else %}
-          <div class="Compare-feature">Нет товаров для сравнения</div>
+          <div class="Compare-feature">{% trans "Нет товаров для сравнения" %}</div>
       {% endif %}
       </div>
     </div>

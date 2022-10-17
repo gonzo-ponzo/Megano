@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 {% include 'base.html' with title="Megano" %}
 <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'css/shop.css' %}">
@@ -8,12 +9,12 @@
     <div class="Middle-top">
       <div class="wrap">
         <div class="Middle-header">
-          <h1 class="Middle-title">About Megano
+          <h1 class="Middle-title">{% trans "О Megano" %}
           </h1>
           <ul class="breadcrumbs Middle-breadcrumbs">
-            <li class="breadcrumbs-item"><a href="/">home</a>
+            <li class="breadcrumbs-item"><a href="/">{% trans "Главная" %}</a>
             </li>
-            <li class="breadcrumbs-item breadcrumbs-item_current"><span>Shop</span>
+            <li class="breadcrumbs-item breadcrumbs-item_current"><span>{% trans "магазин" %}</span>
             </li>
           </ul>
         </div>
@@ -74,8 +75,8 @@
             <div class="media media_middle">
               <div class="media-image"><img src="{% static 'img/icons/contacts/phone.svg' %}" alt="phone.svg"/>
               </div>
-              <div class="media-content">Phone:&#32;
-                <nobr>+8 (200) 800-2000-600</nobr><br>Mobile:&#32;
+              <div class="media-content">{% trans "Телефон" %}:&#32;
+                <nobr>+8 (200) 800-2000-600</nobr><br>{% trans "Мобильный" %}:&#32;
                 <nobr>+8 (200) 800-2000-650</nobr>
               </div>
             </div>
@@ -101,7 +102,7 @@
           </div>
           <div class="Section-columnSection">
             <header class="Section-header">
-              <strong class="Section-title">Follow Us
+              <strong class="Section-title">{% trans "Мы здесь" %}
               </strong>
             </header>
             <div class="Section-columnContent">
@@ -170,12 +171,12 @@
             </div>
             {% if top_products|length == 0 %}
                 <header class="Section-header">
-                    <h2 class="Section-title">У магазина нет предложений
+                    <h2 class="Section-title">{% trans "У магазина нет предложений" %}
                     </h2>
                 </header>
             {% else %}
                 <header class="Section-header">
-                    <h2 class="Section-title">Популярные товары магазина
+                    <h2 class="Section-title">{% trans "Популярные товары магазина" %}
                     </h2>
                 </header>
                 <div class="Cards">

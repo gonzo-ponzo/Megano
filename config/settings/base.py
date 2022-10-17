@@ -13,6 +13,9 @@ from environs import Env
 from pathlib import Path
 import os
 
+from django.utils.translation import gettext_lazy as _
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -56,6 +59,7 @@ INSTALLED_APPS = [
     "payment",
     "django_celery_beat",
     "django_celery_results",
+    "rosetta",
 ]
 
 AUTH_USER_MODEL = "user.CustomUser"
@@ -63,6 +67,7 @@ AUTH_USER_MODEL = "user.CustomUser"
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -167,6 +172,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # LANGUAGE_CODE = "en-us"
 LANGUAGE_CODE = "ru"
+LANGUAGES = [
+    ('ru', _('Русский')),
+    ('en', _('Английский')),
+]
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
 TIME_ZONE = "UTC"
 
@@ -196,7 +208,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MPTT_ADMIN_LEVEL_INDENT = 20
 
-
 PRODUCT_PER_PAGES = 10
 
 COUNT_ELEMENTS_BEST_OFFER_SHOP = 6
+
+# setting for Rosetta application that eases the translation process
+ROSETTA_MESSAGES_PER_PAGE = 50
+ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE = 'ru'
+ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME = 'Русский'
+ROSETTA_SHOW_AT_ADMIN_PANEL = True

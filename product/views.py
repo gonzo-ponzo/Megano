@@ -54,7 +54,7 @@ class CompareAdd(View):
         elif product not in product_list:
             product_list.append(product)
         request.session[settings.CACHE_KEY_COMPARISON] = product_list
-        return render(request, 'product/compare_change.html', {'message': 'объект добавлен'})
+        return render(request, 'product/compare_change.html', {'message': _('объект добавлен')})
 
 
 class CompareRemove(View):
