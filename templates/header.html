@@ -49,9 +49,9 @@
             <div class="row ControlPanel-rowSplit">
               {% if request.user.is_authenticated %}
                 <div class="row-block"><a class="ControlPanel-title" href="{% url 'account' %}">{% trans "добро пожаловать" %}, {{ request.user.email }}</a></div>
-                <div class="row-block"><a class="ControlPanel-title" href="{% url 'logout' %}">{% trans "выход" %}</a></div>
+                <div class="row-block"><a class="ControlPanel-title" href="{% url 'logout' %}?next={{ request.path }}">{% trans "выход" %}</a></div>
               {% else %}
-                <div class="row-block"><a class="ControlPanel-title" href="/login">{% trans "вход/регистрация" %}</a></div>
+                <div class="row-block"><a class="ControlPanel-title" href="{% url 'login-page' %}?next={{ request.path }}">{% trans "вход/регистрация" %}</a></div>
               {% endif %}
             </div>
           </nav>

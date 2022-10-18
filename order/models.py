@@ -9,9 +9,9 @@ User = get_user_model()
 class Order(Model):
     """Заказ"""
 
-    DELIVERY_CHOICES = ((1, _("Доставка")), (2, _("Экспресс-доставка")))
+    DELIVERY_CHOICES = ((1, _("Обычная доставка")), (2, _("Экспресс-доставка")))
     PAYMENT_CHOICES = ((1, _("Онлайн картой")), (2, _("Онлайн со случайного чужого счёта")))
-    STATUS_CHOICES = ((1, _("Оплачен")), (2, _("Не оплачен")))
+    STATUS_CHOICES = ((1, "Ожидается оплата"), (2, _("Оплачен")), (3, _("Не оплачен")))
     ERROR_CHOICES = (
         (1, _("Оплата не выполнена, на вашем счёте не хватает средств")),
         (2, _("Оплата не выполнена, произошел сбой при списании средств")),
@@ -21,13 +21,17 @@ class Order(Model):
     city = models.CharField(max_length=100, verbose_name=_("город"))
     address = models.CharField(max_length=512, verbose_name=_("адрес"))
     comment = models.TextField(blank=True, verbose_name=_("комментарий"))
-    delivery_type = models.IntegerField(choices=DELIVERY_CHOICES, verbose_name=_("тип доставки"))
-    payment_type = models.IntegerField(choices=PAYMENT_CHOICES, verbose_name=_("способ оплаты"))
-    status_type = models.IntegerField(choices=STATUS_CHOICES, verbose_name=_("статус заказа"))
-    error_type = models.IntegerField(blank=True, null=True, choices=ERROR_CHOICES, verbose_name=_("ошибка заказа"))
-    delivery = models.ForeignKey(
-        "Delivery", blank=True, null=True, on_delete=models.DO_NOTHING, verbose_name=_("доставка")
+    delivery_type = models.IntegerField(
+        choices=DELIVERY_CHOICES, verbose_name=_("тип доставки"), default=DELIVERY_CHOICES[0][0]
     )
+    payment_type = models.IntegerField(
+        choices=PAYMENT_CHOICES, verbose_name=_("способ оплаты"), default=PAYMENT_CHOICES[0][0]
+    )
+    status_type = models.IntegerField(
+        choices=STATUS_CHOICES, verbose_name=_("статус заказа"), default=STATUS_CHOICES[0][0]
+    )
+    error_type = models.IntegerField(blank=True, null=True, choices=ERROR_CHOICES, verbose_name=_("ошибка заказа"))
+    delivery = models.ForeignKey("Delivery", on_delete=models.DO_NOTHING, verbose_name=_("доставка"))
     offer = models.ManyToManyField(Offer, through="OrderOffer", verbose_name=_("заказанные продукты"))
 
     class Meta:
@@ -41,6 +45,7 @@ class OrderOffer(Model):
     order = models.ForeignKey(Order, on_delete=models.DO_NOTHING, verbose_name=_("заказ"))
     offer = models.ForeignKey(Offer, on_delete=models.DO_NOTHING, verbose_name=_("предложение магазина"))
     price = models.DecimalField(max_digits=11, decimal_places=2, verbose_name=_("цена"))
+    discount = models.DecimalField(blank=True, null=True, max_digits=11, decimal_places=2, verbose_name=_("скидка"))
     amount = models.PositiveIntegerField(default=1, verbose_name=_("количество"))
 
     class Meta:

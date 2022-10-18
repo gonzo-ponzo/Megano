@@ -1,9 +1,15 @@
 from django.conf import settings
-from order.models import Offer
+from django.shortcuts import get_object_or_404
+from django.core.cache import cache
+from django.db import transaction, DatabaseError
+from django.core.serializers.json import DjangoJSONEncoder
+from order.models import Offer, Delivery, Order, OrderOffer
 from product.models import ProductImage, Product
 from shop.models import Shop
-from django.shortcuts import get_object_or_404
 from promotion.models import PromotionOffer
+from decimal import Decimal
+from typing import Dict, Tuple
+import json
 
 
 class Cart(object):
@@ -354,29 +360,126 @@ class Cart(object):
             self.session.modified = True
 
 
-class Order:
-    """
-    Составление заказа
-    """
+class Checkout:
+    """Оформление заказа"""
 
-    def set_user_param(self):
-        """Уточнить параметры пользователя"""
-        pass
+    @classmethod
+    def get_data_from_cart(cls, shops: Dict, user_id: int) -> Dict:
+        """Формирование данных из корзины"""
+        data_products = []
+        full_total_price = 0
+        total_price = 0
+
+        for products in shops.values():
+            for product in products.values():
+                product["discount"] = Decimal(str(sum(product.pop("discount").values())))
+                full_total_price += product.get("quantity", 1) * Decimal(str(product.get("offer_price")))
+                total_price += product.get("quantity", 1) * Decimal(str(product.get("final_price")))
+                data_products.append(product)
+
+        delivery_id, total = cls._get_data_delivery(
+            shop_cnt=len(shops), full_total_price=full_total_price, total_price=total_price
+        )
+
+        order = {"products": data_products, "delivery_id": delivery_id, "total": total}
+        SerializersCache.set_data_in_cache(
+            f"{settings.CACHE_KEY_CHECKOUT}{user_id}", order, settings.CACHE_TIMEOUT.get(settings.CACHE_KEY_CHECKOUT)
+        )
+        return order
+
+    @staticmethod
+    def _get_data_delivery(shop_cnt: int, full_total_price: Decimal, total_price: Decimal) -> Tuple[int, Dict]:
+        """Формирования итоговых цен с учетом доставки"""
+        delivery_key = ("normal", "express")
+        delivery = Delivery.objects.order_by("-created_at").first()
+        total = {}
+
+        for key in delivery_key:
+            if key == delivery_key[0]:
+                if shop_cnt == 1 and total_price > delivery.sum_order:
+                    delivery_price = 0
+                else:
+                    delivery_price = delivery.price
+            else:
+                delivery_price = delivery.price + delivery.express_price
+
+            total[key] = {
+                "delivery_price": delivery_price,
+                "full_total_price": full_total_price + delivery_price,
+                "total_price": total_price + delivery_price,
+            }
+
+        return delivery.pk, total
 
     def set_shipping_param(self):
         """Установить параметры доставки"""
         pass
 
-    def set_pay_param(self):
-        """Установить параметры доставки"""
-        pass
 
-    def get_order_status(self):
-        """Получить статус заказа"""
-        pass
+class SerializersCache:
+    @staticmethod
+    def set_data_in_cache(cache_key: str, data: Dict, cache_ttl: int) -> None:
+        cache.set(cache_key, json.dumps(data, cls=DjangoJSONEncoder), cache_ttl)
+
+    @staticmethod
+    def get_data_from_cache(cache_key: str) -> Dict | None:
+        data = cache.get(cache_key)
+        if data:
+            return json.loads(data)
+        return None
+
+    @staticmethod
+    def clean_data_from_cache(cache_key: str) -> None:
+        cache.delete(cache_key)
+
+
+class CheckoutDB:
+    """Сохранение заказа в БД"""
+
+    def __init__(self, user_id: int, order_info: Dict, order_data: Dict, cart: Cart):
+        self.user_id = user_id
+        self.order_info = order_info
+        self.order_data = order_data
+        self.cart = cart
+
+    def _add_data_order(self) -> Order:
+        order = Order.objects.create(
+            user_id=self.user_id, delivery_id=self.order_data.get("delivery_id"), **self.order_info
+        )
+        return order
+
+    def _add_data_order_offer(self, order: Order) -> None:
+        order_offer = []
+        for product in self.order_data.get("products"):
+            order_offer.append(
+                OrderOffer(
+                    order=order,
+                    offer_id=product.get("offer_id"),
+                    price=product.get("offer_price"),
+                    discount=product.get("discount"),
+                    amount=product.get("quantity"),
+                )
+            )
+        OrderOffer.objects.bulk_create(order_offer)
+
+    def save_order(self):
+        try:
+            with transaction.atomic():
+                order = self._add_data_order()
+                self._add_data_order_offer(order)
+        except DatabaseError:
+            return False, "Ошибка сервера"
+
+        SerializersCache.clean_data_from_cache(f"{settings.CACHE_KEY_CHECKOUT}{self.user_id}")
+        self.cart.clear()
+        return True, "Заказ сформирован"
 
     def set_order_status(self):
         """Изменить статус заказа"""
+        pass
+
+    def set_order_error(self):
+        """Добавить ошибку"""
         pass
 
 

@@ -1,10 +1,10 @@
-Django==4.0.7
+Django==4.1
 Jinja2==3.0.3
 Pillow==9.0.0
 djangorestframework==3.13.1
 redis==4.3.1
 celery==5.2.7
-django-celery-beat==2.3.0
+django-celery-beat==2.1.0
 django-celery-results==2.4.0
 environs==9.3.0
 psycopg2==2.9.3
@@ -14,4 +14,5 @@ django-phonenumber-field==6.1.0
 phonenumbers==8.12.54
 phonenumberslite==8.12.44
 jsonfield==3.1.0
+hiredis==2.0.0
 django-rosetta==0.9.8

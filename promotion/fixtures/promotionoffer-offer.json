@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
       "promotionoffer_id": 1,
-      "offer_id": 1,
+      "offer_id": 1
     }
   },
   {
@@ -12,7 +12,7 @@
     "pk": 2,
     "fields": {
       "promotionoffer_id": 2,
-      "offer_id": 3,
+      "offer_id": 3
     }
   },
   {
@@ -20,7 +20,7 @@
     "pk": 3,
     "fields": {
       "promotionoffer_id": 3,
-      "offer_id": 1,
+      "offer_id": 1
     }
   }
 ]
