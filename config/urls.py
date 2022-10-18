@@ -19,6 +19,7 @@ from user.views import UserLoginView, UserRegistrationView, LogoutView, \
                        user_page, UserUpdateView, orders_history, views_history
 from product.views import MainPage
 from payment.api import api_one_bill
+from jobs.views import shop_import
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -40,6 +41,7 @@ urlpatterns = [
          name='order'),
     path("promotion/", include("promotion.urls"), name='promotion'),
     path("payment/<int:order_number>", api_one_bill, name='one_payment'),
+    path("import/", shop_import, name='shop_import'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
