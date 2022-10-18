@@ -22,11 +22,13 @@ class CompareView(View):
     """
 
     def get(self, request, *args, **kwargs):
-        compare_list = ProductCompareList(
-            request.session.get(settings.CACHE_KEY_COMPARISON),
-            True,
-            'None'
-        )
+        compare_list = None
+        if request.session.get(settings.CACHE_KEY_COMPARISON):
+            compare_list = ProductCompareList(
+                request.session.get(settings.CACHE_KEY_COMPARISON),
+                True,
+                'None'
+            )
         return render(request, 'product/compare.html', {'compare_list': compare_list})
 
     def post(self, request, *args, **kwargs):
