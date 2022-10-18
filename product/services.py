@@ -114,7 +114,11 @@ class ProductCompare:
         self.category = product.category
         self.manufacturer = product.manufacturer
         self.image = product.productimage_set.first()
-        self.min_price = min(product.offer_set.all().values_list('price', flat=True))
+        min_price = product.offer_set.all().values_list('price', flat=True)
+        if min_price:
+            self.min_price = min(min_price)
+        else:
+            self.min_price = "нет предложений"
         self.rating = self.get_rating_list(product)
 
     def get_rating_list(self, product):
