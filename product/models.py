@@ -170,4 +170,6 @@ class ProductView(Model):
     class Meta:
         verbose_name = _("просмотренный продукт")
         verbose_name_plural = _("просмотренные продукты")
+        # TODO нужна ли сортировка?
         ordering = ["-updated_at"]
+        # unique_together = ['user', 'product']

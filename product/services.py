@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import Product, ProductImage, Offer, ProductProperty, Property, Review, ProductCategory
+from .models import Product, ProductImage, Offer, ProductProperty, Property, Review, ProductCategory, ProductView
 from shop.models import Shop
 from user.models import CustomUser
 
@@ -420,16 +420,23 @@ class BrowsingHistory:
 
     def add_product_to_history(self, product: Product):
         """Добавить продукт в список просмотренных"""
-        print(f'Добавлен в историю: {self.user = }, {product = } ')
-        print('test тест')
+        if not self.user.is_authenticated:
+            return
+
+        product_view, created = ProductView.objects.get_or_create(
+            user=self.user,
+            product=product,
+        )
+        if not created:
+            product_view.save()
 
     def delete_product_from_history(self):
         """Удалить продукт из истории просмотров"""
         pass
 
-    def get_history(self):
-        """Получить список просмотренных товаров"""
-        pass
+    def get_history(self, number_of_entries=20):
+        products = ProductView.objects.filter(user=self.user).select_related('product').order_by('-updated_at')
+        return products[:number_of_entries]
 
 
 class ImportProducts:

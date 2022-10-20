@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth import get_user
 from django.core.cache import cache
 from django.shortcuts import redirect, render, get_object_or_404
 
@@ -179,16 +180,11 @@ class DetailedProductView(DetailView):
         context["stars_rating"] = stars_order_by[::-1]
         context["reviews_form"] = ReviewForm()
 
-        if self.request.user.id:
-            # предлагаю создавать просмотр на админа(id=1),
-            # если пользователь не авторизован
-            product_view = ProductView(product=self.object, user=self.request.user)
-            product_view.save()
         return context
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        BrowsingHistory(self.request.user).add_product_to_history(self.object)
+        BrowsingHistory(get_user(self.request)).add_product_to_history(self.object)
         page_number = request.GET.get("page", 1)
         context = self.get_context_data(page_number=page_number, **kwargs)
         return render(request, self.template_name, context=context)
