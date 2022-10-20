@@ -8,7 +8,7 @@ from product.models import Product, ProductView, ProductCategory
 from shop.models import Shop
 from promotion.services import BannerMain
 from .services import ReviewForItem, ProductCompareList, SortProductsResult, FilterProductsResult, DetailedProduct
-from .services import DailyOffer
+from .services import DailyOffer, BrowsingHistory
 
 from django.core.paginator import Paginator
 from django.contrib import messages
@@ -188,6 +188,7 @@ class DetailedProductView(DetailView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
+        BrowsingHistory(self.request.user).add_product_to_history(self.object)
         page_number = request.GET.get("page", 1)
         context = self.get_context_data(page_number=page_number, **kwargs)
         return render(request, self.template_name, context=context)

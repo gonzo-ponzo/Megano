@@ -415,8 +415,16 @@ class BrowsingHistory:
     История просмотра пользователя
     """
 
-    def add_product_to_history(self):
+    def __init__(self, user: CustomUser):
+        self.user = user
+
+    def add_product_to_history(self, product: Product):
         """Добавить продукт в список просмотренных"""
+        print(f'Добавлен в историю: {self.user = }, {product = } ')
+        print('test тест')
+
+    def delete_product_from_history(self):
+        """Удалить продукт из истории просмотров"""
         pass
 
     def get_history(self):
