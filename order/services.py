@@ -3,10 +3,12 @@ from django.shortcuts import get_object_or_404
 from django.core.cache import cache
 from django.db import transaction, DatabaseError
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models.query import RawQuerySet
 from order.models import Offer, Delivery, Order, OrderOffer
 from product.models import ProductImage, Product
 from shop.models import Shop
 from promotion.models import PromotionOffer
+from .queries_sql import user_orders_sql
 from decimal import Decimal
 from typing import Dict, Tuple
 import json
@@ -103,13 +105,14 @@ class Cart(object):
         self.cart[shop_id][product_id].setdefault("discount", {promotion.id: 0})
 
         if promotion.discount_decimals != 0:
-            self.cart[shop_id][product_id]["discount"][
-                str(promotion.id)] = round(float(promotion.discount_decimals), 2)
+            self.cart[shop_id][product_id]["discount"][str(promotion.id)] = round(
+                float(promotion.discount_decimals), 2
+            )
 
         else:
             price = self.cart[shop_id][product_id]["price"]
-            self.cart[shop_id][product_id]["discount"][str(promotion.id)] = (
-                round(float(price * (100 - promotion.discount_percentage) / 100), 2)
+            self.cart[shop_id][product_id]["discount"][str(promotion.id)] = round(
+                float(price * (100 - promotion.discount_percentage) / 100), 2
             )
 
     def get_discount_two(self, shop_id: str, product_id: str, promotion: PromotionOffer):
@@ -121,8 +124,8 @@ class Cart(object):
         if quantity == 0:
             self.cart[shop_id][product_id]["discount"][str(promotion.id)] = 0
         else:
-            self.cart[shop_id][product_id]["discount"][str(promotion.id)] = (
-                round(float(quantity // discount_value * price / quantity), 2)
+            self.cart[shop_id][product_id]["discount"][str(promotion.id)] = round(
+                float(quantity // discount_value * price / quantity), 2
             )
 
     def get_discount_three(self, shop_id: str, promotion: PromotionOffer):
@@ -143,14 +146,12 @@ class Cart(object):
                     self.cart[shop_id][product].setdefault("discount", {promotion.id: 0})
 
                     if promotion.discount_decimals != 0:
-                        self.cart[shop_id][product]["discount"][
-                            str(promotion.id)] = (
-                            round(float(promotion.discount_decimals / shop_cart_amount), 2)
+                        self.cart[shop_id][product]["discount"][str(promotion.id)] = round(
+                            float(promotion.discount_decimals / shop_cart_amount), 2
                         )
 
                     else:
-                        self.cart[shop_id][product]["discount"][
-                            str(promotion.id)] = int(
+                        self.cart[shop_id][product]["discount"][str(promotion.id)] = int(
                             round(float(shop_cart_price * promotion.discount_percentage / 100 / shop_cart_amount), 2)
                         )
 
@@ -165,8 +166,7 @@ class Cart(object):
 
         for product in self.cart[shop_id].keys():
             if int(product) in products:
-                self.cart[shop_id][product].setdefault("discount",
-                                                       {promotion.id: 0})
+                self.cart[shop_id][product].setdefault("discount", {promotion.id: 0})
                 quantity = self.cart[shop_id][product]["quantity"]
                 shop_cart_amount += quantity
 
@@ -175,16 +175,14 @@ class Cart(object):
                 if int(product) in products:
 
                     if promotion.discount_decimals != 0:
-                        self.cart[shop_id][product]["discount"][
-                            str(promotion.id)] = (
-                            round(float(promotion.discount_decimals / shop_cart_amount), 2)
+                        self.cart[shop_id][product]["discount"][str(promotion.id)] = round(
+                            float(promotion.discount_decimals / shop_cart_amount), 2
                         )
 
                     else:
                         price = self.cart[shop_id][product]["offer_price"]
-                        self.cart[shop_id][product]["discount"][
-                            str(promotion.id)] = (
-                            round(float(price * promotion.discount_percentage / 100), 2)
+                        self.cart[shop_id][product]["discount"][str(promotion.id)] = round(
+                            float(price * promotion.discount_percentage / 100), 2
                         )
 
         else:
@@ -195,20 +193,19 @@ class Cart(object):
         flag = True
         quantity = self.cart[shop_id][product_id]["quantity"]
         for product in self.cart[shop_id]:
-            if get_product_category_id(
-                    product) == promotion.discount_type_value:
+            if get_product_category_id(product) == promotion.discount_type_value:
                 flag = False
 
                 if promotion.discount_decimals != 0:
-                    self.cart[shop_id][product_id]["discount"][
-                        str(promotion.id)] = round(float(promotion.discount_decimals / quantity), 2)
+                    self.cart[shop_id][product_id]["discount"][str(promotion.id)] = round(
+                        float(promotion.discount_decimals / quantity), 2
+                    )
                     break
 
                 else:
                     price = self.cart[shop_id][product_id]["offer_price"]
-                    self.cart[shop_id][product_id]["discount"][
-                        str(promotion.id)] = (
-                        round(float(price * promotion.discount_percentage / 100 / quantity), 2)
+                    self.cart[shop_id][product_id]["discount"][str(promotion.id)] = round(
+                        float(price * promotion.discount_percentage / 100 / quantity), 2
                     )
                     break
 
@@ -249,7 +246,8 @@ class Cart(object):
             self.cart[shop][product]["final_price"] = round(float(self.cart[shop][product]["offer_price"]), 2)
         else:
             self.cart[shop][product]["final_price"] = round(
-                float(get_object_or_404(Offer, product=product, shop=shop).price), 2)
+                float(get_object_or_404(Offer, product=product, shop=shop).price), 2
+            )
 
         self.cart[shop][product].setdefault("discount", {"0": 0})
         for discount in self.cart[shop][product]["discount"].values():
@@ -490,9 +488,10 @@ class OrderHistory:
         """Добавить продукт в историю покупок"""
         pass
 
-    def get_history(self):
+    @staticmethod
+    def get_history(user_id: int) -> RawQuerySet:
         """Получить историю покупок"""
-        pass
+        return Order.objects.raw(user_orders_sql, [user_id])
 
 
 def get_product_price_by_shop(shop_id: int, product_id: int):
