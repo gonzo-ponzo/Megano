@@ -1,12 +1,15 @@
 from django.views import View
+from django.views.generic import ListView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
-from order.services import Cart, Checkout, SerializersCache, CheckoutDB
+from order.services import Cart, Checkout, SerializersCache, CheckoutDB, OrderHistory
 from django.shortcuts import render, redirect, reverse, get_object_or_404
-from product.models import Product
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
+from product.models import Product
 from .forms import OrderForm
+from .models import Order
 from copy import deepcopy
 
 
@@ -104,3 +107,22 @@ class CreateOrderView(View):
         messages.error(request, msg)
         context = {"order_form": order_form, "order": order}
         return render(request, "order/order.html", context=context)
+
+
+class OrderHistoryListView(LoginRequiredMixin, ListView):
+    """История заказов пользователя"""
+
+    # model = Order
+    template_name = "order/historyorder.html"
+    paginate_by = settings.PAGINATE_ORDER_HISTORY
+    context_object_name = "order_list"
+    # queryset = OrderHistory.get_history(1)
+
+    def get_queryset(self):
+        return OrderHistory.get_history(self.request.user.id)
+
+
+class OrderHistoryDetailView(LoginRequiredMixin, DetailView):
+    """Детальная страница заказа"""
+
+    pass

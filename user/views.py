@@ -17,7 +17,7 @@ class UserLoginView(LoginView):
     template_name = "user/login.html"
 
     def get_success_url(self):
-        next = self.request.GET.get('next')
+        next = self.request.GET.get("next")
         if next:
             return next
         return reverse("main-page")
@@ -27,7 +27,7 @@ class UserRegistrationView(View):
     """Страница регистрации"""
 
     def get(self, request, *args, **kwargs):
-        context = {'form': UserRegistrationForm}
+        context = {"form": UserRegistrationForm}
         return render(request, "user/register.html", context=context)
 
     def post(self, request, *args, **kwargs):
@@ -51,7 +51,7 @@ class LogoutView(LogoutView):
 
 @login_required
 def user_page(request):
-    return render(request, 'user/account.html')
+    return render(request, "user/account.html")
 
 
 class UserUpdateView(View):
@@ -62,7 +62,7 @@ class UserUpdateView(View):
         return super(UserUpdateView, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        context = {'form': UserUpdateForm(instance=request.user)}
+        context = {"form": UserUpdateForm(instance=request.user)}
         return render(request, "user/profile.html", context=context)
 
     def post(self, request, *args, **kwargs):
@@ -90,11 +90,6 @@ class UserUpdateView(View):
             is_ok = True
         context = {"form": form, "is_ok": is_ok}
         return render(request, "user/profile.html", context=context)
-
-
-@login_required
-def orders_history(request):
-    return HttpResponse("Эта страница еще никем не сделана")
 
 
 @login_required
