@@ -116,10 +116,9 @@ class OrderHistoryListView(LoginRequiredMixin, ListView):
     template_name = "order/historyorder.html"
     paginate_by = settings.PAGINATE_ORDER_HISTORY
     context_object_name = "order_list"
-    # queryset = OrderHistory.get_history(1)
 
     def get_queryset(self):
-        return OrderHistory.get_history(self.request.user.id)
+        return OrderHistory.get_history_orders(self.request.user.id)
 
 
 class OrderHistoryDetailView(LoginRequiredMixin, DetailView):

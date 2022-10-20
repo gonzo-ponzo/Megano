@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.http import HttpResponse
 
+from order.services import OrderHistory
 from .forms import UserRegistrationForm, UserLoginForm, UserUpdateForm
 
 
@@ -51,7 +52,10 @@ class LogoutView(LogoutView):
 
 @login_required
 def user_page(request):
-    return render(request, "user/account.html")
+    order = OrderHistory.get_history_last_order(request.user.id)
+    if order:
+        order = order[0]
+    return render(request, "user/account.html", context={"order": order})
 
 
 class UserUpdateView(View):

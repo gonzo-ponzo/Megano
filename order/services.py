@@ -8,7 +8,7 @@ from order.models import Offer, Delivery, Order, OrderOffer
 from product.models import ProductImage, Product
 from shop.models import Shop
 from promotion.models import PromotionOffer
-from .queries_sql import user_orders_sql
+from .queries_sql import user_orders_sql, user_last_order_sql
 from decimal import Decimal
 from typing import Dict, Tuple
 import json
@@ -482,16 +482,17 @@ class CheckoutDB:
 
 
 class OrderHistory:
-    """История покупок"""
-
-    def add_product_in_history(self):
-        """Добавить продукт в историю покупок"""
-        pass
+    """История заказов"""
 
     @staticmethod
-    def get_history(user_id: int) -> RawQuerySet:
-        """Получить историю покупок"""
+    def get_history_orders(user_id: int) -> RawQuerySet:
+        """Получить список заказов"""
         return Order.objects.raw(user_orders_sql, [user_id])
+
+    @staticmethod
+    def get_history_last_order(user_id: int) -> RawQuerySet:
+        """Получить последний заказ"""
+        return Order.objects.raw(user_last_order_sql, [user_id])
 
 
 def get_product_price_by_shop(shop_id: int, product_id: int):

@@ -36,7 +36,9 @@
                                                 {% trans 'Заказ' %}&#32;
                                                 <span class="Order-numberOrder">№{{ order.pk }}</span>
                                                 &#32;{% trans 'от' %}&#32;
-                                                <span class="Order-dateOrder">{{ order.created_at|date:'Y-m-d H:i:s' }}</span>
+                                                <span class="Order-dateOrder">
+                                                    {{ order.created_at|date:'Y-m-d H:i:s' }}
+                                                </span>
                                             </a>
                                         </div>
                                         <div class="row-block">

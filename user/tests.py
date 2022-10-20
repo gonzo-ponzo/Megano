@@ -215,7 +215,7 @@ class UserLogoutViewTest(TestCase):
 
 class UserPageNotAuthenticatedTest(TestCase):
     def test_userpages_not_allowed(self):
-        names = ['account', 'profile', 'orders_history', 'views_history']
+        names = ['account', 'profile', 'order:history-orders', 'views_history']
         url_login = reverse('login-page')
         for name in names:
             url = reverse(name)
@@ -232,7 +232,7 @@ class UserPagesTest(TestCase):
         self.client.login(email="test@e.mail", password="test_password")
 
     def test_userpage(self):
-        names = ['profile', 'orders_history', 'views_history']
+        names = ['profile', 'order:history-orders', 'views_history']
         url = reverse('account')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -242,7 +242,7 @@ class UserPagesTest(TestCase):
         # TODO проверить наличие остальных разделов
 
     def test_userpage_update_get(self):
-        names = ['account', 'orders_history', 'views_history']
+        names = ['account', 'order:history-orders', 'views_history']
         url = reverse('profile')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
