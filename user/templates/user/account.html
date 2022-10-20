@@ -40,7 +40,7 @@
                   <div class="Order-personal">
                     <div class="row">
                       <div class="row-block">
-                          <a class="Order-title" href="oneorder.html">
+                          <a class="Order-title" href="{{ order.get_absolute_url }}">
                               {% trans "Заказ" %}&#32;
                               <span class="Order-numberOrder">№{{ order.pk }}</span>
                               &#32;{% trans 'от' %}&#32;
