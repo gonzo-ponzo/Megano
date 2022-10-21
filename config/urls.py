@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from user.views import UserLoginView, UserRegistrationView, LogoutView, \
-                       user_page, UserUpdateView, orders_history, views_history
+                       user_page, UserUpdateView, orders_history, views_history, ViewsHistory
 from product.views import MainPage
 from payment.api import api_one_bill
 from django.conf import settings
@@ -34,7 +34,7 @@ urlpatterns = [
     path("user_page/", user_page, name="account"),
     path("user_page/update/", UserUpdateView.as_view(), name="profile"),
     path("orders_history/", orders_history, name="orders_history"),
-    path("history/", views_history, name="views_history"),
+    path("history/", ViewsHistory.as_view(), name="views_history"),
     path("catalog/", include("product.urls_catalog")),
     path("shop/", include("shop.urls"), name='shop'),
     path("order/", include(("order.urls", 'order'), namespace='order'),

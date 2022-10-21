@@ -1,14 +1,16 @@
 from django.contrib.auth import authenticate, login, get_user
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import View
+from django.views.generic import View, TemplateView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.http import HttpResponse
 
 from .forms import UserRegistrationForm, UserLoginForm, UserUpdateForm
 from product.services import BrowsingHistory
+
 
 class UserLoginView(LoginView):
     """Страница входа"""
@@ -104,3 +106,14 @@ def orders_history(request):
 @login_required
 def views_history(request):
     return HttpResponse("Эта страница еще никем не сделана")
+
+
+class ViewsHistory(LoginRequiredMixin, TemplateView):
+
+    template_name = 'user/historyview.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = get_user(self.request)
+        context['viewed_products'] = BrowsingHistory(user).get_history()
+        return context
