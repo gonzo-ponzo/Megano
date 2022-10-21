@@ -10,13 +10,13 @@ WITH history_order AS (
            o.payment_type,
            o.status_type,
            o.error_type,
-           SUM(oo.price * oo.amount) AS sum_price,
-           SUM(oo.discount)          AS sum_discount,
+           SUM(oo.price * oo.amount)    AS sum_price,
+           SUM(oo.discount * oo.amount) AS sum_discount,
            CASE
                WHEN o.delivery_type = 2 THEN od.price + od.express_price
                WHEN COUNT(DISTINCT of.shop_id) > 1 THEN od.price
                WHEN SUM(oo.price * oo.amount) < od.sum_order THEN od.price
-               ELSE 0 END            AS price_delivery
+               ELSE 0 END               AS price_delivery
     FROM order_order o
             JOIN order_orderoffer oo ON o.id = oo.order_id
             JOIN order_delivery od ON o.delivery_id = od.id

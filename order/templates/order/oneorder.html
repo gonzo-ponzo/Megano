@@ -2,6 +2,8 @@
 {% load i18n %}
 {% include 'base.html' with title='Информация заказа' %}
 <body class="Site">
+    {% include 'header.html' %}
+
     <div class="Middle Middle_top">
         <div class="Middle-top">
             <div class="wrap">
@@ -114,35 +116,56 @@
                             </div>
 
                             <div class="Cart Cart_order">
-                                <div class="Cart-product">
-                                    <div class="Cart-block Cart-block_row">
-                                        <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img
-                                                class="Cart-img" src="assets/img/content/sale/product.png"
-                                                alt="product.png"/></a>
-                                        </div>
-                                        <div class="Cart-block Cart-block_info"><a class="Cart-title" href="#">Планшет</a>
-                                            <div class="Cart-desc">Это планшет с современным железом. Процессор последнего
-                                                поколения
+                                {% for product in products %}
+                                    <div class="Cart-product">
+                                        <div class="Cart-block Cart-block_row">
+                                            <div class="Cart-block Cart-block_pict">
+                                                <a class="Cart-pict" href="{{ product.offer.product.get_absolute_url }}">
+                                                    {% if product.offer.product.productimage_set.all %}
+                                                        <img class="Cart-img" src="{{ product.offer.product.productimage_set.all.0.image.url }}" alt="product.png"/>
+                                                    {% else %}
+                                                        <img class="Cart-img" src="{% static 'img/no_image.png' %}" alt="product.png"/>
+                                                    {% endif %}
+                                                </a>
+                                            </div>
+                                            <div class="Cart-block Cart-block_info">
+                                                <a class="Cart-title" href="{{ product.offer.product.get_absolute_url }}">
+                                                    {{ product.offer.product.name }}
+                                                </a>
+                                            </div>
+                                            <div class="Cart-block Cart-block_price">
+                                                {% if product.discount == 0 %}
+                                                    <div class="Cart-price">
+                                                        {{ product.price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                    </div>
+                                                {% else %}
+                                                    <div class="Cart-price_old">
+                                                        {{ product.price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                    </div>
+                                                    <div class="Cart-price">
+                                                        {{ product.total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                    </div>
+                                                {% endif %}
                                             </div>
                                         </div>
-                                        <div class="Cart-block Cart-block_price">
-                                            <div class="Cart-price_old">60.99$
+                                        <div class="Cart-block Cart-block_row">
+                                            <div class="Cart-block Cart-block_seller">
+                                                <div>
+                                                    {% trans 'Продавец' %}:
+                                                </div>
+                                                <div>
+                                                    <a href="{{ product.offer.shop.get_absolute_url }}">
+                                                        {{ product.offer.shop.name }}
+                                                    </a>
+                                                </div>
                                             </div>
-                                            <div class="Cart-price">40.99$
+                                            <div class="Cart-block Cart-block_amount">
+                                                {{ product.amount }}&nbsp;{% trans 'шт.' %}
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="Cart-block Cart-block_row">
-                                        <div class="Cart-block Cart-block_seller">
-                                            <div>Продавец:
-                                            </div>
-                                            <div>shop kke ываыва ыа ываыв а
-                                            </div>
-                                        </div>
-                                        <div class="Cart-block Cart-block_amount">1 шт.
-                                        </div>
-                                    </div>
-                                </div>
+                                {% endfor %}
+
 
                                 <div class="Cart-total custom-Order-delivery">
                                     <div class="Cart-block Cart-block_total">

@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from django.core.cache import cache
 from django.db import transaction, DatabaseError
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models.query import RawQuerySet
+from django.db.models import F, Prefetch
 from order.models import Offer, Delivery, Order, OrderOffer
 from product.models import ProductImage, Product
 from shop.models import Shop
@@ -485,7 +485,7 @@ class OrderHistory:
     """История заказов"""
 
     @staticmethod
-    def get_history_orders(user_id: int) -> RawQuerySet:
+    def get_history_orders(user_id: int) -> Order | None:
         """Получить список заказов"""
         return Order.objects.raw(user_orders_sql, [user_id])
 
@@ -499,13 +499,25 @@ class OrderHistory:
         return order
 
     @staticmethod
-    def get_history_order_detail(order_id: int) -> RawQuerySet:
+    def get_history_order_detail(order_id: int) -> Order | None:
         """Получить детальную информацию о заказе"""
         try:
             order = Order.objects.raw(order_sql, [order_id])[0]
         except IndexError:
             return None
         return order
+
+    @staticmethod
+    def get_products_order(order_id: int) -> OrderOffer:
+        product_image = ProductImage.objects.only("image", "product_id")
+        queryset = OrderOffer.objects.select_related("offer", "offer__product", "offer__shop")
+        queryset = queryset.prefetch_related(Prefetch("offer__product__productimage_set", queryset=product_image))
+        queryset = queryset.annotate(total_price=F("price") - F("discount"))
+        queryset = queryset.filter(order_id=order_id)
+        queryset = queryset.only(
+            "id", "price", "discount", "amount", "offer_id", "offer__product__name", "offer__shop__name"
+        )
+        return queryset
 
 
 def get_product_price_by_shop(shop_id: int, product_id: int):
