@@ -435,7 +435,12 @@ class BrowsingHistory:
         pass
 
     def get_history(self, number_of_entries=20):
-        products = ProductView.objects.filter(user=self.user).select_related('product').order_by('-updated_at')
+        products = FilterProductsResult.get_queryset_for_catalog()
+        products = products.filter(id__in=ProductView.objects.filter(user=self.user).values_list('product'))
+        products = products.annotate(date_view=F('productview__updated_at'))
+        products = products.order_by('-date_view')
+        for product in products:
+            print(product)
         return products[:number_of_entries]
 
 

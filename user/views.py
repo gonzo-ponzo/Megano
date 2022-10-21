@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, get_user
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import View
@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 from django.http import HttpResponse
 
 from .forms import UserRegistrationForm, UserLoginForm, UserUpdateForm
-
+from product.services import BrowsingHistory
 
 class UserLoginView(LoginView):
     """Страница входа"""
@@ -51,7 +51,11 @@ class LogoutView(LogoutView):
 
 @login_required
 def user_page(request):
-    return render(request, 'user/account.html')
+    user = get_user(request)
+    context = {
+        'viewed_products': BrowsingHistory(user).get_history(3)
+    }
+    return render(request, 'user/account.html', context=context)
 
 
 class UserUpdateView(View):
