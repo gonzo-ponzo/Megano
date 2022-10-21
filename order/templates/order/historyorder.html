@@ -8,7 +8,8 @@
         <div class="Middle-top">
             <div class="wrap">
                 <div class="Middle-header">
-                    <h1 class="Middle-title">История заказов
+                    <h1 class="Middle-title">
+                        {% trans 'История заказов' %}
                     </h1>
                     <ul class="breadcrumbs Middle-breadcrumbs">
                         <li class="breadcrumbs-item">
@@ -65,10 +66,10 @@
                                                 <div class="Order-infoContent">
                                                     {% if order.total_full_price %}
                                                         <span class="Order-price">
-                                                            {{ order.full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                            {{ order.total_full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
                                                         </span>
                                                         <span class="Order-price_old">
-                                                            {{ order.total_full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                            {{ order.full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
                                                         </span>
                                                     {% else %}
                                                         <span class="Order-price">

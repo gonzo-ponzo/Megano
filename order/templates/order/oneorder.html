@@ -1,0 +1,194 @@
+{% load static %}
+{% load i18n %}
+{% include 'base.html' with title='Информация заказа' %}
+<body class="Site">
+    <div class="Middle Middle_top">
+        <div class="Middle-top">
+            <div class="wrap">
+                <div class="Middle-header">
+                    <h1 class="Middle-title">{% trans 'Заказ' %}&nbsp;№{{ order.id }}
+                    </h1>
+                    <ul class="breadcrumbs Middle-breadcrumbs">
+                        <li class="breadcrumbs-item">
+                            <a href="{% url 'main-page' %}">
+                                {% trans "Главная" %}
+                            </a>
+                        </li>
+                        <li class="breadcrumbs-item">
+                            <a href="{% url 'order:history-orders' %}">
+                                {% trans 'История заказов' %}
+                            </a>
+                        </li>
+                        <li class="breadcrumbs-item breadcrumbs-item_current">
+                            <span>
+                                {% trans 'Заказ' %}&nbsp;№{{ order.id }}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="Section">
+            <div class="wrap">
+                <div class="Section-content">
+                    <div class="Orders">
+                    </div>
+                    <div class="Order">
+                        <div class="Order-infoBlock">
+                            <div class="Order-personal">
+                                <div class="row">
+                                    <div class="row-block">
+                                        <div class="Order-info Order-info_date">
+                                            <div class="Order-infoType">
+                                                {% trans 'Дата заказа' %}:
+                                            </div>
+                                            <div class="Order-infoContent">
+                                                {{ order.created_at|date:'Y-m-d H:i:s' }}
+                                            </div>
+                                        </div>
+                                        {% include 'order/inc/_data_user.html' %}
+                                        {% if order.comment %}
+                                            <div class="Order-info">
+                                                <div class="Order-infoType">
+                                                    {% trans 'Комментарий к заказу' %}:
+                                                </div>
+                                                <div class="Order-infoContent">
+                                                    {{ order.comment }}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="row-block">
+                                        <div class="Order-info Order-info_delivery">
+                                            <div class="Order-infoType">
+                                                {% trans 'Тип доставки' %}:
+                                            </div>
+                                            <div class="Order-infoContent">
+                                                {{ order.get_delivery_type_display }}
+                                            </div>
+                                        </div>
+                                        <div class="Order-info">
+                                            <div class="Order-infoType">
+                                                {% trans 'Город' %}:
+                                            </div>
+                                            <div class="Order-infoContent">
+                                                {{ order.city }}
+                                            </div>
+                                        </div>
+                                        <div class="Order-info">
+                                            <div class="Order-infoType">
+                                                {% trans 'Адрес' %}:
+                                            </div>
+                                            <div class="Order-infoContent">
+                                                {{ order.address }}
+                                            </div>
+                                        </div>
+                                        <div class="Order-info Order-info_pay">
+                                            <div class="Order-infoType">
+                                                {% trans 'Оплата' %}:
+                                            </div>
+                                            <div class="Order-infoContent">
+                                                {{ order.get_payment_type_display }}
+                                            </div>
+                                        </div>
+                                        <div class="Order-info Order-info_status">
+                                            <div class="Order-infoType">
+                                                {% trans 'Статус' %}:
+                                            </div>
+                                            <div class="Order-infoContent">
+                                                {{ order.get_status_type_display }}
+                                            </div>
+                                        </div>
+                                        {% if order.error_type %}
+                                            <div class="Order-info Order-info_error">
+                                                <div class="Order-infoType">
+                                                    {% trans 'Оплата не прошла' %}:
+                                                </div>
+                                                <div class="Order-infoContent">
+                                                    {{ order.get_error_type_display }}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="Cart Cart_order">
+                                <div class="Cart-product">
+                                    <div class="Cart-block Cart-block_row">
+                                        <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img
+                                                class="Cart-img" src="assets/img/content/sale/product.png"
+                                                alt="product.png"/></a>
+                                        </div>
+                                        <div class="Cart-block Cart-block_info"><a class="Cart-title" href="#">Планшет</a>
+                                            <div class="Cart-desc">Это планшет с современным железом. Процессор последнего
+                                                поколения
+                                            </div>
+                                        </div>
+                                        <div class="Cart-block Cart-block_price">
+                                            <div class="Cart-price_old">60.99$
+                                            </div>
+                                            <div class="Cart-price">40.99$
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="Cart-block Cart-block_row">
+                                        <div class="Cart-block Cart-block_seller">
+                                            <div>Продавец:
+                                            </div>
+                                            <div>shop kke ываыва ыа ываыв а
+                                            </div>
+                                        </div>
+                                        <div class="Cart-block Cart-block_amount">1 шт.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="Cart-total custom-Order-delivery">
+                                    <div class="Cart-block Cart-block_total">
+                                        <strong class="Cart-title">
+                                            {% trans 'Доставка:' %}
+                                        </strong>
+                                        <span class="Cart-price">
+                                            {{ order.price_delivery|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="Cart-total custom-Order-total">
+                                    <div class="Cart-block Cart-block_total">
+                                        <strong class="Cart-title">
+                                            {% trans 'Итого' %}:
+                                            {% if order.total_full_price %}
+                                                <span class="Cart-price">
+                                                    {{ order.total_full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                </span>
+                                                <span class="Cart-price_old">
+                                                    {{ order.full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                </span>
+                                            {% else %}
+                                                <span class="Cart-price">
+                                                    {{ order.full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                </span>
+                                            {% endif %}
+                                        </strong>
+                                    </div>
+                                    <div class="Cart-block"><a class="btn btn_primary btn_lg" href="#">Оплатить</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% include 'footer.html' %}
+<script src="{% static 'plg/jQuery/jquery-3.5.0.slim.min.js' %}"></script>
+<script src="{% static 'plg/form/jquery.form.js' %}"></script>
+<script src="{% static 'plg/form/jquery.maskedinput.min.js' %}"></script>
+<script src="{% static 'plg/range/ion.rangeSlider.min.js' %}"></script>
+<script src="{% static 'plg/Slider/slick.min.js' %}"></script>
+<script src="{% static 'js/scripts.js' %}"></script>
+</body>

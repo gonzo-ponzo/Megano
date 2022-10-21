@@ -8,7 +8,7 @@ from order.models import Offer, Delivery, Order, OrderOffer
 from product.models import ProductImage, Product
 from shop.models import Shop
 from promotion.models import PromotionOffer
-from .queries_sql import user_orders_sql, user_last_order_sql
+from .queries_sql import user_orders_sql, user_last_order_sql, order_sql
 from decimal import Decimal
 from typing import Dict, Tuple
 import json
@@ -490,9 +490,22 @@ class OrderHistory:
         return Order.objects.raw(user_orders_sql, [user_id])
 
     @staticmethod
-    def get_history_last_order(user_id: int) -> RawQuerySet:
+    def get_history_last_order(user_id: int) -> Order | None:
         """Получить последний заказ"""
-        return Order.objects.raw(user_last_order_sql, [user_id])
+        try:
+            order = Order.objects.raw(user_last_order_sql, [user_id])[0]
+        except IndexError:
+            return None
+        return order
+
+    @staticmethod
+    def get_history_order_detail(order_id: int) -> RawQuerySet:
+        """Получить детальную информацию о заказе"""
+        try:
+            order = Order.objects.raw(order_sql, [order_id])[0]
+        except IndexError:
+            return None
+        return order
 
 
 def get_product_price_by_shop(shop_id: int, product_id: int):

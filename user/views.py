@@ -53,8 +53,6 @@ class LogoutView(LogoutView):
 @login_required
 def user_page(request):
     order = OrderHistory.get_history_last_order(request.user.id)
-    if order:
-        order = order[0]
     return render(request, "user/account.html", context={"order": order})
 
 

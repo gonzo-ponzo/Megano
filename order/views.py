@@ -1,5 +1,5 @@
 from django.views import View
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
 from order.services import Cart, Checkout, SerializersCache, CheckoutDB, OrderHistory
@@ -9,7 +9,6 @@ from django.http import HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
 from product.models import Product
 from .forms import OrderForm
-from .models import Order
 from copy import deepcopy
 
 
@@ -112,7 +111,6 @@ class CreateOrderView(View):
 class OrderHistoryListView(LoginRequiredMixin, ListView):
     """История заказов пользователя"""
 
-    # model = Order
     template_name = "order/historyorder.html"
     paginate_by = settings.PAGINATE_ORDER_HISTORY
     context_object_name = "order_list"
@@ -121,7 +119,11 @@ class OrderHistoryListView(LoginRequiredMixin, ListView):
         return OrderHistory.get_history_orders(self.request.user.id)
 
 
-class OrderHistoryDetailView(LoginRequiredMixin, DetailView):
+class OrderHistoryDetailView(LoginRequiredMixin, View):
     """Детальная страница заказа"""
 
-    pass
+    def get(self, request, *args, **kwargs):
+        order = OrderHistory.get_history_order_detail(kwargs.get("pk"))
+        context = {"order": order}
+        return render(request, "order/oneorder.html", context=context)
+

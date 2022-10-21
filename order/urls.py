@@ -18,5 +18,5 @@ urlpatterns = [
     path("cart-clear/", cart_clear, name="cart-clear"),
     path("create/", CreateOrderView.as_view(), name="create-order"),
     path("history/", OrderHistoryListView.as_view(), name="history-orders"),
-    path("history/<int:pk>", OrderHistoryDetailView.as_view(), name="history-order-detail"),
+    path("history/<int:pk>/", OrderHistoryDetailView.as_view(), name="history-order-detail"),
 ]

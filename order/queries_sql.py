@@ -21,7 +21,7 @@ WITH history_order AS (
             JOIN order_orderoffer oo ON o.id = oo.order_id
             JOIN order_delivery od ON o.delivery_id = od.id
             JOIN product_offer of ON oo.offer_id = of.id
-    WHERE oo.deleted_at IS NULL AND {}
+    WHERE o.deleted_at IS NULL AND {}
     GROUP BY o.id, o.created_at, o.user_id, o.city, o.address, o.comment, o.delivery_type,
             o.payment_type,
             o.status_type, o.error_type, od.price, od.express_price, od.sum_order)

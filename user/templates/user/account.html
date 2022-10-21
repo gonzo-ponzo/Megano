@@ -78,10 +78,10 @@
                           <div class="Order-infoContent">
                               {% if order.total_full_price %}
                                 <span class="Order-price">
-                                  {{ order.full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                  {{ order.total_full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
                                 </span>
                                 <span class="Order-price_old">
-                                  {{ order.total_full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                  {{ order.full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
                                 </span>
                               {% else %}
                                 <span class="Order-price">
