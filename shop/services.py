@@ -6,14 +6,14 @@ from config.settings.base import COUNT_ELEMENTS_BEST_OFFER_SHOP
 class ShopDetail:
     """Магазин"""
 
-    count_top_products = 10     # проверить, помоему уже не нужены
+    count_top_products = 10     # проверить, по-моему уже не нужены
 
     def __init__(self, shop):
         self.shop = shop
 
-    def check_shop(self):
+    def get_shop_status(self):
         check = Shop.objects.filter(id=self.shop).first()
-        if check and not check.deleted_at:
+        if check:
             return True
         return False
 
@@ -44,4 +44,5 @@ class ShopList:
 
     def get_list_shops(self):
         """Получить список всех магазинов"""
-        pass
+        list_shops = Shop.objects.filter(offer__amount__gt=0, offer__deleted_at=None, product__deleted_at=None).distinct()
+        return list_shops
