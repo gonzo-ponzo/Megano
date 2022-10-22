@@ -19,12 +19,12 @@ class ShopDetail:
 
     def get_shop_description(self):
         """Получить описание магазина"""
-        description_shop = Shop.objects.values().get(id=self.shop)
+        description_shop = Shop.objects.get(id=self.shop)
         return description_shop
 
     def get_shop_photos(self):
         """Получить фотографии магазина"""
-        shop_photos = list(ShopImage.objects.filter(shop=self.shop).values_list('image'))
+        shop_photos = list(ShopImage.objects.filter(shop=self.shop))
         return shop_photos
 
     def get_shop_address(self):
@@ -44,5 +44,9 @@ class ShopList:
 
     def get_list_shops(self):
         """Получить список всех магазинов"""
-        list_shops = Shop.objects.filter(offer__amount__gt=0, offer__deleted_at=None, product__deleted_at=None).distinct()
+        list_shops = Shop.objects.filter(
+            offer__amount__gt=0,
+            offer__deleted_at=None,
+            product__deleted_at=None
+        ).distinct()
         return list_shops

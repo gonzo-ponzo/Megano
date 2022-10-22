@@ -131,7 +131,7 @@
                                     {% if shop_photos %}
                                     {% for photo in shop_photos %}
                                         <div class="carousel-item photo-shop-block {% if forloop.revcounter0 == 0 %}active{% endif %}">
-                                            <img class="d-block w-100" src="/media/{{ photo.0 }}" alt="photo {{ shop_description.name }}">
+                                            <img class="d-block w-100" src="{{ photo.image.url }}" alt="photo {{ shop_description.name }}">
                                         </div>
 
                                     {% endfor %}
@@ -150,7 +150,7 @@
                             <div class="row-block logo-shop">
                                 <h2>{{ shop_description.name }}</h2>
                                     {% if shop_description.image %}
-                                        <img src="/media/{{ shop_description.image }}" alt="logo {{ shop_description.name }}"/>
+                                        <img src="{{ shop_description.image.url }}" alt="logo {{ shop_description.name }}"/>
                                     {% else %}
                                         <img src="{% static 'img/default_logo_shop.png' %}" alt="logo {{ shop_description.name }}"/>
                                     {% endif %}
