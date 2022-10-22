@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "django_celery_results",
     "rosetta",
+    "easy_select2",
 ]
 
 AUTH_USER_MODEL = "user.CustomUser"

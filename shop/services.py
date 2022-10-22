@@ -6,10 +6,16 @@ from config.settings.base import COUNT_ELEMENTS_BEST_OFFER_SHOP
 class ShopDetail:
     """Магазин"""
 
-    count_top_products = 10
+    count_top_products = 10     # проверить, помоему уже не нужены
 
     def __init__(self, shop):
         self.shop = shop
+
+    def check_shop(self):
+        check = Shop.objects.filter(id=self.shop).first()
+        if check and not check.deleted_at:
+            return True
+        return False
 
     def get_shop_description(self):
         """Получить описание магазина"""
