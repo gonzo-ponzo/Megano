@@ -1,3 +1,4 @@
+from django.urls import reverse
 from timestamps.models import models, Model
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
@@ -33,6 +34,9 @@ class Order(Model):
     error_type = models.IntegerField(blank=True, null=True, choices=ERROR_CHOICES, verbose_name=_("ошибка заказа"))
     delivery = models.ForeignKey("Delivery", on_delete=models.DO_NOTHING, verbose_name=_("доставка"))
     offer = models.ManyToManyField(Offer, through="OrderOffer", verbose_name=_("заказанные продукты"))
+
+    def get_absolute_url(self):
+        return reverse("order:history-order-detail", kwargs={"pk": self.pk})
 
     class Meta:
         verbose_name = _("заказ")
