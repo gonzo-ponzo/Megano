@@ -123,15 +123,8 @@
             </div>
           </div>
         </div>
-
-
-
-
-
         <div class="Section-content">
             <div class="row row_verticalCenter row_maxHalf shop-block-info">
-
-
                             <div class="row-block">
                             <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
                                 <div class="carousel-inner">
@@ -154,8 +147,6 @@
                                 </a>
                             </div>
                             </div>
-
-
                             <div class="row-block logo-shop">
                                 <h2>{{ shop_description.name }}</h2>
                                     {% if shop_description.image %}
@@ -195,11 +186,13 @@
                                 </div>
                                 <div class="Card-category">достать категорию
                                 </div>
-                                <div class="Card-hover"><a class="Card-btn" href="#">
-                                    <img src="{% static 'img/icons/card/bookmark.svg' %}" alt="bookmark.svg"/></a>
-                                    <a class="Card-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a>
+                                <div class="Card-hover">
+                                    <a class="Card-btn" href="{% url 'order:cart-add' i.product_id shop_description.id %}">
+                                        <img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/>
+                                    </a>
                                     <a class="Card-btn" onclick="openWin(url='{% url 'compare_add' i.product_id %}')">
-                                        <img src="{% static 'img/icons/card/change.svg' %}" alt="change.svg"/></a>
+                                        <img src="{% static 'img/icons/card/change.svg' %}" alt="change.svg"/>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -213,7 +206,6 @@
       </div>
     </div>
   </div>
-
   {% include 'footer.html' %}
   <script src="{% static 'plg/jQuery/jquery-3.5.0.slim.min.js' %}"></script>
   <script src="{% static 'plg/form/jquery.form.js' %}"></script>
