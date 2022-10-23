@@ -85,14 +85,17 @@ class OrderTest(TestCase):
 
 class OrderHistoryTest(TestCase):
     __password = "password12345"
-    __emails = "user1@test.com"
+    __emails = ["user1@test.com", "user2@test.com"]
     __order_id = 1
     __history_orders_url = reverse("order:history-orders")
     __detail_order_url = reverse("order:history-order-detail", kwargs={"pk": __order_id})
 
     @classmethod
     def setUpTestData(cls):
-        user = User.objects.create_user(email=cls.__emails, password=cls.__password)
+        users = []
+        for email in cls.__emails:
+            user = User.objects.create_user(email=email, password=cls.__password)
+            users.append(user)
         category = ProductCategory.objects.create(name="category", slug="category")
         manufacturer = Manufacturer.objects.create(name="Manufacturer")
         delivery = Delivery.objects.create(price=200, express_price=500, sum_order=2000)
@@ -111,7 +114,7 @@ class OrderHistoryTest(TestCase):
                 phone=f"++37533758659{i}",
                 email=f"shop{i}@test.com",
                 address="address",
-                user=user,
+                user=users[0],
             )
             shops.append(shop)
         Shop.objects.bulk_create(shops)
@@ -127,6 +130,7 @@ class OrderHistoryTest(TestCase):
 
         orders = []
         for i in range(3):
+            user = users[0] if i % 2 == 0 else users[1]
             order = Order(user=user, city=f"city{i}", address=f"address{i}", delivery=delivery)
             orders.append(order)
         Order.objects.bulk_create(orders)
@@ -140,7 +144,7 @@ class OrderHistoryTest(TestCase):
                 orders_offers.append(order_offer)
         OrderOffer.objects.bulk_create(orders_offers)
 
-        cls.user = user
+        cls.users = users
 
     def test_history_redirect_on_login_if_not_authorized(self):
         response = self.client.get(self.__history_orders_url)
@@ -151,27 +155,33 @@ class OrderHistoryTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_history_if_authorized(self):
-        self.client.login(email=self.__emails, password=self.__password)
+        self.client.login(email=self.__emails[0], password=self.__password)
         response = self.client.get(self.__history_orders_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "order/historyorder.html")
 
     def test_detail_if_authorized(self):
-        self.client.login(email=self.__emails, password=self.__password)
+        self.client.login(email=self.__emails[0], password=self.__password)
         response = self.client.get(self.__detail_order_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "order/oneorder.html")
 
     def test_check_count_history_order(self):
-        self.client.login(email=self.__emails, password=self.__password)
-        order_cnt = Order.objects.filter(user=self.user).count()
+        self.client.login(email=self.__emails[0], password=self.__password)
+        order_cnt = Order.objects.filter(user=self.users[0]).count()
         response = self.client.get(self.__history_orders_url)
         self.assertEqual(len(response.context["order_list"]), order_cnt)
 
     def test_check_count_product_in_order_detail(self):
-        self.client.login(email=self.__emails, password=self.__password)
+        self.client.login(email=self.__emails[0], password=self.__password)
         offer_cnt = OrderOffer.objects.filter(order_id=self.__order_id).count()
         order = Order.objects.get(id=self.__order_id)
         response = self.client.get(self.__detail_order_url)
         self.assertEqual(response.context["order"], order)
         self.assertEqual(len(response.context["products"]), offer_cnt)
+
+    def test_if_redirect_not_your_order(self):
+        self.client.login(email=self.__emails[0], password=self.__password)
+        order = Order.objects.filter(user=self.users[1]).first()
+        response = self.client.get(reverse("order:history-order-detail", kwargs={"pk": order.id}))
+        self.assertEqual(response.status_code, 404)

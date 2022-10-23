@@ -122,9 +122,8 @@ class OrderHistoryListView(LoginRequiredMixin, ListView):
 class OrderHistoryDetailView(LoginRequiredMixin, View):
     """Детальная страница заказа"""
 
-    def get(self, request, *args, **kwargs):
-        order_id = kwargs.get("pk")
-        order = OrderHistory.get_history_order_detail(order_id)
-        products = OrderHistory.get_products_order(order_id)
+    def get(self, request, pk):
+        order = OrderHistory.get_history_order_detail(pk, request.user.id)
+        products = OrderHistory.get_products_order(pk)
         context = {"order": order, "products": products}
         return render(request, "order/oneorder.html", context=context)

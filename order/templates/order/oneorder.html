@@ -182,7 +182,7 @@
                                     <div class="Cart-block Cart-block_total">
                                         <strong class="Cart-title">
                                             {% trans 'Итого' %}:
-                                            {% if order.total_full_price %}
+                                            {% if order.sum_discount %}
                                                 <span class="Cart-price">
                                                     {{ order.total_full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
                                                 </span>

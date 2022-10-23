@@ -38,14 +38,12 @@ SELECT ho.id,
        ho.error_type,
        ho.sum_price + ho.price_delivery AS full_price,
        ho.price_delivery,
-       CASE sum_discount
-         WHEN 0 THEN NULL
-         ELSE ho.sum_price + ho.price_delivery - ho.sum_discount
-       END AS total_full_price
+       ho.sum_discount,
+       ho.sum_price + ho.price_delivery - ho.sum_discount AS total_full_price
 FROM history_order ho
 ORDER BY ho.created_at DESC
 """
 
 USER_ORDERS_SQL = __order_history_sql.format("user_id = %s")
 USER_LAST_ORDER_SQL = f"{USER_ORDERS_SQL}LIMIT 1"
-ORDER_SQL = __order_history_sql.format("order_id = %s")
+ORDER_SQL = __order_history_sql.format("order_id = %s AND user_id = %s")
