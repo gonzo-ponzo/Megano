@@ -1,12 +1,15 @@
 from django.views.generic import ListView, DetailView
 from .models import PromotionOffer
+from constance import config
 
 
 # Create your views here.
 class PromotionListView(ListView):
     model = PromotionOffer
     template_name = "promotion/promotions.html"
-    paginate_by = 12  # 12 акций на страницы для комфортного просмотра
+
+    def get_paginate_by(self, queryset):
+        return config.OBJECTS_PER_PAGE
 
 
 class PromotionView(DetailView):

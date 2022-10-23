@@ -1,5 +1,6 @@
 {% load static %}
 {% load i18n %}
+{% load shop_tag %}
 <head>
   <title>Megano</title>
     {% include 'base.html' %}
@@ -167,7 +168,23 @@
     </div>
   </div>
 
-
+  <div class="Pagination">
+    <div class="Pagination-ins">
+      {% if page_obj.has_previous %}
+        <a class="Pagination-element Pagination-element_prev" href="?{% url_replace 'page' page_obj.previous_page_number %}"><img src="{% static 'img/icons/prevPagination.svg' %}" alt="prevPagination.svg"/></a>
+      {% endif %}
+      {% for page in paginator %}
+        {% if page.number == page_obj.number %}
+          <span class="Pagination-element Pagination-text Pagination-element_current">{{ page.number }}</span>
+        {% else %}
+          <a class="Pagination-element" href="?{% url_replace 'page' page.number %}"><span class="Pagination-text">{{ page.number }}</span></a>
+        {% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+        <a class="Pagination-element Pagination-element_prev" href="?{% url_replace 'page' page_obj.next_page_number %}"><img src="{% static 'img/icons/nextPagination.svg' %}" alt="nextPagination.svg"/></a>
+      {% endif %}
+    </div>
+  </div>
   {% include 'footer.html' %}
   <script src="{% static 'plg/jQuery/jquery-3.5.0.slim.min.js' %}"></script>
   <script src="{% static 'plg/form/jquery.form.js' %}"></script>
