@@ -4,6 +4,7 @@ import glob
 from django.conf import settings
 from jobs.services import try_start_import
 
+from jobs.services import one_shop_import
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
@@ -24,7 +25,14 @@ class Command(BaseCommand):
             list_files = list_files | set(files)
         list_files = list(list_files)
         # TODO и если в список не попало ни одного файла, или нет параметров, тоже показать ошибку
-        if try_start_import(list_files):
-            print("Import is started. Wait for results.")
-        else:
-            print("Something is wrong. Import cancelled.")
+        
+        # временно, для отладки поштучной обработки файлов:
+        for file_name in list_files:
+            is_ok, message = one_shop_import(file_name)
+            print(file_name, "-", is_ok, "-", message)
+        
+        # такое должно быть:
+        #if try_start_import(list_files):
+        #    print("Import is started. Wait for results.")
+        #else:
+        #    print("Something is wrong. Import cancelled.")
