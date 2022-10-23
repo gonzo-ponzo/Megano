@@ -188,6 +188,10 @@ STATIC_ROOT = os.path.join("", "staticfiles")
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 
+IMPORT_INCOME = BASE_DIR / "import" / "import-data"
+IMPORT_DONE = BASE_DIR / "import" / "import-done"
+IMPORT_FAIL = BASE_DIR / "import" / "import-fail"
+
 LOGIN_URL = "/login/"
 
 # Default primary key field type
