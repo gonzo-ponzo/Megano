@@ -139,22 +139,9 @@
             </header>
             <div class="shops-list">
                 {% for shop in object_list %}
-                    <div class="shops-list-li">
-                        <div class="shops-list-li-logo">
-                            <a href="{{ shop.id }}">
-                                {% if shop.image %}
-                                    <img src="{{ shop.image.url }}" height="50" alt="logo {{ shop.name }}"/>
-                                {% else %}
-                                    <img src="{% static 'img/default_logo_shop.png' %}" height="50" alt="logo {{ shop.name }}"/>
-                                {% endif %}
-                            </a>
-                        </div>
-                        <div class="shops-list-li-text">
-                            <a href="{{ shop.id }}">
-                                {{ shop.name }}
-                            </a>
-                        </div>
-                    </div>
+                    {% include 'shop/inc/_shop_element.html' %}
+                {% empty %}
+                    Список магазинов пуст
                 {% endfor %}
             </div>
         </div>

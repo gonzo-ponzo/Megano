@@ -35,12 +35,10 @@ class ShopDetail:
             deleted_at=None,
             orderoffer__amount__gt=0
         ).annotate(
-            sorted_amount_offers_byu=Sum('orderoffer__amount')
+            sorted_amount_offers_buy=Sum('orderoffer__amount')
         ).order_by(
-            '-sorted_amount_offers_byu'
-        )[:COUNT_ELEMENTS_BEST_OFFER_SHOP].select_related(
-            'product'
-        )
+            '-sorted_amount_offers_buy'
+        )[:COUNT_ELEMENTS_BEST_OFFER_SHOP]
         return top_products
 
 
