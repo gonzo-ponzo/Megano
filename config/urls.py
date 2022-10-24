@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from user.views import UserLoginView, UserRegistrationView, LogoutView, \
-                       user_page, UserUpdateView, orders_history, views_history, ViewsHistory
+                       user_page, UserUpdateView, ViewsHistory
 from product.views import MainPage
 from payment.api import api_one_bill
 from django.conf import settings

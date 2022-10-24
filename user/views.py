@@ -101,11 +101,6 @@ class UserUpdateView(View):
         return render(request, "user/profile.html", context=context)
 
 
-@login_required
-def views_history(request):
-    return HttpResponse("Эта страница еще никем не сделана")
-
-
 class ViewsHistory(LoginRequiredMixin, TemplateView):
 
     template_name = 'user/historyview.html'
@@ -114,4 +109,5 @@ class ViewsHistory(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = get_user(self.request)
         context['viewed_products'] = BrowsingHistory(user).get_history()
+        context['card_style'] = [''] * 10 + ['hide_1450'] * 5 + ['hide_700'] * 5
         return context

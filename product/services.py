@@ -180,9 +180,10 @@ class FilterProductsResult:
             self.min_price, self.max_price = map(int, price)
 
     @staticmethod
-    def get_queryset_for_catalog():
+    def get_queryset_for_catalog(without_offer=True):
         queryset = Product.objects.all()
-        queryset = queryset.filter(offer__isnull=False)
+        if without_offer:
+            queryset = queryset.filter(offer__isnull=False)
         queryset = queryset.prefetch_related('productimage_set')
         queryset = queryset.select_related('category')
         # queryset = queryset.prefetch_related('shop')
@@ -419,28 +420,42 @@ class BrowsingHistory:
         self.user = user
 
     def add_product_to_history(self, product: Product):
-        """Добавить продукт в список просмотренных"""
+        """Добавить продукт в список просмотренных или обновить дату просмотра, если он там уже есть"""
         if not self.user.is_authenticated:
             return
 
-        product_view, created = ProductView.objects.get_or_create(
+        ProductView.objects.update_or_create(
             user=self.user,
             product=product,
         )
-        if not created:
-            product_view.save()
 
-    def delete_product_from_history(self):
+    def __len__(self):
+        return self.count
+
+    @property
+    def count(self):
+        """Количество просмотренных продуктов"""
+        return ProductView.objects.filter(user=self.user).count()
+
+    def delete_product_from_history(self, product: Product):
         """Удалить продукт из истории просмотров"""
-        pass
+        ProductView.objects.filter(
+            user=self.user,
+            product=product,
+        ).delete()
+
+    def clear_history(self):
+        """Очистить историю просмотров"""
+        ProductView.objects.filter(
+            user=self.user,
+        ).delete()
 
     def get_history(self, number_of_entries=20):
-        products = FilterProductsResult.get_queryset_for_catalog()
+        """Получить последние записи истории просмотренных товаров"""
+        products = FilterProductsResult.get_queryset_for_catalog(without_offer=False)
         products = products.filter(id__in=ProductView.objects.filter(user=self.user).values_list('product'))
         products = products.annotate(date_view=F('productview__updated_at'))
         products = products.order_by('-date_view')
-        for product in products:
-            print(product)
         return products[:number_of_entries]
 
 
