@@ -1,6 +1,9 @@
 from django.views import View
+from shop.models import Shop
 from shop.services import ShopDetail, ShopList
 from django.shortcuts import render, redirect
+from product.services import FilterProductsResult
+from config.settings.base import COUNT_ELEMENTS_BEST_OFFER_SHOP
 
 
 class ShopDetailView(View):
@@ -18,12 +21,6 @@ class ShopDetailView(View):
             })
         return redirect('shop-list')
 
-
-# class ShopListView(ListView):
-#     """Список магазинов"""
-#     model = Shop
-#     template_name = "shop/shop_list.html"
-#     paginate_by = 20
 
 class ShopListView(View):
     """Список магазинов"""

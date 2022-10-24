@@ -1,3 +1,5 @@
+from django.db.models import Sum
+
 from shop.models import Shop, ShopImage
 from product.models import Offer
 from config.settings.base import COUNT_ELEMENTS_BEST_OFFER_SHOP
@@ -5,8 +7,6 @@ from config.settings.base import COUNT_ELEMENTS_BEST_OFFER_SHOP
 
 class ShopDetail:
     """Магазин"""
-
-    count_top_products = 10     # проверить, по-моему уже не нужены
 
     def __init__(self, shop):
         self.shop = shop
@@ -27,22 +27,27 @@ class ShopDetail:
         shop_photos = list(ShopImage.objects.filter(shop=self.shop))
         return shop_photos
 
-    def get_shop_address(self):
-        """Получить адрес магазина для карт"""
-        pass
-
     def get_top_products(self):
         """Получить топ товаров продавца"""
         top_products = Offer.objects.filter(
-            shop=self.shop
-        )[:COUNT_ELEMENTS_BEST_OFFER_SHOP].select_related('product')
+            shop=self.shop,
+            amount__gt=0,
+            deleted_at=None,
+            orderoffer__amount__gt=0
+        ).annotate(
+            sorted_amount_offers_byu=Sum('orderoffer__amount')
+        ).order_by(
+            '-sorted_amount_offers_byu'
+        )[:COUNT_ELEMENTS_BEST_OFFER_SHOP].select_related(
+            'product'
+        )
         return top_products
 
 
 class ShopList:
     """Магазины"""
 
-    def get_list_shops(self):
+    def get_list_shops(self):   #нужно сделать перепроверку разных комбинаций удаления и с 0 к продукту и офферам.
         """Получить список всех магазинов"""
         list_shops = Shop.objects.filter(
             offer__amount__gt=0,
