@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 
 from django.views import View
 from product.forms import ProductForm, ReviewForm
-from product.models import Product, ProductView, ProductCategory
+from product.models import Product, ProductCategory
 from shop.models import Shop
 from promotion.services import BannerMain
 from .services import ReviewForItem, ProductCompareList, SortProductsResult, FilterProductsResult, DetailedProduct
