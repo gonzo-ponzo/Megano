@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from django.core.validators import validate_email
@@ -58,6 +59,24 @@ class Shop(Model):
         Получение УРЛа магазина
         """
         return reverse("shop-detail", kwargs={"pk": self.pk})
+
+    def save(self, *args, **kwargs):
+        try:
+            sellers_group = Group.objects.get(name="SHOP_owner")
+        except Group.DoesNotExist:
+            sellers_group = None
+            print("Group 'SHOP_owner' does not exists. PLEASE, create it.")
+        if sellers_group:
+            if self.pk:
+                prev_item = Shop.objects.get(pk=self.pk)
+                if prev_item.user != self.user:
+                    if Shop.objects.filter(user=prev_item.user).count() == 1:
+                        # бывший владелец только этого магазина, других магазинов у него нет
+                        prev_item.user.groups.remove(sellers_group)
+                        prev_item.user.save()
+            self.user.groups.add(sellers_group)
+            self.user.save()
+        super(Shop, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("магазин")
