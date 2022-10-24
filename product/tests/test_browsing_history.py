@@ -1,10 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from product.models import ProductCategory, Product, Manufacturer, ProductView
-from promotion.models import DiscountType, PromotionOffer
+from product.models import ProductCategory, Product, Manufacturer
 from product.services import BrowsingHistory
-from shop.models import Shop
-from order.models import Order, OrderOffer, Delivery
 from django.urls import reverse
 
 User = get_user_model()
@@ -17,10 +14,10 @@ class TestBrowsingHistory(TestCase):
         category = ProductCategory.objects.create(name='category', slug='category')
         man = Manufacturer.objects.create(name='Manufacturer')
 
-        p1 = Product.objects.create(name='product_111', limited=False, category=category, manufacturer=man)
-        p2 = Product.objects.create(name='product_222', limited=True, category=category, manufacturer=man)
-        p3 = Product.objects.create(name='product_333', limited=True, category=category, manufacturer=man)
-        user = User.objects.create_user(email='test@test.net', password='qwerty')
+        Product.objects.create(name='product_111', limited=False, category=category, manufacturer=man)
+        Product.objects.create(name='product_222', limited=True, category=category, manufacturer=man)
+        Product.objects.create(name='product_333', limited=True, category=category, manufacturer=man)
+        User.objects.create_user(email='test@test.net', password='qwerty')
 
     def test_add_product_to_history_for_authorized_user(self):
         user = User.objects.get(email='test@test.net')

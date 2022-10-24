@@ -6,7 +6,6 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
-from django.http import HttpResponse
 
 from order.services import OrderHistory
 from .forms import UserRegistrationForm, UserLoginForm, UserUpdateForm
