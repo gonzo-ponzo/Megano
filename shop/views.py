@@ -3,7 +3,8 @@ from shop.models import Shop
 from shop.services import ShopDetail, ShopList
 from django.shortcuts import render, redirect
 from product.services import FilterProductsResult
-from config.settings.base import COUNT_ELEMENTS_BEST_OFFER_SHOP
+from config.settings.base import COUNT_ELEMENTS_PAGINATOR_LIST_SHOPS
+from django.core.paginator import Paginator
 
 
 class ShopDetailView(View):
@@ -26,4 +27,14 @@ class ShopListView(View):
     """Список магазинов"""
     def get(self, request, *args, **kwargs):
         object_list = ShopList().get_list_shops()
-        return render(request, 'shop/shop_list.html', {'object_list': object_list})
+        paginator = Paginator(object_list, COUNT_ELEMENTS_PAGINATOR_LIST_SHOPS)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(
+            request,
+            'shop/shop_list.html',
+            {
+            'object_list': page_obj,
+            'full_object_list': object_list
+            }
+        )

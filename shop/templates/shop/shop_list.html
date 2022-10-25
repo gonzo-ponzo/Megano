@@ -129,7 +129,7 @@
         <div class="Section-content">
             <select onChange="location = this.options[this.selectedIndex].value;" id="field_select2">
                 <option value="" disabled  selected>--Найти магазин--</option>
-                {% for shop in object_list %}
+                {% for shop in full_object_list %}
                     <option value="{{ shop.id }}">{{ shop.name }}</option>
                 {% endfor %}
             </select>
@@ -144,6 +144,25 @@
                     Список магазинов пуст
                 {% endfor %}
             </div>
+        <header class="Section-header">
+            <div class="Section-title paginator-shops">
+                    {% if object_list.has_previous %}
+                        <a href="?page=1">&laquo; первая</a>
+                        <a href="?page={{ object_list.previous_page_number }}">&laquo; предыдущая</a>
+                    {% endif %}
+
+                    {% if object_list.has_previous or object_list.has_next %}
+                        Страница {{ object_list.number }} из {{ object_list.paginator.num_pages }}.
+                    {% else %}
+                        показаны все записи
+                    {% endif %}
+
+                    {% if object_list.has_next %}
+                        <a href="?page={{ object_list.next_page_number }}">следующая &raquo;</a>
+                        <a href="?page={{ object_list.paginator.num_pages }}">последняя &raquo;</a>
+                    {% endif %}
+            </div>
+        </header>
         </div>
       </div>
     </div>

@@ -206,11 +206,11 @@ LOGIN_URL = "/login/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# parameters using in code
 MPTT_ADMIN_LEVEL_INDENT = 20
-
 PRODUCT_PER_PAGES = 10
-
 COUNT_ELEMENTS_BEST_OFFER_SHOP = 6
+COUNT_ELEMENTS_PAGINATOR_LIST_SHOPS = 2
 
 # setting for Rosetta application that eases the translation process
 ROSETTA_MESSAGES_PER_PAGE = 50
