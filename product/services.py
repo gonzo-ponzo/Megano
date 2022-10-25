@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.cache import cache
 
 from .models import Product, ProductImage, Offer, ProductProperty, Property, Review, ProductCategory, ProductView
 from shop.models import Shop
@@ -602,3 +603,28 @@ class DetailedProduct:
         except Review.DoesNotExist:
             reviews = None
         return reviews
+
+
+class PopularCategory:
+
+    @classmethod
+    def get_cached(cls, count=3):
+        category = cache.get_or_set('popular_category', cls.get_sorted_category(), timeout=30)
+        return category[:count]
+
+    @classmethod
+    def get_sorted_category(cls):
+        category = cls.get_needed_level_category()
+        category = cls.annotate_param_for_sort(category)
+        # category = category.order_by('param')
+        category = category.order_by('?')
+        return category
+
+    @classmethod
+    def get_needed_level_category(cls):
+        category = ProductCategory.objects.all()
+        return category
+
+    @classmethod
+    def annotate_param_for_sort(cls, category):
+        return category
