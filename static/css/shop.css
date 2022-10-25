@@ -4,15 +4,6 @@
     margin: inherit;
 }
 
-.photo-shop-block {
-    height: 360px;
-    width: 360px;
-}
-
-.photo-shop-block img {
-    height: 100%;
-}
-
 .shop-block-info {
     flex-wrap: unset;
 }
@@ -30,10 +21,18 @@
     width: 30%;
 }
 
+.photo-shop-block {
+    width: 100%!important;
+    max-width: 300px!important;
+    height: auto!important;
+    max-height: 250px!important;
+    margin: 3%!important;
+}
 
-
-
-
+.photo-shop-block img {
+    width: 100%;
+    height: auto;
+}
 
 .shops-list {
     display: flex;

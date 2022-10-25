@@ -35,6 +35,7 @@ class ShopListView(View):
             'shop/shop_list.html',
             {
             'object_list': page_obj,
-            'full_object_list': object_list
+            'full_object_list': object_list,
+            'count_object_list': object_list.count()
             }
         )
