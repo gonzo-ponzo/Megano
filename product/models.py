@@ -170,4 +170,4 @@ class ProductView(Model):
     class Meta:
         verbose_name = _("просмотренный продукт")
         verbose_name_plural = _("просмотренные продукты")
-        ordering = ["-created_at"]
+        # unique_together = ['user', 'product']

@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import Product, ProductImage, Offer, ProductProperty, Property, Review, ProductCategory
+from .models import Product, ProductImage, Offer, ProductProperty, Property, Review, ProductCategory, ProductView
 from shop.models import Shop
 from user.models import CustomUser
 
@@ -180,9 +180,10 @@ class FilterProductsResult:
             self.min_price, self.max_price = map(int, price)
 
     @staticmethod
-    def get_queryset_for_catalog():
+    def get_queryset_for_catalog(without_offer=True):
         queryset = Product.objects.all()
-        queryset = queryset.filter(offer__isnull=False)
+        if without_offer:
+            queryset = queryset.filter(offer__isnull=False)
         queryset = queryset.prefetch_related('productimage_set')
         queryset = queryset.select_related('category')
         # queryset = queryset.prefetch_related('shop')
@@ -415,13 +416,47 @@ class BrowsingHistory:
     История просмотра пользователя
     """
 
-    def add_product_to_history(self):
-        """Добавить продукт в список просмотренных"""
-        pass
+    def __init__(self, user: CustomUser):
+        self.user = user
 
-    def get_history(self):
-        """Получить список просмотренных товаров"""
-        pass
+    def add_product_to_history(self, product: Product):
+        """Добавить продукт в список просмотренных или обновить дату просмотра, если он там уже есть"""
+        if not self.user.is_authenticated:
+            return
+
+        ProductView.objects.update_or_create(
+            user=self.user,
+            product=product,
+        )
+
+    def __len__(self):
+        return self.count
+
+    @property
+    def count(self):
+        """Количество просмотренных продуктов"""
+        return ProductView.objects.filter(user=self.user).count()
+
+    def delete_product_from_history(self, product: Product):
+        """Удалить продукт из истории просмотров"""
+        ProductView.objects.filter(
+            user=self.user,
+            product=product,
+        ).delete()
+
+    def clear_history(self):
+        """Очистить историю просмотров"""
+        ProductView.objects.filter(
+            user=self.user,
+        ).delete()
+
+    def get_history(self, number_of_entries=20):
+        """Получить последние записи истории просмотренных товаров"""
+        products = FilterProductsResult.get_queryset_for_catalog(without_offer=False)
+        products = products.filter(id__in=ProductView.objects.filter(user=self.user).values_list('product'))
+        products = products.annotate(date_view=F('productview__updated_at'))
+        products = products.order_by('-date_view')
+        return products[:number_of_entries]
 
 
 class ImportProducts:

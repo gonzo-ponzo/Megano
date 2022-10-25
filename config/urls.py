@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from user.views import UserLoginView, UserRegistrationView, LogoutView, user_page, UserUpdateView, views_history
+from user.views import UserLoginView, UserRegistrationView, LogoutView, \
+                       user_page, UserUpdateView, ViewsHistory
 from product.views import MainPage
 from payment.api import api_one_bill
 from django.conf import settings
@@ -32,7 +33,7 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name="logout"),
     path("user_page/", user_page, name="account"),
     path("user_page/update/", UserUpdateView.as_view(), name="profile"),
-    path("history/", views_history, name="views_history"),
+    path("history/", ViewsHistory.as_view(), name="views_history"),
     path("catalog/", include("product.urls_catalog")),
     path("shop/", include("shop.urls"), name="shop"),
     path("order/", include(("order.urls", "order"), namespace="order"), name="order"),
