@@ -61,6 +61,10 @@ class Shop(Model):
         return reverse("shop-detail", kwargs={"pk": self.pk})
 
     def save(self, *args, **kwargs):
+        if self.pk:
+            this_record = Shop.objects.get(pk=self.pk)
+            if this_record.image != self.image:
+                this_record.image.delete(save=False)
         try:
             sellers_group = Group.objects.get(name="SHOP_owner")
         except Group.DoesNotExist:
