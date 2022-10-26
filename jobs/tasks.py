@@ -1,5 +1,4 @@
 from payment.celery import app
-import time
 from .models import Process
 
 
