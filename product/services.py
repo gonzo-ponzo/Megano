@@ -4,7 +4,7 @@ from copy import copy
 from statistics import mean
 
 from django.db.models.query import QuerySet
-from django.db.models import F, Min, Max, Sum, Count, Avg
+from django.db.models import F, Min, Max, Sum, Count, Avg, OuterRef, Subquery
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
@@ -622,7 +622,7 @@ class PopularCategory:
 
     @classmethod
     def get_popular_category(cls):
-        category = cls.get_needed_level_category()
+        category = cls.get_needed_category()
         category = cls.__annotate_parameter_and_sort(category)
         category = category[:cls.__count]
         category = cls.__add_foto_and_price(category)
@@ -630,7 +630,7 @@ class PopularCategory:
         return list(category)
 
     @classmethod
-    def get_needed_level_category(cls):
+    def get_needed_category(cls):
         category = ProductCategory.objects.all()
         return category
 
@@ -649,5 +649,8 @@ class PopularCategory:
 
     @classmethod
     def __add_foto_and_price(cls, category):
-        # category = category.annotate()
+        category = category.annotate(min_price=Min('product__offer__price'))
+        fotos = ProductImage.objects.filter(product__category_id=OuterRef('id')).order_by('?')
+        category = category.annotate(foto=Subquery(fotos.values('image')[:1]))
+
         return category

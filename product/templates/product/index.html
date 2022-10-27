@@ -19,11 +19,15 @@
                     <div class="BannersHomeBlock-row">
                       <div class="BannersHomeBlock-block">
                         <strong class="BannersHomeBlock-title">{{ category.name }}</strong>
-                        <div class="BannersHomeBlock-content">from&#32;<span class="BannersHomeBlock-price">$199.00</span>
+                        <div class="BannersHomeBlock-content">
+                            {% trans "от" %}&#32;
+                            <span class="BannersHomeBlock-price">
+                                {{ category.min_price|floatformat:"0g" }} {% trans "руб." %}
+                            </span>
                         </div>
                       </div>
                       <div class="BannersHomeBlock-block">
-                        <div class="BannersHomeBlock-img"><img src="{% static 'img/content/home/videoca.png' %}" alt="videoca.png"/>
+                        <div class="BannersHomeBlock-img"><img src="{% get_media_prefix %}{{ category.foto }}" alt="{{ category.name }}"/>
                         </div>
                       </div>
                     </div>
