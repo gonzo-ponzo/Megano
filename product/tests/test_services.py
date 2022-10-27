@@ -28,15 +28,15 @@ class TestPopularCategory(TestCase):
 
     def test_count_of_category(self):
         count = 3
-        category = PopularCategory.get_cached()
+        category = PopularCategory.get_popular_category()
         self.assertEqual(count, len(category))
 
     def test_category_sort_by_viewed_product(self):
-        category = PopularCategory.get_cached()
-        self.assertTrue(category[0].parameter > category[1].parameter > category[2].parameter)
+        category = PopularCategory.get_popular_category()
+        self.assertTrue(category[0].parameter >= category[1].parameter >= category[2].parameter)
 
     def test_correct_category(self):
-        category = PopularCategory.get_cached()
+        category = PopularCategory.get_popular_category()
         self.assertEqual('category_5', category[0].name)
         self.assertEqual('category_4', category[1].name)
         self.assertEqual('category_3', category[2].name)
