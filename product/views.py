@@ -104,7 +104,7 @@ class MainPage(TemplateView):
         hot_product.with_promo()
         context["hot_product"] = hot_product.queryset[:9]
 
-        context['popular_category'] = PopularCategory.get_cached(3)
+        context['popular_category'] = PopularCategory.get_cached()
 
         return context
 

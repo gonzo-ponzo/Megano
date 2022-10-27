@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.cache import cache
+from django.conf import settings
 
 from .models import Product, ProductImage, Offer, ProductProperty, Property, Review, ProductCategory, ProductView
 from shop.models import Shop
@@ -607,18 +608,26 @@ class DetailedProduct:
 
 class PopularCategory:
 
-    @classmethod
-    def get_cached(cls, count=3):
-        category = cache.get_or_set('popular_category', cls.get_sorted_category(), timeout=30)
-        return category[:count]
+    __count = 3
 
     @classmethod
-    def get_sorted_category(cls):
-        category = cls.get_needed_level_category()
-        category = cls.annotate_param_for_sort(category)
-        # category = category.order_by('param')
-        category = category.order_by('?')
+    def get_cached(cls):
+
+        category = cache.get_or_set(
+            key=settings.CACHE_KEY_POPULAR_CATEGORY,
+            default=cls.get_popular_category,
+            timeout=settings.CACHE_TIMEOUT.get(settings.CACHE_KEY_POPULAR_CATEGORY, 60 * 60 * 24)
+        )
         return category
+
+    @classmethod
+    def get_popular_category(cls):
+        category = cls.get_needed_level_category()
+        category = cls.__annotate_parameter_and_sort(category)
+        category = category[:cls.__count]
+        category = cls.__add_foto_and_price(category)
+
+        return list(category)
 
     @classmethod
     def get_needed_level_category(cls):
@@ -626,5 +635,19 @@ class PopularCategory:
         return category
 
     @classmethod
-    def annotate_param_for_sort(cls, category):
+    def __annotate_parameter_and_sort(cls, category):
+        """Аннотация полем parameter - количество просмотров товаров в категориях и сортировка по нему"""
+        category = ProductCategory.objects.add_related_count(
+            queryset=category,
+            rel_model=ProductView,
+            rel_field='product__category',
+            count_attr='parameter',
+            cumulative=False,
+        )
+        category = category.order_by('-parameter')
+        return category
+
+    @classmethod
+    def __add_foto_and_price(cls, category):
+        # category = category.annotate()
         return category
