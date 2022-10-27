@@ -622,20 +622,20 @@ class PopularCategory:
 
     @classmethod
     def get_popular_category(cls):
-        category = cls.get_needed_category()
+        category = cls.__get_needed_category()
         category = cls.__annotate_parameter_and_sort(category)
         category = category[:cls.__count]
         category = cls.__add_foto_and_price(category)
 
         return list(category)
 
-    @classmethod
-    def get_needed_category(cls):
+    @staticmethod
+    def __get_needed_category():
         category = ProductCategory.objects.all()
         return category
 
-    @classmethod
-    def __annotate_parameter_and_sort(cls, category):
+    @staticmethod
+    def __annotate_parameter_and_sort(category):
         """Аннотация полем parameter - количество просмотров товаров в категориях и сортировка по нему"""
         category = ProductCategory.objects.add_related_count(
             queryset=category,
@@ -647,8 +647,8 @@ class PopularCategory:
         category = category.order_by('-parameter')
         return category
 
-    @classmethod
-    def __add_foto_and_price(cls, category):
+    @staticmethod
+    def __add_foto_and_price(category):
         category = category.annotate(min_price=Min('product__offer__price'))
         fotos = ProductImage.objects.filter(product__category_id=OuterRef('id')).order_by('?')
         category = category.annotate(foto=Subquery(fotos.values('image')[:1]))

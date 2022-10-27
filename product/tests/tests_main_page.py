@@ -69,6 +69,7 @@ class MainPageView(TestCase):
         self.assertIsNotNone(context.get('daily_offer'))
         self.assertIsNotNone(context.get('limited_product'))
         self.assertIsNotNone(context.get('hot_product'))
+        self.assertIsNotNone(context.get('popular_category'))
 
     def test_top_product_count(self):
         top_product_count = 8
