@@ -42,7 +42,7 @@ class TestPopularCategory(TestCase):
         self.assertEqual('category_3', category[2].name)
 
     def test_get_in_cache(self):
-        category = PopularCategory.get_cached()
+        PopularCategory.get_cached()
         self.assertNumQueries(0, PopularCategory.get_cached)
 
     def test_key_in_cache(self):
