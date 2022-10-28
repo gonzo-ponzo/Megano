@@ -118,6 +118,7 @@ class Property(Timestampable):
     class Meta:
         verbose_name = _("свойство продукта")
         verbose_name_plural = _("свойства продукта")
+        ordering = ("name",)
 
 
 class ProductProperty(Timestampable):
