@@ -4,6 +4,7 @@ from django.core.cache import cache
 from django.db import transaction, DatabaseError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import F, Prefetch
+from django.http import Http404
 from order.models import Offer, Delivery, Order, OrderOffer
 from product.models import ProductImage, Product
 from shop.models import Shop
@@ -361,6 +362,8 @@ class Cart(object):
 class Checkout:
     """Оформление заказа"""
 
+    delivery_key = ("normal", "express")
+
     @classmethod
     def get_data_from_cart(cls, shops: Dict, user_id: int) -> Dict:
         """Формирование данных из корзины"""
@@ -385,15 +388,14 @@ class Checkout:
         )
         return order
 
-    @staticmethod
-    def _get_data_delivery(shop_cnt: int, full_total_price: Decimal, total_price: Decimal) -> Tuple[int, Dict]:
+    @classmethod
+    def _get_data_delivery(cls, shop_cnt: int, full_total_price: Decimal, total_price: Decimal) -> Tuple[int, Dict]:
         """Формирования итоговых цен с учетом доставки"""
-        delivery_key = ("normal", "express")
         delivery = Delivery.objects.order_by("-created_at").first()
         total = {}
 
-        for key in delivery_key:
-            if key == delivery_key[0]:
+        for key in cls.delivery_key:
+            if key == cls.delivery_key[0]:
                 if shop_cnt == 1 and total_price > delivery.sum_order:
                     delivery_price = 0
                 else:
@@ -409,12 +411,44 @@ class Checkout:
 
         return delivery.pk, total
 
-    def set_shipping_param(self):
-        """Установить параметры доставки"""
-        pass
+
+class OrderPaymentCache:
+    """Добавление заказа для оплаты"""
+
+    __key_cache = settings.CACHE_KEY_PAYMENT_ORDER
+    __timeout_cache = settings.CACHE_TIMEOUT.get(__key_cache)
+
+    @classmethod
+    def set_data_with_create_order(cls, order: Order, price: Decimal) -> None:
+        """Добавляется заказ в кэш при создании"""
+        data = {"order": order, "total_price": price}
+        cache.set(cls.__key_cache.format(user_id=order.user_id, order_id=order.id), data, cls.__timeout_cache)
+
+    @classmethod
+    def get_cache_order_for_payment(cls, user_id: int, order_id: int) -> Dict | None:
+        """Получить данные по заказу"""
+        order_cache = cache.get(cls.__key_cache.format(user_id=user_id, order_id=order_id))
+        if order_cache:
+            return order_cache
+        return cls.set_data_with_order_detail(order_id, user_id)
+
+    @classmethod
+    def set_data_with_order_detail(cls, order_id: int, user_id: int) -> Dict | None:
+        order = OrderHistory.get_history_order_detail(order_id, user_id)
+        order_status = [
+            status[0]
+            for status in Order.STATUS_CHOICES
+            if status[1] in ("Новый заказ", "Ожидается оплата", "Не оплачен")
+        ]
+        if order.status_type in order_status:
+            data = {"order": order, "total_price": order.total_full_price}
+            cache.set(cls.__key_cache.format(user_id=order.user_id, order_id=order.id), data, cls.__timeout_cache)
+            return data
 
 
 class SerializersCache:
+    """Класс для работы с данными из кэша"""
+
     @staticmethod
     def set_data_in_cache(cache_key: str, data: Dict, cache_ttl: int) -> None:
         cache.set(cache_key, json.dumps(data, cls=DjangoJSONEncoder), cache_ttl)
@@ -435,20 +469,20 @@ class CheckoutDB:
     """Сохранение заказа в БД"""
 
     def __init__(self, user_id: int, order_info: Dict, order_data: Dict, cart: Cart):
-        self.user_id = user_id
-        self.order_info = order_info
-        self.order_data = order_data
-        self.cart = cart
+        self.__user_id = user_id
+        self.__order_info = order_info
+        self.__order_data = order_data
+        self.__cart = cart
 
     def _add_data_order(self) -> Order:
         order = Order.objects.create(
-            user_id=self.user_id, delivery_id=self.order_data.get("delivery_id"), **self.order_info
+            user_id=self.__user_id, delivery_id=self.__order_data.get("delivery_id"), **self.__order_info
         )
         return order
 
     def _add_data_order_offer(self, order: Order) -> None:
         order_offer = []
-        for product in self.order_data.get("products"):
+        for product in self.__order_data.get("products"):
             order_offer.append(
                 OrderOffer(
                     order=order,
@@ -460,17 +494,24 @@ class CheckoutDB:
             )
         OrderOffer.objects.bulk_create(order_offer)
 
-    def save_order(self):
+    def save_order(self) -> Tuple[bool, str, int | None]:
         try:
             with transaction.atomic():
                 order = self._add_data_order()
                 self._add_data_order_offer(order)
         except DatabaseError:
-            return False, "Ошибка сервера"
+            return False, "Ошибка сервера", None
 
-        SerializersCache.clean_data_from_cache(f"{settings.CACHE_KEY_CHECKOUT}{self.user_id}")
-        self.cart.clear()
-        return True, "Заказ сформирован"
+        type_delivery = Checkout.delivery_key[0] if order.delivery_type == 1 else Checkout.delivery_key[1]
+        price = self.__order_data.get("total").get(type_delivery).get("total_price")
+        OrderPaymentCache.set_data_with_create_order(order, price)
+        self._clean_cache()
+
+        return True, "Заказ сформирован", order.id
+
+    def _clean_cache(self) -> None:
+        SerializersCache.clean_data_from_cache(f"{settings.CACHE_KEY_CHECKOUT}{self.__user_id}")
+        self.__cart.clear()
 
     def set_order_status(self):
         """Изменить статус заказа"""
@@ -499,12 +540,12 @@ class OrderHistory:
         return order
 
     @staticmethod
-    def get_history_order_detail(order_id: int) -> Order | None:
+    def get_history_order_detail(order_id: int, user_id: int) -> Order | None:
         """Получить детальную информацию о заказе"""
         try:
-            order = Order.objects.raw(ORDER_SQL, [order_id])[0]
+            order = Order.objects.raw(ORDER_SQL, [order_id, user_id])[0]
         except IndexError:
-            return None
+            raise Http404
         return order
 
     @staticmethod

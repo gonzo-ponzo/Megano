@@ -121,12 +121,14 @@ CACHE_KEY_PRODUCT_CATEGORY = "product_category"
 CACHE_KEY_BANNER = "banner"
 CACHE_KEY_COMPARISON = "comparison"
 CACHE_KEY_CHECKOUT = "checkout"
+CACHE_KEY_PAYMENT_ORDER = "payment_order-{user_id}-{order_id}"
 
 CACHE_TIMEOUT = {
     CACHE_KEY_PRODUCT_CATEGORY: 60 * 60 * 24,
     CACHE_KEY_BANNER: 60 * 10,
     CACHE_KEY_COMPARISON: 60 * 60 * 24 * 30,
     CACHE_KEY_CHECKOUT: 60 * 60,
+    CACHE_KEY_PAYMENT_ORDER: 60 * 20,
 }
 CART_SESSION_ID = "cart"
 SESSION_COOKIE_AGE = 24 * 60 * 60
@@ -147,7 +149,7 @@ DATABASES = {
     }
 }
 
-CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULT_BACKEND = "django-db"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -173,11 +175,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # LANGUAGE_CODE = "en-us"
 LANGUAGE_CODE = "ru"
 LANGUAGES = [
-    ('ru', _('Русский')),
-    ('en', _('Английский')),
+    ("ru", _("Русский")),
+    ("en", _("Английский")),
 ]
 LOCALE_PATHS = [
-    BASE_DIR / 'locale',
+    BASE_DIR / "locale",
 ]
 
 TIME_ZONE = "UTC"
@@ -215,6 +217,6 @@ COUNT_ELEMENTS_BEST_OFFER_SHOP = 6
 
 # setting for Rosetta application that eases the translation process
 ROSETTA_MESSAGES_PER_PAGE = 50
-ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE = 'ru'
-ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME = 'Русский'
+ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE = "ru"
+ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME = "Русский"
 ROSETTA_SHOW_AT_ADMIN_PANEL = True
