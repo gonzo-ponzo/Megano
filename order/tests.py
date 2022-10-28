@@ -48,6 +48,7 @@ class OrderTest(TestCase):
         user = User.objects.create_user(email=self.__emails[1], password=self.__password)
         user.cart = self.__cart
         user.save()
+        cache.clear()
 
     def test_http403_if_cart_empty_and_logout(self):
         response = self.client.get(reverse(self.__url))
@@ -75,12 +76,16 @@ class OrderTest(TestCase):
 
         self.assertEqual(Order.objects.count(), 1)
         self.assertEqual(OrderOffer.objects.count(), 1)
+        order = Order.objects.first()
+        order_cache = cache.get(settings.CACHE_KEY_PAYMENT_ORDER.format(user_id=order.user_id, order_id=order.id))
+        self.assertTrue(order_cache)
+        self.assertEqual(order.id, order_cache.get("order").id)
+        self.assertRedirects(response, reverse("order:payment-order", kwargs={"order_id": order.id}))
 
         user = auth.get_user(self.client)
         cache_order_data = cache.get(f"{settings.CACHE_KEY_CHECKOUT}{user.id}")
         self.assertFalse(cache_order_data)
         self.assertFalse(user.cart)
-        self.assertRedirects(response, reverse("main-page"))
 
 
 class OrderHistoryTest(TestCase):
@@ -146,6 +151,9 @@ class OrderHistoryTest(TestCase):
 
         cls.users = users
 
+    def setUp(self):
+        cache.clear()
+
     def test_history_redirect_on_login_if_not_authorized(self):
         response = self.client.get(self.__history_orders_url)
         self.assertEqual(response.status_code, 302)
@@ -185,3 +193,12 @@ class OrderHistoryTest(TestCase):
         order = Order.objects.filter(user=self.users[1]).first()
         response = self.client.get(reverse("order:history-order-detail", kwargs={"pk": order.id}))
         self.assertEqual(response.status_code, 404)
+
+    def test_order_detail_post_payment_and_redirect(self):
+        self.client.login(email=self.__emails[0], password=self.__password)
+        order = Order.objects.filter(user=self.users[0]).first()
+        data = {"payment_type": 2}
+        response = self.client.post(reverse("order:history-order-detail", kwargs={"pk": order.id}), data)
+        new_order = Order.objects.get(pk=order.id)
+        self.assertEqual(data.get("payment_type"), new_order.payment_type)
+        self.assertRedirects(response, reverse("order:payment-order", kwargs={"order_id": order.id}))

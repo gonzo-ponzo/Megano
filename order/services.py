@@ -419,21 +419,16 @@ class OrderPaymentCache:
     __timeout_cache = settings.CACHE_TIMEOUT.get(__key_cache)
 
     @classmethod
-    def set_data_with_create_order(cls, order: Order, price: Decimal) -> None:
-        """Добавляется заказ в кэш при создании"""
-        data = {"order": order, "total_price": price}
-        cache.set(cls.__key_cache.format(user_id=order.user_id, order_id=order.id), data, cls.__timeout_cache)
-
-    @classmethod
-    def get_cache_order_for_payment(cls, user_id: int, order_id: int) -> Dict | None:
+    def get_cache_order_for_payment(cls, order_id: int, user_id: int) -> Dict | None:
         """Получить данные по заказу"""
         order_cache = cache.get(cls.__key_cache.format(user_id=user_id, order_id=order_id))
         if order_cache:
             return order_cache
-        return cls.set_data_with_order_detail(order_id, user_id)
+        return cls._get_data_with_order_detail(order_id, user_id)
 
     @classmethod
-    def set_data_with_order_detail(cls, order_id: int, user_id: int) -> Dict | None:
+    def _get_data_with_order_detail(cls, order_id: int, user_id: int) -> Dict | None:
+        """Добавление в кэш и получение данных, если статус соответствующий"""
         order = OrderHistory.get_history_order_detail(order_id, user_id)
         order_status = [
             status[0]
@@ -441,9 +436,15 @@ class OrderPaymentCache:
             if status[1] in ("Новый заказ", "Ожидается оплата", "Не оплачен")
         ]
         if order.status_type in order_status:
-            data = {"order": order, "total_price": order.total_full_price}
-            cache.set(cls.__key_cache.format(user_id=order.user_id, order_id=order.id), data, cls.__timeout_cache)
-            return data
+            return cls.set_data_with_order(order)
+
+    @classmethod
+    def set_data_with_order(cls, order: Order, price: Decimal = None) -> Dict:
+        """Добавляется заказ в кэш"""
+        total_price = price if price else order.total_full_price
+        data = {"order": order, "total_price": total_price}
+        cache.set(cls.__key_cache.format(user_id=order.user_id, order_id=order.id), data, cls.__timeout_cache)
+        return data
 
 
 class SerializersCache:
@@ -504,7 +505,7 @@ class CheckoutDB:
 
         type_delivery = Checkout.delivery_key[0] if order.delivery_type == 1 else Checkout.delivery_key[1]
         price = self.__order_data.get("total").get(type_delivery).get("total_price")
-        OrderPaymentCache.set_data_with_create_order(order, price)
+        OrderPaymentCache.set_data_with_order(order, price)
         self._clean_cache()
 
         return True, "Заказ сформирован", order.id
@@ -512,6 +513,15 @@ class CheckoutDB:
     def _clean_cache(self) -> None:
         SerializersCache.clean_data_from_cache(f"{settings.CACHE_KEY_CHECKOUT}{self.__user_id}")
         self.__cart.clear()
+
+    @staticmethod
+    def set_order_payment_type(order: Order, payment_type: int) -> Order:
+        order_p = order.payment_type
+        if order.payment_type != payment_type:
+            order.payment_type = payment_type
+            order.save()
+            order.refresh_from_db()
+        return order
 
     def set_order_status(self):
         """Изменить статус заказа"""
