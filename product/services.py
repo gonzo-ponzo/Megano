@@ -97,6 +97,9 @@ class ProductCompareList:
         self.get_product_list()
 
     def get_product_list(self):
+        """
+        Получение списка продуктов в сравнении
+        """
         return [
             i for i in self.product_list.values()
             if self.category == 'None' or self.category == str(i.category.id)
@@ -122,9 +125,12 @@ class ProductCompare:
         self.rating = self.get_rating_list(product)
 
     def get_rating_list(self, product):
+        """
+        Определяем средний рейтинг продукта в сравнении
+        """
         rating_list = product.review_set.all().values_list('rating', flat=True)
         if rating_list:
-            avg_rating = mean(product.review_set.all().values_list('rating', flat=True))
+            avg_rating = mean(rating_list)
             star_list = list()
             for i in range(5):
                 if avg_rating > 1:

@@ -1,14 +1,14 @@
 from django.views import View
-from shop.models import Shop
+from order.templatetags.cart import register
 from shop.services import ShopDetail, ShopList
 from django.shortcuts import render, redirect
-from product.services import FilterProductsResult
 from config.settings.base import COUNT_ELEMENTS_PAGINATOR_LIST_SHOPS
 from django.core.paginator import Paginator
 
 
+
 class ShopDetailView(View):
-    """Страница продавца"""
+    """Страница магазина"""
     def get(self, request, *args, **kwargs):
         shop = ShopDetail(kwargs["pk"])
         if shop.get_shop_status():
