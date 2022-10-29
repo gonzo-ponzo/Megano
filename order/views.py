@@ -2,14 +2,14 @@ from django.views import View
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
-from order.services import Cart, Checkout, SerializersCache, CheckoutDB, OrderHistory, OrderPaymentCache
+from order.services import Cart, Checkout, SerializersCache, CheckoutDB, OrderHistory, OrderPaymentCache, PaymentApi
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
-from product.models import Product
-from .forms import OrderForm, OrderPaymentForm
 from copy import deepcopy
+from product.models import Product
+from .forms import OrderForm, OrderPaymentForm, PaymentForm
 
 
 # Create your views here.
@@ -148,7 +148,23 @@ class OrderPaymentView(View):
         order = OrderPaymentCache.get_cache_order_for_payment(order_id, request.user.id)
         if order is None:
             raise PermissionDenied
+        order["form"] = PaymentForm()
         return render(request, "order/payment.html", context=order)
 
     def post(self, request, order_id):
-        pass
+        order = OrderPaymentCache.get_cache_order_for_payment(order_id, request.user.id)
+        form = PaymentForm(request.POST)
+        data = ""
+
+        if form.is_valid() and order:
+            status, data = PaymentApi.post(order, form.cleaned_data.get("card_number"))
+            if status:
+                order_obj = CheckoutDB.set_order_expectation_status(order.get("order"))
+                OrderPaymentCache.set_data_with_order(order_obj, order.get("total_price"))
+                return redirect(reverse("order:history-order-detail", kwargs={"pk": order_id}))
+
+        if data:
+            messages.error(request, data)
+
+        order["form"] = form
+        return render(request, "order/payment.html", context=order)

@@ -21,3 +21,7 @@ class OrderPaymentForm(forms.ModelForm):
         fields = ("payment_type",)
         labels = {"payment_type": ""}
         widgets = {"payment_type": forms.Select(attrs={"class": "form-select"})}
+
+
+class PaymentForm(forms.Form):
+    card_number = forms.CharField()

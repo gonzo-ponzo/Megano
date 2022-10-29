@@ -5,14 +5,18 @@ from django.db import transaction, DatabaseError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import F, Prefetch
 from django.http import Http404
+
 from order.models import Offer, Delivery, Order, OrderOffer
 from product.models import ProductImage, Product
 from shop.models import Shop
 from promotion.models import PromotionOffer
 from .queries import USER_ORDERS_SQL, USER_LAST_ORDER_SQL, ORDER_SQL
+
 from decimal import Decimal
 from typing import Dict, Tuple
 import json
+import requests
+from requests.exceptions import Timeout, ConnectionError
 
 
 class Cart(object):
@@ -421,8 +425,10 @@ class OrderPaymentCache:
     @classmethod
     def get_cache_order_for_payment(cls, order_id: int, user_id: int) -> Dict | None:
         """Получить данные по заказу"""
-        order_cache = cache.get(cls.__key_cache.format(user_id=user_id, order_id=order_id))
+        key = cls.__key_cache.format(user_id=user_id, order_id=order_id)
+        order_cache = cache.get(key)
         if order_cache:
+            cache.touch(key, timeout=cls.__timeout_cache)
             return order_cache
         return cls._get_data_with_order_detail(order_id, user_id)
 
@@ -516,16 +522,18 @@ class CheckoutDB:
 
     @staticmethod
     def set_order_payment_type(order: Order, payment_type: int) -> Order:
-        order_p = order.payment_type
         if order.payment_type != payment_type:
             order.payment_type = payment_type
             order.save()
             order.refresh_from_db()
         return order
 
-    def set_order_status(self):
+    @staticmethod
+    def set_order_expectation_status(order: Order) -> Order:
         """Изменить статус заказа"""
-        pass
+        order.status_type = Order.STATUS_CHOICES[1][0]
+        order.save()
+        return order
 
     def set_order_error(self):
         """Добавить ошибку"""
@@ -569,6 +577,28 @@ class OrderHistory:
             "id", "price", "discount", "amount", "offer_id", "offer__product__name", "offer__shop__name"
         )
         return queryset
+
+
+class PaymentApi:
+    __url = "http://127.0.0.1:8000/payment/{}"
+    __timeout = 10
+
+    @classmethod
+    def post(cls, order_data: Dict, card_number: str) -> Tuple[bool, str]:
+        order = order_data.get("order")
+        data = {"card_number": card_number, "sum_to_pay": order_data.get("total_price")}
+        try:
+            response = requests.post(cls.__url.format(order.id), data=data, timeout=cls.__timeout)
+            data = response.json()
+        except (Timeout, ConnectionError):
+            return False, "Платежный сервис не отвечает, попробуйте позже"
+
+        error_data = data.get("error")
+        if error_data:
+            return False, error_data
+
+        if data.get("status") == 0:
+            return True, ""
 
 
 def get_product_price_by_shop(shop_id: int, product_id: int):
