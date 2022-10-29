@@ -9,7 +9,7 @@ from product.models import Product, ProductCategory
 from shop.models import Shop
 from promotion.services import BannerMain
 from .services import ReviewForItem, ProductCompareList, SortProductsResult, FilterProductsResult, DetailedProduct
-from .services import DailyOffer, BrowsingHistory
+from .services import DailyOffer, BrowsingHistory, PopularCategory
 
 from django.core.paginator import Paginator
 from django.contrib import messages
@@ -103,6 +103,8 @@ class MainPage(TemplateView):
         hot_product = FilterProductsResult()
         hot_product.with_promo()
         context["hot_product"] = hot_product.queryset[:9]
+
+        context['popular_category'] = PopularCategory.get_cached()
 
         return context
 

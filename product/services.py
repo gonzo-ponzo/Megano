@@ -4,11 +4,13 @@ from copy import copy
 from statistics import mean
 
 from django.db.models.query import QuerySet
-from django.db.models import F, Min, Max, Sum, Count, Avg
+from django.db.models import F, Min, Max, Sum, Count, Avg, OuterRef, Subquery
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.cache import cache
+from django.conf import settings
 
 from .models import Product, ProductImage, Offer, ProductProperty, Property, Review, ProductCategory, ProductView
 from shop.models import Shop
@@ -602,3 +604,53 @@ class DetailedProduct:
         except Review.DoesNotExist:
             reviews = None
         return reviews
+
+
+class PopularCategory:
+
+    __count = 3
+
+    @classmethod
+    def get_cached(cls):
+
+        category = cache.get_or_set(
+            key=settings.CACHE_KEY_POPULAR_CATEGORY,
+            default=cls.get_popular_category,
+            timeout=settings.CACHE_TIMEOUT.get(settings.CACHE_KEY_POPULAR_CATEGORY, 60 * 60 * 24)
+        )
+        return category
+
+    @classmethod
+    def get_popular_category(cls):
+        category = cls.__get_needed_category()
+        category = cls.__annotate_parameter_and_sort(category)
+        category = category[:cls.__count]
+        category = cls.__add_foto_and_price(category)
+
+        return list(category)
+
+    @staticmethod
+    def __get_needed_category():
+        category = ProductCategory.objects.all()
+        return category
+
+    @staticmethod
+    def __annotate_parameter_and_sort(category):
+        """Аннотация полем parameter - количество просмотров товаров в категориях и сортировка по нему"""
+        category = ProductCategory.objects.add_related_count(
+            queryset=category,
+            rel_model=ProductView,
+            rel_field='product__category',
+            count_attr='parameter',
+            cumulative=False,
+        )
+        category = category.order_by('-parameter')
+        return category
+
+    @staticmethod
+    def __add_foto_and_price(category):
+        category = category.annotate(min_price=Min('product__offer__price'))
+        fotos = ProductImage.objects.filter(product__category_id=OuterRef('id')).order_by('?')
+        category = category.annotate(foto=Subquery(fotos.values('image')[:1]))
+
+        return category
