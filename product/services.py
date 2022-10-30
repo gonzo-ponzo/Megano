@@ -2,14 +2,12 @@ from random import randint
 from urllib.parse import urlencode
 from copy import copy
 from statistics import mean
-
 from django.db.models.query import QuerySet
 from django.db.models import F, Min, Max, Sum, Count, Avg
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
-
 from .models import Product, ProductImage, Offer, ProductProperty, Property, Review, ProductCategory
 from shop.models import Shop
 from user.models import CustomUser
@@ -117,12 +115,16 @@ class ProductCompare:
         self.category = product.category
         self.manufacturer = product.manufacturer
         self.image = product.productimage_set.first()
-        min_price = product.offer_set.all().values_list('price', flat=True)
-        if min_price:
-            self.min_price = min(min_price)
-        else:
-            self.min_price = "нет предложений"
         self.rating = self.get_rating_list(product)
+
+        self.min_price = "нет предложений"
+        if product.deleted_at is None:
+            min_price = product.offer_set.filter(
+                amount__gt=0,
+                deleted_at=None
+            ).values_list('price', flat=True)
+            if min_price:
+                self.min_price = f'{min(min_price)} руб.'
 
     def get_rating_list(self, product):
         """

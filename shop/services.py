@@ -1,6 +1,5 @@
 from django.db.models import Sum, Avg, Q, Max, DecimalField
 from django.db.models.functions import Cast
-
 from shop.models import Shop, ShopImage
 from product.models import Offer
 from config.settings.base import COUNT_ELEMENTS_BEST_OFFER_SHOP
