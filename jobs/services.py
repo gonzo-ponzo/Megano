@@ -1,9 +1,12 @@
 from pydantic import BaseModel, EmailStr, ValidationError, validator
 from phonenumber_field.phonenumber import PhoneNumber
+from decimal import Decimal
 
 from .models import Process
 from .tasks import shop_import
 from shop.models import Shop
+from product.models import Product, Offer
+#from promotion.models import PromotionOffer
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.core.mail import send_mail
@@ -27,10 +30,22 @@ class ShopBaseInfo(BaseModel):
             raise ValueError(f"invalid PhoneNumber - {v}; error message - {e}")
 
 
+class OfferInfo(BaseModel):
+    product_id: int
+    amount: int
+    price: Decimal
+    promotion: int | None = None  # TODO
+    
+    @validator("price")
+    def check_correct_price(cls, v):
+        if int(v*100) < v*100:
+            raise ValueError(f"invalid price - {v}; must be 2 decimal points")
+        return v
+
+
 class ShopModel(BaseModel):
     shop: ShopBaseInfo
-    # TODO + раздел с офферами
-    # TODO + раздел с акциями
+    offers: list[OfferInfo] | None = None
 
 
 def try_start_import(file_names):
@@ -67,7 +82,6 @@ def one_shop_import(file_name):
         if user:
             shop.user = user
         shop.save()
-        return True, "TODO logo and shop-pictures"  # TODO
     else:
         need_fields = fields_requred - shop_data.__fields_set__
         if len(need_fields) > 0:
@@ -75,8 +89,20 @@ def one_shop_import(file_name):
         if not user:
             return False, f"User with email {shop_data.user_mail} not found"
         shop = Shop.objects.create(email=email, user=user, **{key: shop_data.__dict__.get(key) for key in fields})
-        return True, "TODO logo and shop-pictures"  # TODO
-    return True, "All correct, supposed"
+    error_list = []
+    for offer_data in data.offers:
+        product = Product.objects.filter(pk=offer_data.product_id).first()
+        if product:
+            offer = Offer.objects.filter(shop=shop, product=product).first()  # TODO update_or_create
+            if offer:
+                offer.price = offer_data.price
+                offer.amount = offer_data.amount
+                offer.save()
+            else:
+                Offer.objects.create(shop=shop, product=product, price=offer_data.price, amount=offer_data.amount)
+        else:
+            error_list.append(f"Product c offer_data.product_id={offer_data.product_id} not found")
+    return True, "TODO logo and shop-pictures"  # TODO
 
 
 def send_mail_from_site(subject, message, recipient_list):
