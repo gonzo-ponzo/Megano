@@ -5,6 +5,8 @@ from .models import Process
 from .tasks import shop_import
 from shop.models import Shop
 from django.contrib.auth import get_user_model
+from django.conf import settings
+from django.core.mail import send_mail
 
 
 class ShopBaseInfo(BaseModel):
@@ -75,3 +77,8 @@ def one_shop_import(file_name):
         shop = Shop.objects.create(email=email, user=user, **{key: shop_data.__dict__.get(key) for key in fields})
         return True, "TODO logo and shop-pictures"  # TODO
     return True, "All correct, supposed"
+
+
+def send_mail_from_site(subject, message, recipient_list):
+    # TODO отправку делать через механизм очереди, или на крайний случай обернуть в try
+    send_mail(subject=subject, message=message, from_email=settings.EMAIL_HOST_USER, recipient_list=recipient_list)
