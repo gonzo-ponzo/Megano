@@ -4,13 +4,15 @@ from copy import copy
 from statistics import mean
 
 from django.db.models.query import QuerySet
-from django.db.models import F, Min, Max, Sum, Count, Avg
+from django.db.models import F, Min, Max, Sum, Count, Avg, OuterRef, Subquery
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.cache import cache
+from django.conf import settings
 
-from .models import Product, ProductImage, Offer, ProductProperty, Property, Review, ProductCategory
+from .models import Product, ProductImage, Offer, ProductProperty, Property, Review, ProductCategory, ProductView
 from shop.models import Shop
 from user.models import CustomUser
 
@@ -180,9 +182,10 @@ class FilterProductsResult:
             self.min_price, self.max_price = map(int, price)
 
     @staticmethod
-    def get_queryset_for_catalog():
+    def get_queryset_for_catalog(without_offer=True):
         queryset = Product.objects.all()
-        queryset = queryset.filter(offer__isnull=False)
+        if without_offer:
+            queryset = queryset.filter(offer__isnull=False)
         queryset = queryset.prefetch_related('productimage_set')
         queryset = queryset.select_related('category')
         # queryset = queryset.prefetch_related('shop')
@@ -415,13 +418,47 @@ class BrowsingHistory:
     История просмотра пользователя
     """
 
-    def add_product_to_history(self):
-        """Добавить продукт в список просмотренных"""
-        pass
+    def __init__(self, user: CustomUser):
+        self.user = user
 
-    def get_history(self):
-        """Получить список просмотренных товаров"""
-        pass
+    def add_product_to_history(self, product: Product):
+        """Добавить продукт в список просмотренных или обновить дату просмотра, если он там уже есть"""
+        if not self.user.is_authenticated:
+            return
+
+        ProductView.objects.update_or_create(
+            user=self.user,
+            product=product,
+        )
+
+    def __len__(self):
+        return self.count
+
+    @property
+    def count(self):
+        """Количество просмотренных продуктов"""
+        return ProductView.objects.filter(user=self.user).count()
+
+    def delete_product_from_history(self, product: Product):
+        """Удалить продукт из истории просмотров"""
+        ProductView.objects.filter(
+            user=self.user,
+            product=product,
+        ).delete()
+
+    def clear_history(self):
+        """Очистить историю просмотров"""
+        ProductView.objects.filter(
+            user=self.user,
+        ).delete()
+
+    def get_history(self, number_of_entries=20):
+        """Получить последние записи истории просмотренных товаров"""
+        products = FilterProductsResult.get_queryset_for_catalog(without_offer=False)
+        products = products.filter(id__in=ProductView.objects.filter(user=self.user).values_list('product'))
+        products = products.annotate(date_view=F('productview__updated_at'))
+        products = products.order_by('-date_view')
+        return products[:number_of_entries]
 
 
 class ImportProducts:
@@ -567,3 +604,53 @@ class DetailedProduct:
         except Review.DoesNotExist:
             reviews = None
         return reviews
+
+
+class PopularCategory:
+
+    __count = 3
+
+    @classmethod
+    def get_cached(cls):
+
+        category = cache.get_or_set(
+            key=settings.CACHE_KEY_POPULAR_CATEGORY,
+            default=cls.get_popular_category,
+            timeout=settings.CACHE_TIMEOUT.get(settings.CACHE_KEY_POPULAR_CATEGORY, 60 * 60 * 24)
+        )
+        return category
+
+    @classmethod
+    def get_popular_category(cls):
+        category = cls.__get_needed_category()
+        category = cls.__annotate_parameter_and_sort(category)
+        category = category[:cls.__count]
+        category = cls.__add_foto_and_price(category)
+
+        return list(category)
+
+    @staticmethod
+    def __get_needed_category():
+        category = ProductCategory.objects.all()
+        return category
+
+    @staticmethod
+    def __annotate_parameter_and_sort(category):
+        """Аннотация полем parameter - количество просмотров товаров в категориях и сортировка по нему"""
+        category = ProductCategory.objects.add_related_count(
+            queryset=category,
+            rel_model=ProductView,
+            rel_field='product__category',
+            count_attr='parameter',
+            cumulative=False,
+        )
+        category = category.order_by('-parameter')
+        return category
+
+    @staticmethod
+    def __add_foto_and_price(category):
+        category = category.annotate(min_price=Min('product__offer__price'))
+        fotos = ProductImage.objects.filter(product__category_id=OuterRef('id')).order_by('?')
+        category = category.annotate(foto=Subquery(fotos.values('image')[:1]))
+
+        return category
