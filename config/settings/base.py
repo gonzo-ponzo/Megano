@@ -134,6 +134,8 @@ CONSTANCE_ADDITIONAL_FIELDS = {
 CONSTANCE_CONFIG = {
     "COMMENTS_PER_PAGE": (3, "Count of comments per page"),
     "OBJECTS_PER_PAGE": (12, "Count of objects per page"),
+    "ORDERS_PER_PAGE": (12, "Count of orders per page"),
+    "PRODUCTS_PER_SHOP": (6, "Count of products per shop"),
 
     "CLEAR_CACHE": ("No", "Clear all cache", "choice_select"),
     "CACHE_TIMEOUT": (60*60*24, "Cache timeout (default = 24 hours)"),
@@ -144,7 +146,7 @@ CONSTANCE_CONFIG = {
 
 CONSTANCE_CONFIG_FIELDSETS = {
     "Cache options": ( "CLEAR_CACHE", "CACHE_TIMEOUT", "CACHE_KEY_BANNER", "CACHE_KEY_COMPARISON", "CACHE_KEY_CHECKOUT"),
-    "Display Options": ("COMMENTS_PER_PAGE", "OBJECTS_PER_PAGE"),
+    "Display Options": ("COMMENTS_PER_PAGE", "OBJECTS_PER_PAGE", "ORDERS_PER_PAGE", "PRODUCTS_PER_SHOP"),
 }
 
 CACHE_KEY_PRODUCT_CATEGORY = "product_category"
@@ -236,11 +238,6 @@ LOGIN_URL = "/login/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MPTT_ADMIN_LEVEL_INDENT = 20
-
-PRODUCT_PER_PAGES = 10
-PAGINATE_ORDER_HISTORY = 3
-
-COUNT_ELEMENTS_BEST_OFFER_SHOP = 6
 
 # setting for Rosetta application that eases the translation process
 ROSETTA_MESSAGES_PER_PAGE = 50
