@@ -112,7 +112,6 @@ class CatalogView(ListView):
 
     template_name = "product/catalog.html"
     context_objects_name = "product_list"
-    paginate_by = config.OBJECTS_PER_PAGE
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -139,6 +138,9 @@ class CatalogView(ListView):
         queryset = SortProductsResult(products=filter_product.queryset).sort_by_params(**self.request.GET.dict())
 
         return queryset
+
+    def get_paginate_by(self, queryset):
+        return config.OBJECTS_PER_PAGE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
