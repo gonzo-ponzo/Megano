@@ -226,10 +226,12 @@ class OrderPaymentTest(TestCase):
                 self.assertEqual(response.status_code, 200)
             cache.clear()
 
+    @mock.patch("order.tasks.update_order_after_payment.apply_async")
     @mock.patch("requests.post")
-    def test_post_payment_and_true_result(self, mocked):
+    def test_post_payment_and_true_result(self, mocked, call_task):
         self.client.login(email=self.__emails[1], password=self.__password)
         order = Order.objects.filter(user=self.users[1]).first()
+        call_task.return_value = None
         mocked.return_value = MockResponsePayment(method="post", status_code=201, order_number=order.id)
         url = reverse(self.__payment_name_url, kwargs={"order_id": order.id})
         data = {"card_number": "1233 3434"}
@@ -237,10 +239,12 @@ class OrderPaymentTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("order:history-order-detail", kwargs={"pk": order.id}))
 
+    @mock.patch("order.tasks.update_order_after_payment.apply_async")
     @mock.patch("requests.post")
-    def test_post_payment_and_false_result(self, mocked):
+    def test_post_payment_and_false_result(self, mocked, call_task):
         self.client.login(email=self.__emails[1], password=self.__password)
         order = Order.objects.filter(user=self.users[1]).first()
+        call_task.return_value = None
         mocked.return_value = MockResponsePayment(method="post", status_code=400, order_number=order.id)
         url = reverse(self.__payment_name_url, kwargs={"order_id": order.id})
         data = {"card_number": "1233 34jhj34"}

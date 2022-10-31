@@ -18,14 +18,14 @@ def update_order_after_payment(self, order_id: int) -> str:
             data = ex
 
     if status:
-        result = f"Good: {data}"
+        result = f"Good order({order_id}): {data}"
     else:
         try:
             raise self.retry(max_retries=settings.CELERY_MAX_RETRIES_ORDER, countdown=settings.CELERY_COUNTDOWN_ORDER)
         except MaxRetriesExceededError as ex:
             order = CheckoutDB.set_order_status_max_retry(order_id)
             data = ex
-        result = f"Bad: {data}"
+        result = f"Bad order({order_id}): {data}"
 
     OrderPaymentCache.clean_data_from_cache(order.id, order.user_id)
     return result
