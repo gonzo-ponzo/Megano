@@ -14,7 +14,7 @@ class Order(Model):
     DELIVERY_CHOICES = ((1, _("Обычная доставка")), (2, _("Экспресс-доставка")))
     PAYMENT_CHOICES = ((1, _("Онлайн картой")), (2, _("Онлайн со случайного чужого счёта")))
     STATUS_CHOICES = ((1, "Новый заказ"), (2, "Ожидается оплата"), (3, _("Оплачен")), (4, _("Не оплачен")))
-    ERROR_CHOICES = CONST_STATUS_CHOICES[2:]
+    ERROR_CHOICES = ((1, "Сервер оплаты не доступен"),) + CONST_STATUS_CHOICES[2:]
 
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name=_("пользователь"))
     city = models.CharField(max_length=100, verbose_name=_("город"))

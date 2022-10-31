@@ -452,6 +452,10 @@ class OrderPaymentCache:
         cache.set(cls.__key_cache.format(user_id=order.user_id, order_id=order.id), data, cls.__timeout_cache)
         return data
 
+    @classmethod
+    def clean_data_from_cache(cls, order_id: int, user_id: int) -> None:
+        cache.delete(cls.__key_cache.format(user_id=user_id, order_id=order_id))
+
 
 class SerializersCache:
     """Класс для работы с данными из кэша"""
@@ -482,12 +486,14 @@ class CheckoutDB:
         self.__cart = cart
 
     def _add_data_order(self) -> Order:
+        """Создание заказа"""
         order = Order.objects.create(
             user_id=self.__user_id, delivery_id=self.__order_data.get("delivery_id"), **self.__order_info
         )
         return order
 
     def _add_data_order_offer(self, order: Order) -> None:
+        """Создание продуктов в заказе"""
         order_offer = []
         for product in self.__order_data.get("products"):
             order_offer.append(
@@ -502,6 +508,7 @@ class CheckoutDB:
         OrderOffer.objects.bulk_create(order_offer)
 
     def save_order(self) -> Tuple[bool, str, int | None]:
+        """Формирование заказа и заполнение кэша для оплаты"""
         try:
             with transaction.atomic():
                 order = self._add_data_order()
@@ -522,6 +529,7 @@ class CheckoutDB:
 
     @staticmethod
     def set_order_payment_type(order: Order, payment_type: int) -> Order:
+        """Изменение способа оплаты"""
         if order.payment_type != payment_type:
             order.payment_type = payment_type
             order.save()
@@ -532,12 +540,43 @@ class CheckoutDB:
     def set_order_expectation_status(order: Order) -> Order:
         """Изменить статус заказа"""
         order.status_type = Order.STATUS_CHOICES[1][0]
+        order.error_type = None
         order.save()
         return order
 
-    def set_order_error(self):
-        """Добавить ошибку"""
-        pass
+    @classmethod
+    def set_order_payment(cls, data: Dict) -> Order:
+        """Обновить данные при оплате"""
+        order = Order.objects.get(pk=data.get("order_number"))
+        status = data.get("status")
+        if status == 1:
+            order.status_type = Order.STATUS_CHOICES[2][0]
+            order.error_type = None
+            cls.set_amounts_of_goods_sold(order)
+        else:
+            order.status_type = Order.STATUS_CHOICES[3][0]
+            order.error_type = status
+        order.save()
+        return order
+
+    @staticmethod
+    def set_order_status_max_retry(order_id: int) -> Order:
+        """Обновление статуса если истекут попытки"""
+        order = Order.objects.get(pk=order_id)
+        order.status_type = Order.STATUS_CHOICES[3][0]
+        order.error_type = Order.ERROR_CHOICES[0][0]
+        order.save()
+        return order
+
+    @staticmethod
+    def set_amounts_of_goods_sold(order: Order) -> None:
+        """Обновляет кол-во проданных товаров"""
+        orders = OrderOffer.objects.select_related("offer").filter(order=order)
+        offers = []
+        for order in orders:
+            order.offer.amount = F("amount") - order.amount
+            offers.append(order.offer)
+        Offer.objects.bulk_update(offers, fields=["amount"])
 
 
 class OrderHistory:
@@ -584,21 +623,39 @@ class PaymentApi:
     __timeout = 10
 
     @classmethod
+    def get(cls, order_id: int, celery_run: bool = False) -> Tuple[Dict | str, bool]:
+        """Получение результата по оплате"""
+        url = "http://web:8000/payment/{}" if celery_run else cls.__url
+
+        try:
+            response = requests.get(url.format(order_id), timeout=cls.__timeout)
+            data = response.json()
+        except (Timeout, ConnectionError) as ex:
+            return ex, False
+
+        if data.get("status", -1) > 0:
+            return data, True
+        return data, False
+
+    @classmethod
     def post(cls, order_data: Dict, card_number: str) -> Tuple[bool, str]:
+        """Отправление данных на оплату"""
         order = order_data.get("order")
         data = {"card_number": card_number, "sum_to_pay": order_data.get("total_price")}
+        msg = ""
         try:
             response = requests.post(cls.__url.format(order.id), data=data, timeout=cls.__timeout)
             data = response.json()
         except (Timeout, ConnectionError):
             return False, "Платежный сервис не отвечает, попробуйте позже"
 
+        if data.get("status", -1) == 0:
+            return True, msg
+
         error_data = data.get("error")
         if error_data:
-            return False, error_data
-
-        if data.get("status") == 0:
-            return True, ""
+            msg = error_data
+        return False, msg
 
 
 def get_product_price_by_shop(shop_id: int, product_id: int):
