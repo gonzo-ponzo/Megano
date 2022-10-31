@@ -149,6 +149,10 @@ DATABASES = {
     }
 }
 
+CELERY_COUNTDOWN_ORDER = 30
+CELERY_MAX_RETRIES_ORDER = 5
+
+CELERY_BROKER_URL = "redis://redis_db"
 CELERY_RESULT_BACKEND = "django-db"
 
 # Password validation

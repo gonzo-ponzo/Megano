@@ -10,6 +10,7 @@ from django.core.exceptions import PermissionDenied
 from copy import deepcopy
 from product.models import Product
 from .forms import OrderForm, OrderPaymentForm, PaymentForm
+from .tasks import update_order_after_payment
 
 
 # Create your views here.
@@ -160,6 +161,7 @@ class OrderPaymentView(View):
             status, data = PaymentApi.post(order, form.cleaned_data.get("card_number"))
             if status:
                 order_obj = CheckoutDB.set_order_expectation_status(order.get("order"))
+                update_order_after_payment.apply_async((order_obj.id,), countdown=settings.CELERY_COUNTDOWN_ORDER)
                 OrderPaymentCache.set_data_with_order(order_obj, order.get("total_price"))
                 return redirect(reverse("order:history-order-detail", kwargs={"pk": order_id}))
 

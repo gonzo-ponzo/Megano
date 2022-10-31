@@ -4,9 +4,13 @@ from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.conf import settings
 from django.contrib import auth
+from django.db.models import F
+
 from .models import Order, OrderOffer, Delivery
 from product.models import ProductCategory, Product, Manufacturer, Offer
 from shop.models import Shop
+from .tasks import update_order_after_payment
+
 import random
 from typing import List
 from unittest import mock
@@ -16,6 +20,7 @@ User = get_user_model()
 
 class MockResponsePayment:
     """Mock для Payment API"""
+
     def __init__(self, method: str, status_code: int, order_number: int):
         self.method = method
         self.status_code = status_code
@@ -29,7 +34,10 @@ class MockResponsePayment:
             elif self.status_code == 400:
                 response = {"error": "Некорректные входные данные"}
         elif self.method == "get":
-            response = {"order_number": self.order_number, "status": 1, "status_text": "Успешно оплачено"}
+            if self.status_code == 200:
+                response = {"order_number": self.order_number, "status": 1, "status_text": "Успешно оплачено"}
+            elif self.status_code == 400:
+                response = {"error": "Счет не найден"}
         return response
 
 
@@ -238,6 +246,35 @@ class OrderPaymentTest(TestCase):
         data = {"card_number": "1233 34jhj34"}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
+
+    @mock.patch("requests.get")
+    def test_update_order_task_true_result(self, requests_get):
+        order = Order.objects.first()
+        offer_old = (
+            OrderOffer.objects.select_related("offer")
+            .values("offer_id", offer_amount=F("offer__amount"))
+            .filter(order=order)
+        )
+        offer_old = [i for i in offer_old]
+        offer = (
+            OrderOffer.objects.select_related("offer")
+            .values("offer_id")
+            .annotate(offer_amount=F("offer__amount") - F("amount"))
+            .filter(order=order)
+        )
+        offer = [i for i in offer]
+        self.assertTrue(offer_old != offer)
+
+        requests_get.return_value = MockResponsePayment(method="get", status_code=200, order_number=order.id)
+        result = update_order_after_payment(order.id)
+        offer_new = (
+            OrderOffer.objects.select_related("offer")
+            .values("offer_id", offer_amount=F("offer__amount"))
+            .filter(order=order)
+        )
+        offer_new = [i for i in offer_new]
+        self.assertEqual(offer_new, offer)
+        self.assertTrue(result.startswith("Good"))
 
 
 def adding_data_to_tables(emails: List, password: str) -> List:
