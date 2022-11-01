@@ -64,7 +64,7 @@
                                                     {% trans 'Общая стоимость' %}:
                                                 </div>
                                                 <div class="Order-infoContent">
-                                                    {% if order.total_full_price %}
+                                                    {% if order.sum_discount %}
                                                         <span class="Order-price">
                                                             {{ order.total_full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
                                                         </span>

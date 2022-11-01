@@ -4,14 +4,19 @@ from django.core.cache import cache
 from django.db import transaction, DatabaseError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import F, Prefetch
+from django.http import Http404
+
 from order.models import Offer, Delivery, Order, OrderOffer
 from product.models import ProductImage, Product
 from shop.models import Shop
 from promotion.models import PromotionOffer
 from .queries import USER_ORDERS_SQL, USER_LAST_ORDER_SQL, ORDER_SQL
+
 from decimal import Decimal
 from typing import Dict, Tuple
 import json
+import requests
+from requests.exceptions import Timeout, ConnectionError
 
 
 class Cart(object):
@@ -361,6 +366,8 @@ class Cart(object):
 class Checkout:
     """Оформление заказа"""
 
+    delivery_key = ("normal", "express")
+
     @classmethod
     def get_data_from_cart(cls, shops: Dict, user_id: int) -> Dict:
         """Формирование данных из корзины"""
@@ -385,15 +392,14 @@ class Checkout:
         )
         return order
 
-    @staticmethod
-    def _get_data_delivery(shop_cnt: int, full_total_price: Decimal, total_price: Decimal) -> Tuple[int, Dict]:
+    @classmethod
+    def _get_data_delivery(cls, shop_cnt: int, full_total_price: Decimal, total_price: Decimal) -> Tuple[int, Dict]:
         """Формирования итоговых цен с учетом доставки"""
-        delivery_key = ("normal", "express")
         delivery = Delivery.objects.order_by("-created_at").first()
         total = {}
 
-        for key in delivery_key:
-            if key == delivery_key[0]:
+        for key in cls.delivery_key:
+            if key == cls.delivery_key[0]:
                 if shop_cnt == 1 and total_price > delivery.sum_order:
                     delivery_price = 0
                 else:
@@ -409,12 +415,51 @@ class Checkout:
 
         return delivery.pk, total
 
-    def set_shipping_param(self):
-        """Установить параметры доставки"""
-        pass
+
+class OrderPaymentCache:
+    """Добавление заказа для оплаты"""
+
+    __key_cache = settings.CACHE_KEY_PAYMENT_ORDER
+    __timeout_cache = settings.CACHE_TIMEOUT.get(__key_cache)
+
+    @classmethod
+    def get_cache_order_for_payment(cls, order_id: int, user_id: int) -> Dict | None:
+        """Получить данные по заказу"""
+        key = cls.__key_cache.format(user_id=user_id, order_id=order_id)
+        order_cache = cache.get(key)
+        if order_cache:
+            cache.touch(key, timeout=cls.__timeout_cache)
+            return order_cache
+        return cls._get_data_with_order_detail(order_id, user_id)
+
+    @classmethod
+    def _get_data_with_order_detail(cls, order_id: int, user_id: int) -> Dict | None:
+        """Добавление в кэш и получение данных, если статус соответствующий"""
+        order = OrderHistory.get_history_order_detail(order_id, user_id)
+        order_status = [
+            status[0]
+            for status in Order.STATUS_CHOICES
+            if status[1] in ("Новый заказ", "Ожидается оплата", "Не оплачен")
+        ]
+        if order.status_type in order_status:
+            return cls.set_data_with_order(order)
+
+    @classmethod
+    def set_data_with_order(cls, order: Order, price: Decimal = None) -> Dict:
+        """Добавляется заказ в кэш"""
+        total_price = price if price else order.total_full_price
+        data = {"order": order, "total_price": total_price}
+        cache.set(cls.__key_cache.format(user_id=order.user_id, order_id=order.id), data, cls.__timeout_cache)
+        return data
+
+    @classmethod
+    def clean_data_from_cache(cls, order_id: int, user_id: int) -> None:
+        cache.delete(cls.__key_cache.format(user_id=user_id, order_id=order_id))
 
 
 class SerializersCache:
+    """Класс для работы с данными из кэша"""
+
     @staticmethod
     def set_data_in_cache(cache_key: str, data: Dict, cache_ttl: int) -> None:
         cache.set(cache_key, json.dumps(data, cls=DjangoJSONEncoder), cache_ttl)
@@ -435,20 +480,22 @@ class CheckoutDB:
     """Сохранение заказа в БД"""
 
     def __init__(self, user_id: int, order_info: Dict, order_data: Dict, cart: Cart):
-        self.user_id = user_id
-        self.order_info = order_info
-        self.order_data = order_data
-        self.cart = cart
+        self.__user_id = user_id
+        self.__order_info = order_info
+        self.__order_data = order_data
+        self.__cart = cart
 
     def _add_data_order(self) -> Order:
+        """Создание заказа"""
         order = Order.objects.create(
-            user_id=self.user_id, delivery_id=self.order_data.get("delivery_id"), **self.order_info
+            user_id=self.__user_id, delivery_id=self.__order_data.get("delivery_id"), **self.__order_info
         )
         return order
 
     def _add_data_order_offer(self, order: Order) -> None:
+        """Создание продуктов в заказе"""
         order_offer = []
-        for product in self.order_data.get("products"):
+        for product in self.__order_data.get("products"):
             order_offer.append(
                 OrderOffer(
                     order=order,
@@ -460,25 +507,76 @@ class CheckoutDB:
             )
         OrderOffer.objects.bulk_create(order_offer)
 
-    def save_order(self):
+    def save_order(self) -> Tuple[bool, str, int | None]:
+        """Формирование заказа и заполнение кэша для оплаты"""
         try:
             with transaction.atomic():
                 order = self._add_data_order()
                 self._add_data_order_offer(order)
         except DatabaseError:
-            return False, "Ошибка сервера"
+            return False, "Ошибка сервера", None
 
-        SerializersCache.clean_data_from_cache(f"{settings.CACHE_KEY_CHECKOUT}{self.user_id}")
-        self.cart.clear()
-        return True, "Заказ сформирован"
+        type_delivery = Checkout.delivery_key[0] if order.delivery_type == 1 else Checkout.delivery_key[1]
+        price = self.__order_data.get("total").get(type_delivery).get("total_price")
+        OrderPaymentCache.set_data_with_order(order, price)
+        self._clean_cache()
 
-    def set_order_status(self):
+        return True, "Заказ сформирован", order.id
+
+    def _clean_cache(self) -> None:
+        SerializersCache.clean_data_from_cache(f"{settings.CACHE_KEY_CHECKOUT}{self.__user_id}")
+        self.__cart.clear()
+
+    @staticmethod
+    def set_order_payment_type(order: Order, payment_type: int) -> Order:
+        """Изменение способа оплаты"""
+        if order.payment_type != payment_type:
+            order.payment_type = payment_type
+            order.save()
+            order.refresh_from_db()
+        return order
+
+    @staticmethod
+    def set_order_expectation_status(order: Order) -> Order:
         """Изменить статус заказа"""
-        pass
+        order.status_type = Order.STATUS_CHOICES[1][0]
+        order.error_type = None
+        order.save()
+        return order
 
-    def set_order_error(self):
-        """Добавить ошибку"""
-        pass
+    @classmethod
+    def set_order_payment(cls, data: Dict) -> Order:
+        """Обновить данные при оплате"""
+        order = Order.objects.get(pk=data.get("order_number"))
+        status = data.get("status")
+        if status == 1:
+            order.status_type = Order.STATUS_CHOICES[2][0]
+            order.error_type = None
+            cls.set_amounts_of_goods_sold(order)
+        else:
+            order.status_type = Order.STATUS_CHOICES[3][0]
+            order.error_type = status
+        order.save()
+        return order
+
+    @staticmethod
+    def set_order_status_max_retry(order_id: int) -> Order:
+        """Обновление статуса если истекут попытки"""
+        order = Order.objects.get(pk=order_id)
+        order.status_type = Order.STATUS_CHOICES[3][0]
+        order.error_type = Order.ERROR_CHOICES[0][0]
+        order.save()
+        return order
+
+    @staticmethod
+    def set_amounts_of_goods_sold(order: Order) -> None:
+        """Обновляет кол-во проданных товаров"""
+        orders = OrderOffer.objects.select_related("offer").filter(order=order)
+        offers = []
+        for order in orders:
+            order.offer.amount = F("amount") - order.amount
+            offers.append(order.offer)
+        Offer.objects.bulk_update(offers, fields=["amount"])
 
 
 class OrderHistory:
@@ -499,12 +597,12 @@ class OrderHistory:
         return order
 
     @staticmethod
-    def get_history_order_detail(order_id: int) -> Order | None:
+    def get_history_order_detail(order_id: int, user_id: int) -> Order | None:
         """Получить детальную информацию о заказе"""
         try:
-            order = Order.objects.raw(ORDER_SQL, [order_id])[0]
+            order = Order.objects.raw(ORDER_SQL, [order_id, user_id])[0]
         except IndexError:
-            return None
+            raise Http404
         return order
 
     @staticmethod
@@ -518,6 +616,46 @@ class OrderHistory:
             "id", "price", "discount", "amount", "offer_id", "offer__product__name", "offer__shop__name"
         )
         return queryset
+
+
+class PaymentApi:
+    __url = "http://127.0.0.1:8000/payment/{}"
+    __timeout = 10
+
+    @classmethod
+    def get(cls, order_id: int, celery_run: bool = False) -> Tuple[Dict | str, bool]:
+        """Получение результата по оплате"""
+        url = "http://web:8000/payment/{}" if celery_run else cls.__url
+
+        try:
+            response = requests.get(url.format(order_id), timeout=cls.__timeout)
+            data = response.json()
+        except (Timeout, ConnectionError) as ex:
+            return ex, False
+
+        if data.get("status", -1) > 0:
+            return data, True
+        return data, False
+
+    @classmethod
+    def post(cls, order_data: Dict, card_number: str) -> Tuple[bool, str]:
+        """Отправление данных на оплату"""
+        order = order_data.get("order")
+        data = {"card_number": card_number, "sum_to_pay": order_data.get("total_price")}
+        msg = ""
+        try:
+            response = requests.post(cls.__url.format(order.id), data=data, timeout=cls.__timeout)
+            data = response.json()
+        except (Timeout, ConnectionError):
+            return False, "Платежный сервис не отвечает, попробуйте позже"
+
+        if data.get("status", -1) == 0:
+            return True, msg
+
+        error_data = data.get("error")
+        if error_data:
+            msg = error_data
+        return False, msg
 
 
 def get_product_price_by_shop(shop_id: int, product_id: int):

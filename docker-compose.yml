@@ -56,7 +56,7 @@ services:
     restart: always
     build:
       context: .
-    command: celery -A payment worker -l info
+    command: celery -A config worker -l info
     volumes:
       - .:/code/
     depends_on:
@@ -71,7 +71,7 @@ services:
     restart: always
     build:
       context: .
-    command: celery -A payment beat -l info -S django
+    command: celery -A config beat -l info -S django
     volumes:
       - .:/code/
     depends_on:

@@ -2,14 +2,15 @@ from django.views import View
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
-from order.services import Cart, Checkout, SerializersCache, CheckoutDB, OrderHistory
+from order.services import Cart, Checkout, SerializersCache, CheckoutDB, OrderHistory, OrderPaymentCache, PaymentApi
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
-from product.models import Product
-from .forms import OrderForm
 from copy import deepcopy
+from product.models import Product
+from .forms import OrderForm, OrderPaymentForm, PaymentForm
+from .tasks import update_order_after_payment
 from constance import config
 
 
@@ -97,11 +98,10 @@ class CreateOrderView(View):
             checkout_db = CheckoutDB(
                 user_id=user_id, order_info=order_form.cleaned_data, order_data=order, cart=Cart(request)
             )
-            status, msg = checkout_db.save_order()
+            status, msg, order_id = checkout_db.save_order()
             if status:
                 messages.success(request, msg)
-                # нужно переход на оплату сделать
-                return redirect("main-page")
+                return redirect(reverse("order:payment-order", kwargs={"order_id": order_id}))
 
         msg = msg if msg else "Ошибка, проверьте заполнение данных"
         messages.error(request, msg)
@@ -123,9 +123,51 @@ class OrderHistoryListView(LoginRequiredMixin, ListView):
 class OrderHistoryDetailView(LoginRequiredMixin, View):
     """Детальная страница заказа"""
 
-    def get(self, request, *args, **kwargs):
-        order_id = kwargs.get("pk")
-        order = OrderHistory.get_history_order_detail(order_id)
-        products = OrderHistory.get_products_order(order_id)
-        context = {"order": order, "products": products}
+    def get(self, request, pk):
+        order = OrderHistory.get_history_order_detail(pk, request.user.id)
+        products = OrderHistory.get_products_order(pk)
+        context = {"order": order, "products": products, "form": OrderPaymentForm(instance=order)}
         return render(request, "order/oneorder.html", context=context)
+
+    def post(self, request, pk):
+        form = OrderPaymentForm(request.POST)
+        order = OrderPaymentCache.get_cache_order_for_payment(pk, request.user.id)
+
+        if form.is_valid():
+            order = CheckoutDB.set_order_payment_type(order.get("order"), form.cleaned_data.get("payment_type"))
+            OrderPaymentCache.set_data_with_order(order)
+            return redirect(reverse("order:payment-order", kwargs={"order_id": pk}))
+
+        products = OrderHistory.get_products_order(pk)
+        context = {"order": order, "products": products, "form": OrderPaymentForm(instance=order)}
+        return render(request, "order/oneorder.html", context=context)
+
+
+class OrderPaymentView(View):
+    """Страница оплаты заказа"""
+
+    def get(self, request, order_id):
+        order = OrderPaymentCache.get_cache_order_for_payment(order_id, request.user.id)
+        if order is None:
+            raise PermissionDenied
+        order["form"] = PaymentForm()
+        return render(request, "order/payment.html", context=order)
+
+    def post(self, request, order_id):
+        order = OrderPaymentCache.get_cache_order_for_payment(order_id, request.user.id)
+        form = PaymentForm(request.POST)
+        data = ""
+
+        if form.is_valid() and order:
+            status, data = PaymentApi.post(order, form.cleaned_data.get("card_number"))
+            if status:
+                order_obj = CheckoutDB.set_order_expectation_status(order.get("order"))
+                update_order_after_payment.apply_async((order_obj.id,), countdown=settings.CELERY_COUNTDOWN_ORDER)
+                OrderPaymentCache.set_data_with_order(order_obj, order.get("total_price"))
+                return redirect(reverse("order:history-order-detail", kwargs={"pk": order_id}))
+
+        if data:
+            messages.error(request, data)
+
+        order["form"] = form
+        return render(request, "order/payment.html", context=order)

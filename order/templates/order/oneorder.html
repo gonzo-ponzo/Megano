@@ -166,39 +166,53 @@
                                     </div>
                                 {% endfor %}
 
+                                <form action="" method="post">
+                                    {% csrf_token %}
 
-                                <div class="Cart-total custom-Order-delivery">
-                                    <div class="Cart-block Cart-block_total">
-                                        <strong class="Cart-title">
-                                            {% trans 'Доставка:' %}
-                                        </strong>
-                                        <span class="Cart-price">
-                                            {{ order.price_delivery|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
-                                        </span>
+                                    <div class="Cart-total custom-Order-delivery">
+                                        <div class="Cart-block Cart-block_total">
+                                            <strong class="Cart-title">
+                                                {% trans 'Доставка:' %}
+                                            </strong>
+                                            <span class="Cart-price">
+                                                {{ order.price_delivery|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                            </span>
+                                        </div>
+                                        {% if order.status_type == 1 or order.status_type == 4 %}
+                                            <div class="Cart-block">
+                                                {{ form.payment_type }}
+                                            </div>
+                                        {% endif %}
                                     </div>
-                                </div>
 
-                                <div class="Cart-total custom-Order-total">
-                                    <div class="Cart-block Cart-block_total">
-                                        <strong class="Cart-title">
-                                            {% trans 'Итого' %}:
-                                            {% if order.total_full_price %}
-                                                <span class="Cart-price">
-                                                    {{ order.total_full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
-                                                </span>
-                                                <span class="Cart-price_old">
-                                                    {{ order.full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
-                                                </span>
-                                            {% else %}
-                                                <span class="Cart-price">
-                                                    {{ order.full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
-                                                </span>
-                                            {% endif %}
-                                        </strong>
+                                    <div class="Cart-total custom-Order-total">
+                                        <div class="Cart-block Cart-block_total">
+                                            <strong class="Cart-title">
+                                                {% trans 'Итого' %}:
+                                                {% if order.sum_discount %}
+                                                    <span class="Cart-price">
+                                                        {{ order.total_full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                    </span>
+                                                    <span class="Cart-price_old">
+                                                        {{ order.full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                    </span>
+                                                {% else %}
+                                                    <span class="Cart-price">
+                                                        {{ order.full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                    </span>
+                                                {% endif %}
+                                            </strong>
+                                        </div>
+                                        {% if order.status_type == 1 or order.status_type == 4 %}
+                                            <div class="Cart-block">
+                                                <button class="btn btn_primary btn_lg" type="submit">
+                                                    {% trans 'Оплатить' %}
+                                                </button>
+                                            </div>
+                                        {% endif %}
                                     </div>
-                                    <div class="Cart-block"><a class="btn btn_primary btn_lg" href="#">Оплатить</a>
-                                    </div>
-                                </div>
+                                </form>
+
                             </div>
                         </div>
                     </div>
