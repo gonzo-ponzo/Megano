@@ -1,13 +1,15 @@
 from django.views import View
 from shop.services import ShopDetail, ShopList
 from django.shortcuts import render, redirect
-from config.settings.base import COUNT_ELEMENTS_PAGINATOR_LIST_SHOPS
+from django.conf import settings
 from django.core.paginator import Paginator
 
 
 class ShopDetailView(View):
     """Страница магазина"""
+
     def get(self, request, *args, **kwargs):
+        """Получить данные по магазину: общая информация, ТОП продуктов, фотографии магазина"""
         shop = ShopDetail(kwargs["pk"])
         if shop.get_shop_status():
             shop_description = shop.get_shop_description()
@@ -23,9 +25,11 @@ class ShopDetailView(View):
 
 class ShopListView(View):
     """Список магазинов"""
+
     def get(self, request, *args, **kwargs):
+        """Получить 2 списка магазинов: с пагинацией и без, и количество магазинов"""
         object_list = ShopList().get_list_shops()
-        paginator = Paginator(object_list, COUNT_ELEMENTS_PAGINATOR_LIST_SHOPS)
+        paginator = Paginator(object_list, settings.COUNT_ELEMENTS_PAGINATOR_LIST_SHOPS)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return render(

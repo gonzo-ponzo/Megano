@@ -6,29 +6,27 @@ from config.settings.base import COUNT_ELEMENTS_BEST_OFFER_SHOP
 
 
 class ShopDetail:
-    """Магазин"""
+    """Получить информацию по магазину"""
 
     def __init__(self, shop):
         self.shop = shop
 
     def get_shop_status(self):
-        check = Shop.objects.filter(id=self.shop).first()
-        if check:
-            return True
-        return False
+        """Получить статуса магазина"""
+        return bool(Shop.objects.filter(id=self.shop).first())
 
     def get_shop_description(self):
-        """Получить описание магазина"""
+        """Получить объект магазина"""
         description_shop = Shop.objects.get(id=self.shop)
         return description_shop
 
     def get_shop_photos(self):
-        """Получить фотографии магазина"""
+        """Получить эсписок объектов фотографий магазина"""
         shop_photos = list(ShopImage.objects.filter(shop=self.shop))
         return shop_photos
 
     def get_top_products(self):
-        """Получить топ товаров продавца"""
+        """Получить список объектов товаров ТОП для магазина"""
         top_products = Offer.objects.filter(
             shop=self.shop,
             amount__gt=0,
@@ -91,10 +89,10 @@ class ShopDetail:
 
 
 class ShopList:
-    """Магазины"""
+    """Список магазинов"""
 
     def get_list_shops(self):
-        """Получить список всех магазинов"""
+        """Получить список объектов всех магазинов"""
         list_shops = Shop.objects.filter(
             offer__amount__gt=0,
             offer__deleted_at=None,
