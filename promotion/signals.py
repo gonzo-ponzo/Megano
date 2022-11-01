@@ -6,5 +6,5 @@ from .models import Banner
 
 
 @receiver([post_save, post_delete], sender=Banner)
-def clear_cache_product_category_handler(sender, **kwargs):
+def clear_cache_banner_handler(sender, **kwargs):
     cache.delete(settings.CACHE_KEY_BANNER)
