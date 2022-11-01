@@ -8,7 +8,6 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
-from .models import Product, ProductImage, Offer, ProductProperty, Property, Review, ProductCategory
 from django.core.cache import cache
 from django.conf import settings
 
