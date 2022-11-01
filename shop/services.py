@@ -1,6 +1,6 @@
 from shop.models import Shop, ShopImage
 from product.models import Offer
-from config.settings.base import COUNT_ELEMENTS_BEST_OFFER_SHOP
+from constance import config
 
 
 class ShopDetail:
@@ -29,7 +29,7 @@ class ShopDetail:
         """Получить топ товаров продавца"""
         top_products = Offer.objects.filter(
             shop=self.shop
-        )[:COUNT_ELEMENTS_BEST_OFFER_SHOP].select_related('product')
+        )[:config.PRODUCTS_PER_SHOP].select_related('product')
         return top_products
 
 

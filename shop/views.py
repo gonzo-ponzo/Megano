@@ -3,6 +3,7 @@ from django.views.generic import ListView
 from shop.services import ShopDetail
 from django.shortcuts import render
 from shop.models import Shop
+from constance import config
 
 
 class ShopDetailView(View):  # добавить проверку, если нет такого ID в бд, то отправлять на список магазинов
@@ -23,4 +24,6 @@ class ShopListView(ListView):
     """Список магазинов"""
     model = Shop
     template_name = "shop/shop_list.html"
-    paginate_by = 20
+
+    def get_paginate_by(self, queryset):
+        return config.OBJECTS_PER_PAGE

@@ -2,7 +2,6 @@ from django.conf import settings
 from django.contrib.auth import get_user
 from django.core.cache import cache
 from django.shortcuts import redirect, render, get_object_or_404
-
 from django.views import View
 from product.forms import ProductForm, ReviewForm
 from product.models import Product, ProductCategory
@@ -10,7 +9,7 @@ from shop.models import Shop
 from promotion.services import BannerMain
 from .services import ReviewForItem, ProductCompareList, SortProductsResult, FilterProductsResult, DetailedProduct
 from .services import DailyOffer, BrowsingHistory, PopularCategory
-
+from constance import config
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
@@ -113,7 +112,6 @@ class CatalogView(ListView):
 
     template_name = "product/catalog.html"
     context_objects_name = "product_list"
-    paginate_by = settings.PRODUCT_PER_PAGES
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -141,6 +139,9 @@ class CatalogView(ListView):
 
         return queryset
 
+    def get_paginate_by(self, queryset):
+        return config.OBJECTS_PER_PAGE
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["sort_data"] = SortProductsResult.get_data_for_sort_links(**self.request.GET.dict())
@@ -160,7 +161,6 @@ class DetailedProductView(DetailView):
     model = Product
     template_name = "product/product.html"
     TIMEOUT = settings.SESSION_COOKIE_AGE
-    _paginate_by = settings.PAGINATE_REVIEW
 
     def get_context_data(self, **kwargs):
         context = super(DetailedProductView, self).get_context_data(**kwargs)
@@ -168,7 +168,7 @@ class DetailedProductView(DetailView):
 
         reviews = ReviewForItem(self.object)
         stars_order_by = reviews.get_stars_order_by()
-        paginator = Paginator(reviews.get_reviews_product(), self._paginate_by)
+        paginator = Paginator(reviews.get_reviews_product(), config.COMMENTS_PER_PAGE)
         page_obj = paginator.get_page(kwargs.get("page_number", 1))
 
         context["page_obj"] = page_obj

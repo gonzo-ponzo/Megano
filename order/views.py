@@ -10,6 +10,7 @@ from django.core.exceptions import PermissionDenied
 from product.models import Product
 from .forms import OrderForm
 from copy import deepcopy
+from constance import config
 
 
 # Create your views here.
@@ -112,7 +113,7 @@ class OrderHistoryListView(LoginRequiredMixin, ListView):
     """История заказов пользователя"""
 
     template_name = "order/historyorder.html"
-    paginate_by = settings.PAGINATE_ORDER_HISTORY
+    paginate_by = config.ORDERS_PER_PAGE
     context_object_name = "order_list"
 
     def get_queryset(self):
