@@ -1,6 +1,6 @@
 {% load static %}
 {% load i18n %}
-{% include 'base.html' with title='Order' %}
+{% include 'base.html' with title='Оформление заказа' %}
 <body class="Site">
     {% include 'header.html' %}
 
@@ -67,7 +67,9 @@
                                 </h2>
                             </header>
                             <div class="row">
-                                {% include 'order/inc/_data_user.html' %}
+                                <div class="row-block">
+                                    {% include 'order/inc/_data_user.html' %}
+                                </div>
                             </div>
                             <div class="Order-footer">
                                 <a class="btn btn_success Order-next" href="#step2">
@@ -294,7 +296,7 @@
                                                     {{ express.total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
                                                 </span>
                                                         <span class="Cart-price_old">
-                                                    {{ express.full_total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                    {{ express.full_total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}{{ express.full_total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
                                                 </span>
                                                     {% endif %}
                                                 </div>

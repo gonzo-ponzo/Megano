@@ -1,14 +1,15 @@
 from django.conf import settings
+from django.contrib.auth import get_user
 from django.core.cache import cache
 from django.shortcuts import redirect, render, get_object_or_404
 
 from django.views import View
 from product.forms import ProductForm, ReviewForm
-from product.models import Product, ProductView, ProductCategory
+from product.models import Product, ProductCategory
 from shop.models import Shop
 from promotion.services import BannerMain
 from .services import ReviewForItem, ProductCompareList, SortProductsResult, FilterProductsResult, DetailedProduct
-from .services import DailyOffer
+from .services import DailyOffer, BrowsingHistory, PopularCategory
 
 from django.core.paginator import Paginator
 from django.contrib import messages
@@ -150,8 +151,7 @@ class CatalogView(ListView):
         context = super().get_context_data(**kwargs)
         context['sort_data'] = SortProductsResult.get_data_for_sort_links(**self.request.GET.dict())
         context['parent_categories'] = self.category.get_ancestors(include_self=True) if self.category else None
-        context['child_categories'] = self.category.get_children() if self.category \
-            else ProductCategory.objects.root_nodes()
+        context['child_categories'] = self.category.get_children() if self.category else ProductCategory.objects.root_nodes()
         context['filter_part_url'] = FilterProductsResult.make_filter_part_url(self.request.GET.dict())
         context['sort_part_url'] = SortProductsResult.make_sort_part_url(self.request.GET.dict())
         context['shops'] = self.shops
@@ -164,7 +164,7 @@ class DetailedProductView(DetailView):
     model = Product
     template_name = "product/product.html"
     TIMEOUT = settings.SESSION_COOKIE_AGE
-    _paginate_by = 3
+    _paginate_by = settings.PAGINATE_REVIEW
 
     def get_context_data(self, **kwargs):
         context = super(DetailedProductView, self).get_context_data(**kwargs)
@@ -181,15 +181,11 @@ class DetailedProductView(DetailView):
         context["stars_rating"] = stars_order_by[::-1]
         context["reviews_form"] = ReviewForm()
 
-        if self.request.user.id:
-            # предлагаю создавать просмотр на админа(id=1),
-            # если пользователь не авторизован
-            product_view = ProductView(product=self.object, user=self.request.user)
-            product_view.save()
         return context
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
+        BrowsingHistory(get_user(self.request)).add_product_to_history(self.object)
         page_number = request.GET.get("page", 1)
         context = self.get_context_data(page_number=page_number, **kwargs)
         return render(request, self.template_name, context=context)
