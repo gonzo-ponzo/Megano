@@ -102,23 +102,25 @@ class MainPage(TemplateView):
 
         daily_offer = DailyOffer()
         products = FilterProductsResult()
-        context['top_product'] = SortProductsResult(products.queryset).by_popularity()[:8]
-        context['daily_offer'] = daily_offer.product
+        context["top_product"] = SortProductsResult(products.queryset).by_popularity()[:8]
+        context["daily_offer"] = daily_offer.product
 
         products.only_limited()
-        context['limited_product'] = products.queryset.exclude(id=daily_offer.product_id).order_by('?')[:16]
+        context["limited_product"] = products.queryset.exclude(id=daily_offer.product_id).order_by("?")[:16]
 
         hot_product = FilterProductsResult()
         hot_product.with_promo()
-        context['hot_product'] = hot_product.queryset[:9]
+        context["hot_product"] = hot_product.queryset[:9]
+
+        context['popular_category'] = PopularCategory.get_cached()
 
         return context
 
 
 class CatalogView(ListView):
 
-    template_name = 'product/catalog.html'
-    context_objects_name = 'product_list'
+    template_name = "product/catalog.html"
+    context_objects_name = "product_list"
     paginate_by = settings.PRODUCT_PER_PAGES
 
     def __init__(self, **kwargs):
@@ -131,7 +133,7 @@ class CatalogView(ListView):
 
         filter_product = FilterProductsResult(**self.request.GET.dict())
 
-        category = self.kwargs.get('category', None)
+        category = self.kwargs.get("category", None)
         if category:
             self.category = get_object_or_404(ProductCategory, slug=category)
             filter_product.by_category(self.category)
@@ -139,9 +141,9 @@ class CatalogView(ListView):
         filter_product.all_filter_without_price()
         self.price_range = filter_product.price_range()
         filter_product.by_price()
-        self.current_price_range = {'min': filter_product.min_price, 'max': filter_product.max_price}
+        self.current_price_range = {"min": filter_product.min_price, "max": filter_product.max_price}
 
-        self.shops = Shop.objects.filter(product__in=filter_product.queryset).distinct().values_list('name', flat=True)
+        self.shops = Shop.objects.filter(product__in=filter_product.queryset).distinct().values_list("name", flat=True)
 
         queryset = SortProductsResult(products=filter_product.queryset).sort_by_params(**self.request.GET.dict())
 
@@ -149,14 +151,16 @@ class CatalogView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['sort_data'] = SortProductsResult.get_data_for_sort_links(**self.request.GET.dict())
-        context['parent_categories'] = self.category.get_ancestors(include_self=True) if self.category else None
-        context['child_categories'] = self.category.get_children() if self.category else ProductCategory.objects.root_nodes()
-        context['filter_part_url'] = FilterProductsResult.make_filter_part_url(self.request.GET.dict())
-        context['sort_part_url'] = SortProductsResult.make_sort_part_url(self.request.GET.dict())
-        context['shops'] = self.shops
-        context['price_range'] = self.price_range
-        context['current_price_range'] = self.current_price_range
+        context["sort_data"] = SortProductsResult.get_data_for_sort_links(**self.request.GET.dict())
+        context["parent_categories"] = self.category.get_ancestors(include_self=True) if self.category else None
+        context["child_categories"] = (
+            self.category.get_children() if self.category else ProductCategory.objects.root_nodes()
+        )
+        context["filter_part_url"] = FilterProductsResult.make_filter_part_url(self.request.GET.dict())
+        context["sort_part_url"] = SortProductsResult.make_sort_part_url(self.request.GET.dict())
+        context["shops"] = self.shops
+        context["price_range"] = self.price_range
+        context["current_price_range"] = self.current_price_range
         return context
 
 

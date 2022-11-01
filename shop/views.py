@@ -1,10 +1,8 @@
 from django.views import View
-from order.templatetags.cart import register
 from shop.services import ShopDetail, ShopList
 from django.shortcuts import render, redirect
 from config.settings.base import COUNT_ELEMENTS_PAGINATOR_LIST_SHOPS
 from django.core.paginator import Paginator
-
 
 
 class ShopDetailView(View):
@@ -34,8 +32,8 @@ class ShopListView(View):
             request,
             'shop/shop_list.html',
             {
-            'object_list': page_obj,
-            'full_object_list': object_list,
-            'count_object_list': object_list.count()
+                'object_list': page_obj,
+                'full_object_list': object_list,
+                'count_object_list': object_list.count()
             }
         )
