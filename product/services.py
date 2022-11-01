@@ -58,7 +58,7 @@ class ReviewForItem:
     @staticmethod
     def get_stars_order_by():
         """Список оценок"""
-        return [star for star in range(Review.MIN_GRADE, Review.MAX_GRADE + 1)]
+        return list(range(Review.MIN_GRADE, Review.MAX_GRADE + 1))
 
 
 class ProductCompareList:

@@ -1,6 +1,6 @@
-import random
 from django.core.cache import cache
 from django.conf import settings
+from constance import config
 from .models import Banner, PromotionOffer
 
 
@@ -11,28 +11,19 @@ class BannerMain:
 
     @classmethod
     def get_active_banners(cls):
-        """Получить баннеры"""
+        """Получить нужное кол-во активных баннеров"""
         return (
             Banner.objects.filter(is_active=True)
             .only("pk", "name", "description", "product", "image", "product__id")
-            .select_related("product")
+            .select_related("product").order_by("?")[:config.COUNT_BANNERS]
         )
-
-    @classmethod
-    def _get_count_active_banners(cls):
-        """Получить нужное количество баннеров"""
-        banners = cls.get_active_banners()
-        count_banners = len(banners)
-        if count_banners >= cls._count:
-            count_banners = cls._count
-        return random.sample(list(banners), count_banners)
 
     @classmethod
     def get_cache_banners(cls):
         """Получить кэш"""
         return cache.get_or_set(
             settings.CACHE_KEY_BANNER,
-            cls._get_count_active_banners,
+            cls.get_active_banners,
             settings.CACHE_TIMEOUT.get(settings.CACHE_KEY_BANNER),
         )
 
