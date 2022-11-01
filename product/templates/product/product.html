@@ -117,7 +117,12 @@
                         </strong>
                       </div>
                       <div class="Categories-block">
-                        <strong>{{ amounth }} шт.
+                        <strong>
+                            {% if amounth >= 0 %}
+                                {{ amounth }} шт.
+                            {% else %}
+                                0 шт.
+                            {% endif %}
                         </strong>
                       </div>
                       <div class="Categories-block Categories-button"><a class="btn btn_primary" href="{% url 'order:cart-add' object.id shop.id %}"><img class="btn-icon" src="{% static 'img/icons/card/cart_white.svg' %}" alt="cart_white.svg"/><span class="btn-content">{% trans "Добавить в корзину" %}</span></a>

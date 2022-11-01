@@ -138,21 +138,25 @@ CONSTANCE_CONFIG = {
     "PRODUCTS_PER_SHOP": (6, "Count of products per shop"),
 
     "CLEAR_CACHE": ("No", "Clear all cache", "choice_select"),
-    "CACHE_TIMEOUT": (60*60*24, "Cache timeout (default = 24 hours)"),
+    "CACHE_KEY_PRODUCT_CATEGORY": (60*60*24, "Product category cache timeout (default = 10 minutes)"),
     "CACHE_KEY_BANNER": (60*10, "Banner cache timeout (default = 10 minutes)"),
     "CACHE_KEY_COMPARISON": (60*60*24*30, "Cache comparison (default = 1 month)"),
-    "CACHE_KEY_CHECKOUT": (60*60*24, "Cache checkout (default = 24 hours)"),
+    "CACHE_KEY_CHECKOUT": (60*60, "Cache checkout (default = 1 hour)"),
+    "CACHE_KEY_POPULAR_CATEGORY": (60*60*24, "Cache checkout (default = 24 hours)"),
     "CACHE_KEY_PAYMENT_ORDER": (60*20, "Cache timeout for payment (default = 20 minutes)"),
+    "SESSION_COOKIE_AGE": (60*60*24, "Session cookie age timeout (default = 24 hours)")
 }
 
 CONSTANCE_CONFIG_FIELDSETS = {
     "Cache options": (
         "CLEAR_CACHE",
-        "CACHE_TIMEOUT",
+        "CACHE_KEY_PRODUCT_CATEGORY",
         "CACHE_KEY_BANNER",
         "CACHE_KEY_COMPARISON",
         "CACHE_KEY_CHECKOUT",
-        "CACHE_KEY_PAYMENT_ORDER"
+        "CACHE_KEY_POPULAR_CATEGORY",
+        "CACHE_KEY_PAYMENT_ORDER",
+        "SESSION_COOKIE_AGE",
     ),
     "Display Options": ("COMMENTS_PER_PAGE", "OBJECTS_PER_PAGE", "ORDERS_PER_PAGE", "PRODUCTS_PER_SHOP"),
 }
@@ -165,16 +169,16 @@ CACHE_KEY_POPULAR_CATEGORY = "popular_category"
 CACHE_KEY_PAYMENT_ORDER = "payment_order-{user_id}-{order_id}"
 
 CACHE_TIMEOUT = {
-    CACHE_KEY_PRODUCT_CATEGORY: CONSTANCE_CONFIG["CACHE_TIMEOUT"][0],
+    CACHE_KEY_PRODUCT_CATEGORY: CONSTANCE_CONFIG["CACHE_KEY_PRODUCT_CATEGORY"][0],
     CACHE_KEY_BANNER: CONSTANCE_CONFIG["CACHE_KEY_BANNER"][0],
     CACHE_KEY_COMPARISON: CONSTANCE_CONFIG["CACHE_KEY_COMPARISON"][0],
     CACHE_KEY_CHECKOUT: CONSTANCE_CONFIG["CACHE_KEY_CHECKOUT"][0],
-    CACHE_KEY_POPULAR_CATEGORY: CONSTANCE_CONFIG["CACHE_KEY_CHECKOUT"][0],
+    CACHE_KEY_POPULAR_CATEGORY: CONSTANCE_CONFIG["CACHE_KEY_POPULAR_CATEGORY"][0],
     CACHE_KEY_PAYMENT_ORDER: CONSTANCE_CONFIG["CACHE_KEY_PAYMENT_ORDER"][0],
 }
 
 CART_SESSION_ID = "cart"
-SESSION_COOKIE_AGE = CONSTANCE_CONFIG["CACHE_TIMEOUT"][0]
+SESSION_COOKIE_AGE = CONSTANCE_CONFIG["SESSION_COOKIE_AGE"][0]
 
 WSGI_APPLICATION = "config.wsgi.application"
 
