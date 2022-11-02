@@ -1,9 +1,9 @@
-from .celery import app
+from celery import shared_task
 from .models import Payment
 from .services import Pay
 
 
-@app.task(name="pay_actual_bills")
+@shared_task(name="pay_actual_bills")
 def pay_actual_bills():
     curr_payments = Payment.objects.filter(status=0)
     res_ok, res_fail = 0, 0

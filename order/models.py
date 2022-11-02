@@ -3,6 +3,7 @@ from timestamps.models import models, Model
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from product.models import Offer
+from payment.services import CONST_STATUS_CHOICES
 
 User = get_user_model()
 
@@ -12,11 +13,8 @@ class Order(Model):
 
     DELIVERY_CHOICES = ((1, _("Обычная доставка")), (2, _("Экспресс-доставка")))
     PAYMENT_CHOICES = ((1, _("Онлайн картой")), (2, _("Онлайн со случайного чужого счёта")))
-    STATUS_CHOICES = ((1, "Ожидается оплата"), (2, _("Оплачен")), (3, _("Не оплачен")))
-    ERROR_CHOICES = (
-        (1, _("Оплата не выполнена, на вашем счёте не хватает средств")),
-        (2, _("Оплата не выполнена, произошел сбой при списании средств")),
-    )
+    STATUS_CHOICES = ((1, "Новый заказ"), (2, "Ожидается оплата"), (3, _("Оплачен")), (4, _("Не оплачен")))
+    ERROR_CHOICES = ((1, "Сервер оплаты не доступен"),) + CONST_STATUS_CHOICES[2:]
 
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name=_("пользователь"))
     city = models.CharField(max_length=100, verbose_name=_("город"))

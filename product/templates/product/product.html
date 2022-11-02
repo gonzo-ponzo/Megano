@@ -39,7 +39,7 @@
                 <div class="ProductCard-info">
                   <div class="ProductCard-cost">
                       {% if detailed_product.get_min_price %}
-                        <div class="ProductCard-price">${{ detailed_product.get_min_price }} - ${{ detailed_product.get_top_price }}
+                        <div class="ProductCard-price">{{ detailed_product.get_min_price }} - {{ detailed_product.get_top_price }} руб.
                       {% else %}
                         <div class="ProductCard-price">{% trans "Нет в продаже" %}
                       {% endif %}
@@ -113,7 +113,7 @@
                       <div class="Categories-splitProps">
                       </div>
                       <div class="Categories-block Categories-price">
-                        <strong>€{{ price }}
+                        <strong>{{ price }} руб.
                         </strong>
                       </div>
                       <div class="Categories-block">

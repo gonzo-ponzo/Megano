@@ -2,6 +2,7 @@ from django.db.models import Sum, Avg, Q, Max, DecimalField
 from django.db.models.functions import Cast
 from shop.models import Shop, ShopImage
 from product.models import Offer
+from constance import config
 from config.settings.base import COUNT_ELEMENTS_BEST_OFFER_SHOP
 
 
@@ -86,6 +87,10 @@ class ShopDetail:
                                            )
         )
         return top_products
+
+        # top_products = Offer.objects.filter(
+        #     shop=self.shop
+        # )[:config.PRODUCTS_PER_SHOP].select_related('product')
 
 
 class ShopList:
