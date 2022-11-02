@@ -1,0 +1,82 @@
+[
+  {
+    "model": "promotion.promotionoffer",
+    "pk": 1,
+    "fields": {
+      "created_at": "2022-09-10T20:35:52.606Z",
+      "updated_at": "2022-09-10T20:39:39.168Z",
+      "name": "Скидка на iphone",
+      "discount_type_value": 1,
+      "discount_decimals": 6000,
+      "discount_percentage": 0,
+      "is_active": true,
+      "discount_type_id_id": 1,
+      "image": "test.png",
+      "description": "Выгодное предложение для обновления смартфона"
+    }
+  },
+  {
+    "model": "promotion.promotionoffer",
+    "pk": 2,
+    "fields": {
+      "created_at": "2022-09-10T20:35:52.606Z",
+      "updated_at": "2022-09-10T20:39:39.168Z",
+      "name": "Третий макбук в подарок",
+      "discount_type_value": 3,
+      "discount_decimals": 10000,
+      "discount_percentage": 0,
+      "is_active": true,
+      "discount_type_id_id": 2,
+      "image": "test.png",
+      "description": "При покупке трех макбуков в заказе - третий будет бесплатным"
+    }
+  },
+  {
+    "model": "promotion.promotionoffer",
+    "pk": 3,
+    "fields": {
+      "created_at": "2022-09-10T20:35:52.606Z",
+      "updated_at": "2022-09-10T20:39:39.168Z",
+      "name": "Скидка при покупке от 2200000 рублей",
+      "discount_type_value": 220000,
+      "discount_decimals": 0,
+      "discount_percentage": 5,
+      "is_active": true,
+      "discount_type_id_id": 3,
+      "image": "test.png",
+      "description": "При покупке от 220 тыс. рублей действует скидка 5% на всю корзину магазина"
+    }
+  },
+  {
+    "model": "promotion.promotionoffer",
+    "pk": 4,
+    "fields": {
+      "created_at": "2022-09-10T20:35:52.606Z",
+      "updated_at": "2022-09-10T20:39:39.168Z",
+      "name": "Скидка при покупке от 5-и товаров",
+      "discount_type_value": 5,
+      "discount_decimals": 50000,
+      "discount_percentage": 0,
+      "is_active": true,
+      "discount_type_id_id": 4,
+      "image": "test.png",
+      "description": "При покупке 5-и товаров и более - скидка 50 тыс. на всю корзину магазина"
+    }
+  },
+  {
+    "model": "promotion.promotionoffer",
+    "pk": 5,
+    "fields": {
+      "created_at": "2022-09-10T20:35:52.606Z",
+      "updated_at": "2022-09-10T20:39:39.168Z",
+      "name": "Скидка 10000 тыс. на телевизор",
+      "discount_type_value": 11,
+      "discount_decimals": 10000,
+      "discount_percentage": 0,
+      "is_active": true,
+      "discount_type_id_id": 5,
+      "image": "test.png",
+      "description": "Скидка 10000 тыс. на телевизор при покупке телефоном в одном заказе"
+    }
+  }
+]

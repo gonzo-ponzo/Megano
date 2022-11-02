@@ -4,6 +4,10 @@ from product.tests.test_product_category import ProductCategoryCacheCleanTest
 from .models import Banner
 from product.models import Product
 from django.urls import reverse
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 class BannerCacheCleanTest(ProductCategoryCacheCleanTest):
@@ -17,6 +21,28 @@ class BannerCacheCleanTest(ProductCategoryCacheCleanTest):
 
 
 class PromotionOfferTest(TestCase):
+    fixtures = [
+        "product_category.json",
+        "manufacturer.json",
+        "product.json",
+        "product_offer.json",
+        "user.json",
+        "shop.json",
+        "discount_type.json",
+        "promotion_offer.json",
+        "promotion_offer-offer"
+    ]
+    __password = "testpassword"
+    __email = "testuser@test.com"
+
+    def setUp(self):
+        user = User.objects.create_user(email=self.__email, password=self.__password)
+        user.save()
+        self.client.login(email=self.__email, password=self.__password)
+
+    def tearDown(self) -> None:
+        self.client.get("/order/cart-clear/")
+
     def test_view_url_exists_at_desired_location(self):
         resp = self.client.get("/promotion/")
         self.assertEqual(resp.status_code, 200)
@@ -25,3 +51,52 @@ class PromotionOfferTest(TestCase):
         resp = self.client.get(reverse("promotion-list-page"))
         self.assertEqual(resp.status_code, 200)
         self.assertTemplateUsed(resp, "promotion/promotions.html")
+
+    def test_promotion_type_1(self):
+        self.client.get("/order/cart-add/1/1/")
+        user = User.objects.filter(email=self.__email).first()
+        final_price = user.cart["1"]["1"]["final_price"]
+        self.assertEqual(final_price, 94000)
+
+    def test_promotion_type_2(self):
+        for _ in range(3):
+            self.client.get("/order/cart-add/3/1/")
+        user = User.objects.filter(email=self.__email).first()
+        final_price = user.cart["1"]["3"]["final_price"]
+
+        self.assertEqual(final_price, 56000)
+
+    def test_promotion_type_3(self):
+        for _ in range(2):
+            self.client.get("/order/cart-add/1/1/")
+        self.client.get("/order/cart-add/2/1/")
+
+        user = User.objects.filter(email=self.__email).first()
+        sum_discount = 0
+        for item in user.cart["1"].values():
+            sum_discount += item["discount"]["3"]
+
+        self.assertEqual(sum_discount, 9000)
+
+    def test_promotion_type_4(self):
+        for _ in range(4):
+            self.client.get("/order/cart-add/3/1/")
+        self.client.get("/order/cart-add/1/1/")
+
+        user = User.objects.filter(email=self.__email).first()
+        sum_discount = 0
+        for item in user.cart["1"].values():
+            sum_discount += item["discount"]["4"] * item["quantity"]
+
+        self.assertEqual(sum_discount, 50000)
+
+    def test_promotion_type_5(self):
+        self.client.get("/order/cart-add/2/2/")
+        self.client.get("/order/cart-add/1/2/")
+
+        user = User.objects.filter(email=self.__email).first()
+        final_price = user.cart["2"]["2"]["final_price"]
+
+        self.assertEqual(final_price, 68000)
+
+

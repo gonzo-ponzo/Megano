@@ -1,0 +1,66 @@
+[
+  {
+    "model": "promotion.promotionoffer_offer",
+    "pk": 1,
+    "fields": {
+      "promotionoffer_id": 1,
+      "offer_id": 1
+    }
+  },
+  {
+    "model": "promotion.promotionoffer_offer",
+    "pk": 2,
+    "fields": {
+      "promotionoffer_id": 2,
+      "offer_id": 5
+    }
+  },
+  {
+    "model": "promotion.promotionoffer_offer",
+    "pk": 3,
+    "fields": {
+      "promotionoffer_id": 3,
+      "offer_id": 1
+    }
+  },
+  {
+    "model": "promotion.promotionoffer_offer",
+    "pk": 4,
+    "fields": {
+      "promotionoffer_id": 3,
+      "offer_id": 3
+    }
+  },
+  {
+    "model": "promotion.promotionoffer_offer",
+    "pk": 5,
+    "fields": {
+      "promotionoffer_id": 4,
+      "offer_id": 1
+    }
+  },
+  {
+    "model": "promotion.promotionoffer_offer",
+    "pk": 6,
+    "fields": {
+      "promotionoffer_id": 4,
+      "offer_id": 3
+    }
+  },
+  {
+    "model": "promotion.promotionoffer_offer",
+    "pk": 7,
+    "fields": {
+      "promotionoffer_id": 4,
+      "offer_id": 5
+    }
+  },
+  {
+    "model": "promotion.promotionoffer_offer",
+    "pk": 8,
+    "fields": {
+      "promotionoffer_id": 5,
+      "offer_id": 4
+    }
+  }
+]
