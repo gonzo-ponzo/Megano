@@ -1,8 +1,9 @@
 from django.views import View
 from shop.services import ShopDetail, ShopList
 from django.shortcuts import render, redirect
-from django.conf import settings
+# from django.conf import settings
 from django.core.paginator import Paginator
+from constance import config
 
 
 class ShopDetailView(View):
@@ -29,7 +30,7 @@ class ShopListView(View):
     def get(self, request, *args, **kwargs):
         """Получить 2 списка магазинов: с пагинацией и без, и количество магазинов"""
         object_list = ShopList().get_list_shops()
-        paginator = Paginator(object_list, settings.COUNT_ELEMENTS_PAGINATOR_LIST_SHOPS)
+        paginator = Paginator(object_list, config.SHOPS_PER_PAGE)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return render(

@@ -3,7 +3,6 @@ from django.db.models.functions import Cast
 from shop.models import Shop, ShopImage
 from product.models import Offer
 from constance import config
-from config.settings.base import COUNT_ELEMENTS_BEST_OFFER_SHOP
 
 
 class ShopDetail:
@@ -39,7 +38,7 @@ class ShopDetail:
         )
         top_products = top_products.order_by(
             '-sorted_amount_offers_buy'
-        )[:COUNT_ELEMENTS_BEST_OFFER_SHOP]
+        )[:config.PRODUCTS_PER_SHOP]
         top_products = top_products.annotate(
             rating=Avg('product__review__rating', default=0)
         )
@@ -87,10 +86,6 @@ class ShopDetail:
                                            )
         )
         return top_products
-
-        # top_products = Offer.objects.filter(
-        #     shop=self.shop
-        # )[:config.PRODUCTS_PER_SHOP].select_related('product')
 
 
 class ShopList:
