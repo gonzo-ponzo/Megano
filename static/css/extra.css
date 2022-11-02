@@ -1877,7 +1877,7 @@ a.Cart-title {
           transform: translateY(-50%) rotate(-90deg);
 }
 @media screen and (min-width: 990px) {
-  .CategoriesButton-link:hover .CategoriesButton-submenu {
+  .CategoriesButton-link:hover > .CategoriesButton-submenu {
     margin-left: 0;
     display: block !important;
   }
