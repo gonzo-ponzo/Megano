@@ -7,7 +7,7 @@ from django.core.files import File
 
 from .models import Process
 from .tasks import shop_import
-from shop.models import Shop
+from shop.models import Shop, ShopImage
 from product.models import Product, Offer
 # from promotion.models import PromotionOffer
 from django.contrib.auth import get_user_model
@@ -23,7 +23,7 @@ class ShopBaseInfo(BaseModel):
     address: str | None = None
     image: str | None = None
     user_mail: EmailStr | None = None
-    # TODO + список фотографий магазина
+    shop_photos: list[str] | None = None
 
     @validator("phone")
     def check_correct_phone(cls, v):
@@ -44,6 +44,20 @@ class ShopBaseInfo(BaseModel):
             except Exception as e:
                 raise ValueError(f"invalid LOGO - {v}; error message - {e}")
             return File(open(logo_path, 'rb'), name=v)
+        return v
+
+    @validator("shop_photos")
+    def check_correct_photos(cls, v, values):
+        if v and "email" in values.keys():
+            res = []
+            for file_name in v:  # TODO соотношение сторон проверять? в верстке картинки оквадачиваются
+                logo_path = os.path.join(settings.IMPORT_INCOME, values["email"], file_name)
+                try:
+                    check_image = Image.open(logo_path)
+                    res.append((File(open(logo_path, 'rb'), name=file_name), ""))
+                except Exception as e:
+                    res.append((None, f"invalid LOGO - {v}; error message - {e}"))
+            v = res
         return v
 
 
@@ -93,6 +107,8 @@ def one_shop_import(file_name):
         user = get_user_model().objects.filter(email=shop_data.user_mail).first()
 
     if shop:  # редактирование информации о магазине
+        if Shop.objects.filter(phone=shop_data.phone).exclude(pk=shop.pk).first():
+            return False, f"Phone {shop_data.phone} is already used"
         for key in fields:
             if key in shop_data.__fields_set__:
                 setattr(shop, key, shop_data.__dict__.get(key))
@@ -110,6 +126,13 @@ def one_shop_import(file_name):
         shop = Shop.objects.create(email=email, user=user, **{key: shop_data.__dict__.get(key) for key in fields})
 
     error_list = []
+    if shop_data.shop_photos:
+        for f, e in shop_data.shop_photos:
+            if f:
+                ShopImage.objects.create(image=f, shop=shop)
+            else:
+                error_list.append(e)
+
     if data.offers:
         for offer_data in data.offers:
             product = Product.objects.filter(pk=offer_data.product_id).first()
@@ -123,7 +146,10 @@ def one_shop_import(file_name):
                     Offer.objects.create(shop=shop, product=product, price=offer_data.price, amount=offer_data.amount)
             else:
                 error_list.append(f"Product c offer_data.product_id={offer_data.product_id} not found")
-    return True, "TODO shop-pictures and promo"  # TODO
+
+    if len(error_list) > 0:
+        return False, error_list
+    return True, "TODO promo"  # TODO
 
 
 def send_mail_from_site(subject, message, recipient_list):
