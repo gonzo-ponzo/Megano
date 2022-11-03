@@ -23,3 +23,7 @@ class ShopAdmin(admin.ModelAdmin):
     fields = ("name", "phone", "email", "address", "description", "image", "user", "created_at", "updated_at")
     readonly_fields = ("created_at", "updated_at")
     inlines = [ShopImageInLine, ]
+
+    def delete_queryset(self, request, queryset):
+        queryset.update(email=None, phone=None)
+        queryset.delete()
