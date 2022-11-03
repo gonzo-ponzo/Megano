@@ -136,6 +136,7 @@ CONSTANCE_CONFIG = {
     "OBJECTS_PER_PAGE": (12, "Count of objects per page"),
     "ORDERS_PER_PAGE": (12, "Count of orders per page"),
     "PRODUCTS_PER_SHOP": (6, "Count of products per shop"),
+    "SHOPS_PER_PAGE": (2, "Count shops on one page in shop list"),
 
     "CLEAR_CACHE": ("No", "Clear all cache", "choice_select"),
     "CACHE_TIMEOUT": (60*60*24, "Cache timeout (default = 24 hours)"),
@@ -154,7 +155,13 @@ CONSTANCE_CONFIG_FIELDSETS = {
         "CACHE_KEY_CHECKOUT",
         "CACHE_KEY_PAYMENT_ORDER"
     ),
-    "Display Options": ("COMMENTS_PER_PAGE", "OBJECTS_PER_PAGE", "ORDERS_PER_PAGE", "PRODUCTS_PER_SHOP"),
+    "Display Options": (
+        "COMMENTS_PER_PAGE",
+        "OBJECTS_PER_PAGE",
+        "ORDERS_PER_PAGE",
+        "PRODUCTS_PER_SHOP",
+        "SHOPS_PER_PAGE"
+    ),
 }
 
 CACHE_KEY_PRODUCT_CATEGORY = "product_category"

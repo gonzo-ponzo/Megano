@@ -61,7 +61,6 @@
                                    alt="{{ product.name|truncatechars:30 }}">
                           </div>
                           <div class="Compare-feature">
-                          <a class="Compare-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a>
                           <a class="Compare-btn" href="{% url 'compare_remove' product.id %}">
                               <img src="{%  static 'img/icons/card/delete.svg' %}" alt="delete.svg"/>
                           </a>
