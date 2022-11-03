@@ -142,3 +142,6 @@ dmypy.json
 .idea/
 
 .DS_Store
+
+# VS Code
+.vscode/
