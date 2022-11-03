@@ -2,7 +2,6 @@ from random import randint
 from urllib.parse import urlencode
 from copy import copy
 from statistics import mean
-
 from django.db.models.query import QuerySet
 from django.db.models import F, Min, Max, Sum, Count, Avg, OuterRef, Subquery
 from django.utils.translation import gettext_lazy as _
@@ -99,6 +98,9 @@ class ProductCompareList:
         self.get_product_list()
 
     def get_product_list(self):
+        """
+        Получение списка продуктов в сравнении
+        """
         return [
             i for i in self.product_list.values()
             if self.category == 'None' or self.category == str(i.category.id)
@@ -116,13 +118,24 @@ class ProductCompare:
         self.category = product.category
         self.manufacturer = product.manufacturer
         self.image = product.productimage_set.first()
-        self.min_price = min(product.offer_set.all().values_list('price', flat=True))
         self.rating = self.get_rating_list(product)
 
+        self.min_price = "нет предложений"
+        if product.deleted_at is None:
+            min_price = product.offer_set.filter(
+                amount__gt=0,
+                deleted_at=None
+            ).values_list('price', flat=True)
+            if min_price:
+                self.min_price = f'{min(min_price)} руб.'
+
     def get_rating_list(self, product):
+        """
+        Определяем средний рейтинг продукта в сравнении
+        """
         rating_list = product.review_set.all().values_list('rating', flat=True)
         if rating_list:
-            avg_rating = mean(product.review_set.all().values_list('rating', flat=True))
+            avg_rating = mean(rating_list)
             star_list = list()
             for i in range(5):
                 if avg_rating > 1:

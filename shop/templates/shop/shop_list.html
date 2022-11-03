@@ -5,6 +5,7 @@
   <title>Megano</title>
     {% include 'base.html' %}
     <link rel="stylesheet" href="{% static 'css/shop.css' %}">
+    <link href="{% static 'plg/select2/css/select2.min.css' %}" rel="stylesheet" />
 </head>
 <body class="Site">
   {% include 'header.html' %}
@@ -126,63 +127,43 @@
             </div>
           </div>
         </div>
-
-
         <div class="Section-content">
+            <select onChange="location = this.options[this.selectedIndex].value;" id="field_select2">
+                <option value="" disabled  selected>--{% trans 'Найти магазин' %}--</option>
+                {% for shop in full_object_list %}
+                    <option value="{{ shop.id }}">{{ shop.name }}</option>
+                {% endfor %}
+            </select>
             <header class="Section-header">
-                <h2 class="Section-title">{% trans "магазины" %}
+                <h2 class="Section-title">{% trans "магазины:" %} {{ count_object_list }}
                 </h2>
             </header>
             <div class="shops-list">
                 {% for shop in object_list %}
-                    <div class="shops-list-li">
-
-                        <div class="shops-list-li-logo">
-
-                            <a href="{{ shop.id }}">
-                                {% if shop.image %}
-                                    <img src="{{ shop.image.url }}" height="50" alt="logo {{ shop.name }}"/>
-                                {% else %}
-                                    <img src="{% static 'img/default_logo_shop.png' %}" height="50" alt="logo {{ shop.name }}"/>
-                                {% endif %}
-                            </a>
-
-                        </div>
-                        <div class="shops-list-li-text">
-
-                            <a href="{{ shop.id }}">
-                                {{ shop.name }}
-                            </a>
-
-                        </div>
-
-                    </div>
-
-
+                    {% include 'shop/inc/_shop_element.html' %}
+                {% empty %}
+                    {% trans 'Список магазинов пуст' %}
                 {% endfor %}
             </div>
+            <header class="Section-header">
+                <div class="Section-title paginator-shops">
+                    {% if object_list.has_previous %}
+                        <a href="?page=1">&laquo; {% trans 'первая' %}</a>
+                        <a href="?page={{ object_list.previous_page_number }}">&laquo; {% trans 'предыдущая' %}</a>
+                    {% endif %}
+                    {% if object_list.has_previous or object_list.has_next %}
+                        {% trans 'Страница' %} {{ object_list.number }} {% trans 'из' %} {{ object_list.paginator.num_pages }}.
+                    {% else %}
+                        {% trans 'показаны все записи' %}
+                    {% endif %}
+                    {% if object_list.has_next %}
+                        <a href="?page={{ object_list.next_page_number }}">{% trans 'следующая' %} &raquo;</a>
+                        <a href="?page={{ object_list.paginator.num_pages }}">{% trans 'последняя' %} &raquo;</a>
+                    {% endif %}
+                </div>
+            </header>
         </div>
-
-
       </div>
-    </div>
-  </div>
-
-  <div class="Pagination">
-    <div class="Pagination-ins">
-      {% if page_obj.has_previous %}
-        <a class="Pagination-element Pagination-element_prev" href="?{% url_replace 'page' page_obj.previous_page_number %}"><img src="{% static 'img/icons/prevPagination.svg' %}" alt="prevPagination.svg"/></a>
-      {% endif %}
-      {% for page in paginator %}
-        {% if page.number == page_obj.number %}
-          <span class="Pagination-element Pagination-text Pagination-element_current">{{ page.number }}</span>
-        {% else %}
-          <a class="Pagination-element" href="?{% url_replace 'page' page.number %}"><span class="Pagination-text">{{ page.number }}</span></a>
-        {% endif %}
-      {% endfor %}
-      {% if page_obj.has_next %}
-        <a class="Pagination-element Pagination-element_prev" href="?{% url_replace 'page' page_obj.next_page_number %}"><img src="{% static 'img/icons/nextPagination.svg' %}" alt="nextPagination.svg"/></a>
-      {% endif %}
     </div>
   </div>
   {% include 'footer.html' %}
@@ -192,4 +173,6 @@
   <script src="{% static 'plg/range/ion.rangeSlider.min.js' %}"></script>
   <script src="{% static 'plg/Slider/slick.min.js' %}"></script>
   <script src="{% static 'js/scripts.js' %}"></script>
+  <script src="{% static 'plg/select2/js/select2.min.js' %}"></script>
+  <script src="{% static 'js/shop.js' %}"></script>
 </body>

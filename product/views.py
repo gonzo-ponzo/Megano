@@ -22,16 +22,24 @@ class CompareView(View):
     """
 
     def get(self, request, *args, **kwargs):
-        compare_list = ProductCompareList(request.session.get(settings.CACHE_KEY_COMPARISON), True, "None")
-        return render(request, "product/compare.html", {"compare_list": compare_list})
+        compare_list = None
+        if request.session.get(settings.CACHE_KEY_COMPARISON):
+            compare_list = ProductCompareList(
+                request.session.get(settings.CACHE_KEY_COMPARISON),
+                True,
+                'None'
+            )
+        return render(request, 'product/compare.html', {'compare_list': compare_list})
 
     def post(self, request, *args, **kwargs):
-        short_list = request.POST.get("differentFeature")
-        choice_category = request.POST.get("ChoiceCategory")
+        short_list = request.POST.get('differentFeature')
+        choice_category = request.POST.get('ChoiceCategory')
         compare_list = ProductCompareList(
-            request.session.get(settings.CACHE_KEY_COMPARISON), short_list, choice_category
+            request.session.get(settings.CACHE_KEY_COMPARISON),
+            short_list,
+            choice_category
         )
-        return render(request, "product/compare.html", {"compare_list": compare_list})
+        return render(request, 'product/compare.html', {'compare_list': compare_list})
 
 
 class CompareAdd(View):
@@ -41,14 +49,14 @@ class CompareAdd(View):
 
     def get(self, request, *args, **kwargs):
         product_list = request.session.get(settings.CACHE_KEY_COMPARISON)
-        product = kwargs["pk"]
+        product = kwargs['pk']
 
         if not product_list:
             product_list = [product]
         elif product not in product_list:
             product_list.append(product)
         request.session[settings.CACHE_KEY_COMPARISON] = product_list
-        return render(request, "product/compare_change.html", {"message": _("объект добавлен")})
+        return render(request, 'product/compare_change.html', {'message': _('объект добавлен')})
 
 
 class CompareRemove(View):
@@ -58,12 +66,12 @@ class CompareRemove(View):
 
     def get(self, request, *args, **kwargs):
         product_list = request.session.get(settings.CACHE_KEY_COMPARISON)
-        product = kwargs["pk"]
+        product = kwargs['pk']
 
         if product in product_list:
             product_list.remove(product)
             request.session[settings.CACHE_KEY_COMPARISON] = product_list
-        return redirect("/product/compare/")
+        return redirect('/product/compare/')
 
 
 class CompareClear(View):
@@ -75,7 +83,7 @@ class CompareClear(View):
         product_list = request.session.get(settings.CACHE_KEY_COMPARISON)
         product_list.clear()
         request.session[settings.CACHE_KEY_COMPARISON] = product_list
-        return redirect("/")
+        return redirect('/')
 
 
 class CreateProductView(CreateView):
