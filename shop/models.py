@@ -22,15 +22,15 @@ class Shop(Model):
         verbose_name=_("описание")
     )
     phone = PhoneNumberField(
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
         unique=True,
         verbose_name=_("телефон")
     )
     email = models.EmailField(
         max_length=100,
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
         unique=True,
         validators=[validate_email],
         verbose_name=_("электронная почта")
@@ -81,6 +81,11 @@ class Shop(Model):
             self.user.groups.add(sellers_group)
             self.user.save()
         super(Shop, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.email = None
+        self.phone = None
+        super(Shop, self).delete(*args, **kwargs)
 
     class Meta:
         verbose_name = _("магазин")

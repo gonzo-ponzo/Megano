@@ -32,3 +32,16 @@ class TestStaffRightForShopOwners(TestCase):
         self.assertFalse(user1.is_staff)
         user2.refresh_from_db()
         self.assertTrue(user2.is_staff)
+
+
+class TestFreeToUseDeletedEmails(TestCase):
+    def test_check_delete_shop(self):
+        group, fl = Group.objects.get_or_create(name="SHOP_owner")
+        user = User.objects.create(email="user1@mail.mail")
+
+        shop1 = Shop.objects.create(name="blabla", email="test@email.ru", phone="+79262223344", user=user)
+        self.assertTrue(shop1.pk)
+        shop1.delete()
+        self.assertTrue(shop1.deleted_at)
+        shop2 = Shop.objects.create(name="blabla", email="test@email.ru", phone="+79262223344", user=user)
+        self.assertTrue(shop2.pk)
