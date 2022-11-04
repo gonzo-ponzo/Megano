@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from product.models import Offer
 from payment.services import CONST_STATUS_CHOICES
+from django.db import transaction
 
 User = get_user_model()
 
@@ -61,6 +62,13 @@ class Delivery(Model):
     price = models.DecimalField(max_digits=11, decimal_places=2, verbose_name=_("цена"))
     express_price = models.DecimalField(max_digits=11, decimal_places=2, verbose_name=_("экспресс-цена"))
     sum_order = models.DecimalField(max_digits=11, decimal_places=2, verbose_name=_("мин. цена корзины"))
+
+    def save(self, *args, **kwargs):
+        with transaction.atomic():
+            if self.deleted_at is None:
+                Delivery.objects.delete()
+                self.id = None
+            super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("цена доставки")

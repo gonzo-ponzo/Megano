@@ -1,4 +1,3 @@
-from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
@@ -17,6 +16,64 @@ from typing import List
 from unittest import mock
 
 User = get_user_model()
+
+
+def adding_data_to_tables(emails: List, password: str) -> List:
+    users = []
+    for email in emails:
+        user = User.objects.create_user(email=email, password=password)
+        users.append(user)
+    category = ProductCategory.objects.create(name="category", slug="category")
+    manufacturer = Manufacturer.objects.create(name="Manufacturer")
+    delivery = Delivery.objects.create(price=200, express_price=500, sum_order=2000)
+
+    products = []
+    for i in range(5):
+        product = Product(name=f"product{1}", category=category, manufacturer=manufacturer)
+        products.append(product)
+    Product.objects.bulk_create(products)
+
+    shops = []
+    for i in range(2):
+        shop = Shop(
+            name=f"shop{1}",
+            description="description",
+            phone=f"++37533758659{i}",
+            email=f"shop{i}@test.com",
+            address="address",
+            user=users[0],
+        )
+        shops.append(shop)
+    Shop.objects.bulk_create(shops)
+
+    offers = []
+    for shop in shops:
+        for product in products:
+            offer = Offer(
+                shop=shop, product=product, price=random.randint(50000, 200000), amount=random.randint(5, 10)
+            )
+            offers.append(offer)
+    Offer.objects.bulk_create(offers)
+
+    orders = []
+    for i in range(3):
+        user = users[0] if i % 2 == 0 else users[1]
+        order = Order(user=user, city=f"city{i}", address=f"address{i}", delivery=delivery)
+        orders.append(order)
+    Order.objects.bulk_create(orders)
+
+    orders_offers = []
+    offer_cnt = 0
+    for order in orders:
+        offer_cnt += 2
+        for offer in random.sample(offers, offer_cnt):
+            order_offer = OrderOffer(
+                order=order, offer=offer, price=offer.price, amount=random.randint(1, 3), discount=0
+            )
+            orders_offers.append(order_offer)
+    OrderOffer.objects.bulk_create(orders_offers)
+
+    return users
 
 
 class MockResponsePayment:
@@ -282,59 +339,21 @@ class OrderPaymentTest(CacheTestCase):
         self.assertTrue(result.startswith("Good"))
 
 
-def adding_data_to_tables(emails: List, password: str) -> List:
-    users = []
-    for email in emails:
-        user = User.objects.create_user(email=email, password=password)
-        users.append(user)
-    category = ProductCategory.objects.create(name="category", slug="category")
-    manufacturer = Manufacturer.objects.create(name="Manufacturer")
-    delivery = Delivery.objects.create(price=200, express_price=500, sum_order=2000)
+class DeliveryTest(CacheTestCase):
+    def setUp(self) -> None:
+        self.delivery = Delivery.objects.create(price=200, express_price=500, sum_order=2000)
 
-    products = []
-    for i in range(5):
-        product = Product(name=f"product{1}", category=category, manufacturer=manufacturer)
-        products.append(product)
-    Product.objects.bulk_create(products)
+    def test_when_update_delete_old_and_create_new(self):
+        delivery_id_old = self.delivery.id
+        self.assertEqual(Delivery.objects.count(), 1)
+        self.delivery.price = 2000
+        self.delivery.save()
+        self.assertEqual(Delivery.objects.count(), 1)
+        self.assertTrue(delivery_id_old != self.delivery.id)
 
-    shops = []
-    for i in range(2):
-        shop = Shop(
-            name=f"shop{1}",
-            description="description",
-            phone=f"++37533758659{i}",
-            email=f"shop{i}@test.com",
-            address="address",
-            user=users[0],
-        )
-        shops.append(shop)
-    Shop.objects.bulk_create(shops)
-
-    offers = []
-    for shop in shops:
-        for product in products:
-            offer = Offer(
-                shop=shop, product=product, price=random.randint(50000, 200000), amount=random.randint(5, 10)
-            )
-            offers.append(offer)
-    Offer.objects.bulk_create(offers)
-
-    orders = []
-    for i in range(3):
-        user = users[0] if i % 2 == 0 else users[1]
-        order = Order(user=user, city=f"city{i}", address=f"address{i}", delivery=delivery)
-        orders.append(order)
-    Order.objects.bulk_create(orders)
-
-    orders_offers = []
-    offer_cnt = 0
-    for order in orders:
-        offer_cnt += 2
-        for offer in random.sample(offers, offer_cnt):
-            order_offer = OrderOffer(
-                order=order, offer=offer, price=offer.price, amount=random.randint(1, 3), discount=0
-            )
-            orders_offers.append(order_offer)
-    OrderOffer.objects.bulk_create(orders_offers)
-
-    return users
+    def test_when_create_delete_old(self):
+        delivery_id_old = self.delivery.id
+        self.assertEqual(Delivery.objects.count(), 1)
+        delivery_new = Delivery.objects.create(price=2100, express_price=400, sum_order=1000)
+        self.assertEqual(Delivery.objects.count(), 1)
+        self.assertTrue(delivery_id_old != delivery_new.id)
