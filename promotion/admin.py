@@ -45,11 +45,11 @@ class PromotionOfferAdmin(admin.ModelAdmin):
     filter_horizontal = ("offer",)
     fields = (
         "name",
+        "discount_type_id",
         "discount_type_value",
         "discount_decimals",
         "discount_percentage",
         "is_active",
-        "discount_type_id",
         "image",
         "offer",
     )
@@ -63,6 +63,22 @@ class PromotionOfferAdmin(admin.ModelAdmin):
     @admin.action(description=_("Деактивировать"))
     def make_inactive(self, request, queryset):
         queryset.update(is_active=False)
+        
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super().get_form(request, obj=obj, change=change, **kwargs)
+        form.base_fields["discount_type_value"].help_text = """
+        Значение (N) для типа акции, при котором текущая акция будет формировать скидку.
+        """
+        form.base_fields["discount_decimals"].help_text = """
+        Если не указано - расчет идет по процентам.
+        """
+        form.base_fields["discount_percentage"].help_text = """
+        Расчет по процентам только в том случае, если не указана фиксированная скидка в рублях.
+        """
+        form.base_fields["offer"].label = """
+        Выберите предложения, на которые будет распростроняться скидка
+        """
+        return form
 
 
 @admin.register(DiscountType)

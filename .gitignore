@@ -145,3 +145,4 @@ dmypy.json
 
 # VS Code
 .vscode/
+.devcontainer/

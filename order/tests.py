@@ -337,3 +337,61 @@ def adding_data_to_tables(emails: List, password: str) -> List:
     OrderOffer.objects.bulk_create(orders_offers)
 
     return users
+
+class CartTest(TestCase):
+    fixtures = [
+        "product_category.json",
+        "manufacturer.json",
+        "product.json",
+        "product_offer.json",
+        "user.json",
+        "shop.json",
+        # "discount_type.json",
+        # "promotion_offer.json",
+        # "promotion_offer-offer"
+    ]
+    __password = "testpassword"
+    __email = "testuser@test.com"
+
+    def setUp(self):
+        user = User.objects.create_user(email=self.__email, password=self.__password)
+        user.save()
+        self.client.login(email=self.__email, password=self.__password)
+
+    def tearDown(self) -> None:
+        self.client.get("/order/cart-clear/")
+        
+    def test_view_url_exists_at_desired_location(self):
+        resp = self.client.get("/order/cart/")
+        self.assertEqual(resp.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        resp = self.client.get(reverse("order:cart-page"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp, "order/cart.html")
+        
+    def test_cart_creation(self):
+        resp = self.client.get(reverse("order:cart-page"))
+        user = User.objects.filter(email=self.__email).first()
+        cart = user.cart
+        self.assertEqual(cart, {})
+
+    def test_add_to_cart(self):
+        self.client.get("/order/cart-add/1/1/")
+        user = User.objects.filter(email=self.__email).first()
+        cart = user.cart
+        self.assertNotEqual(cart, {})
+        
+    def test_remove_from_cart(self):
+        self.client.get("/order/cart-add/1/1/")
+        self.client.get("/order/cart-lower/1/1/")
+        user = User.objects.filter(email=self.__email).first()
+        cart = user.cart
+        self.assertEqual(cart, {})
+        
+    def test_remove_from_cart(self):
+        self.client.get("/order/cart-add/1/1/")
+        self.client.get("/order/cart-clear/")
+        user = User.objects.filter(email=self.__email).first()
+        cart = user.cart
+        self.assertEqual(cart, {})
