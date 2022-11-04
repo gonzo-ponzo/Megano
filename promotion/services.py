@@ -13,7 +13,8 @@ class BannerMain:
         return (
             Banner.objects.filter(is_active=True)
             .only("pk", "name", "description", "product", "image", "product__id")
-            .select_related("product").order_by("?")[:config.COUNT_BANNERS]
+            .select_related("product")
+            .order_by("?")[: config.COUNT_BANNERS]
         )
 
     @classmethod

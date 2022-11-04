@@ -10,17 +10,17 @@ User = get_user_model()
 
 
 class TestPopularCategory(CacheTestCase):
-
     @classmethod
     def setUpTestData(cls):
         user = User.objects.create_user(email="test@test.net", password="qwerty")
-        man = Manufacturer.objects.create(name='Manufacturer')
+        man = Manufacturer.objects.create(name="Manufacturer")
 
         for i in range(1, 6):
-            category = ProductCategory.objects.create(name=f'category_{i}', slug=f'category{i}')
+            category = ProductCategory.objects.create(name=f"category_{i}", slug=f"category{i}")
             for p in range(i):
-                product = Product.objects.create(name=f'product_{i}', limited=False,
-                                                 category=category, manufacturer=man)
+                product = Product.objects.create(
+                    name=f"product_{i}", limited=False, category=category, manufacturer=man
+                )
                 ProductView.objects.create(user=user, product=product)
 
     def test_num_queries(self):
@@ -37,9 +37,9 @@ class TestPopularCategory(CacheTestCase):
 
     def test_correct_category(self):
         category = PopularCategory.get_popular_category()
-        self.assertEqual('category_5', category[0].name)
-        self.assertEqual('category_4', category[1].name)
-        self.assertEqual('category_3', category[2].name)
+        self.assertEqual("category_5", category[0].name)
+        self.assertEqual("category_4", category[1].name)
+        self.assertEqual("category_3", category[2].name)
 
     def test_get_in_cache(self):
         PopularCategory.get_cached()

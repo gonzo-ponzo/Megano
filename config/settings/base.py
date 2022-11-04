@@ -144,7 +144,6 @@ CONSTANCE_CONFIG = {
     "ORDERS_PER_PAGE": (12, "Count of orders per page"),
     "PRODUCTS_PER_SHOP": (6, "Count of products per shop"),
     "COUNT_BANNERS": (3, "Count of banners per page"),
-
     "CLEAR_CACHE": ("No", "Clear all cache", "choice_select"),
     "CACHE_TIMEOUT": (60 * 60 * 24, "Cache timeout (default = 24 hours)"),
     "CACHE_KEY_PRODUCT_CATEGORY": (60 * 60 * 24, "Cache product category (default = 24 hours)"),

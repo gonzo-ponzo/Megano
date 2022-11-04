@@ -10,8 +10,7 @@ from user.tests import CacheTestCase
 class TestAddBill2Payment(CacheTestCase):
     def test_correct_new_bill(self):
         url = reverse("one_payment", args=[77])
-        data = {"card_number": "1111 2223",
-                "sum_to_pay": "22.33"}
+        data = {"card_number": "1111 2223", "sum_to_pay": "22.33"}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "status")
@@ -26,8 +25,7 @@ class TestAddBill2Payment(CacheTestCase):
 
     def test_correct_new_bill_int_sum(self):
         url = reverse("one_payment", args=[34])
-        data = {"card_number": 12345678,
-                "sum_to_pay": 22}
+        data = {"card_number": 12345678, "sum_to_pay": 22}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "status")
@@ -42,8 +40,7 @@ class TestAddBill2Payment(CacheTestCase):
 
     def test_incorrect_data(self):
         url = reverse("one_payment", args=[34])
-        data = {"card_number": "1234 5678",
-                "sum_to_pay": -22.4}
+        data = {"card_number": "1234 5678", "sum_to_pay": -22.4}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "error")
@@ -57,8 +54,7 @@ class TestAddBill2Payment(CacheTestCase):
         self.assertEqual(Payment.objects.count(), 0)
 
         url = reverse("one_payment", args=[34])
-        data = {"card_number": "1234 5678",
-                "sum_to_pay": 22.498}
+        data = {"card_number": "1234 5678", "sum_to_pay": 22.498}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "error")
@@ -74,11 +70,9 @@ class TestAddBill2Payment(CacheTestCase):
     # запрос с дублирующимся номером счета - ошибка, если в предыдущей записи статус 0
     # или 1, запись добавляется, если статус другой
     def test_double_number_bill(self):
-        tmp_bill = Payment.objects.create(order_number=29, card_number="1017 3334",
-                                          sum_to_pay=52.6, status=0)
+        tmp_bill = Payment.objects.create(order_number=29, card_number="1017 3334", sum_to_pay=52.6, status=0)
         url = reverse("one_payment", args=[29])
-        data = {"card_number": "1111 2223",
-                "sum_to_pay": 22.33}
+        data = {"card_number": "1111 2223", "sum_to_pay": 22.33}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "error")
@@ -100,12 +94,9 @@ class TestAddBill2Payment(CacheTestCase):
 class TestCheckBill(CacheTestCase):
     @classmethod
     def setUpTestData(cls):
-        Payment.objects.create(order_number=29, card_number="8613 3334",
-                               sum_to_pay=52.6, status=0)
-        Payment.objects.create(order_number=77, card_number="9929 3334",
-                               sum_to_pay=523, status=1)
-        Payment.objects.create(order_number=34, card_number="7037 3399",
-                               sum_to_pay=556.56, status=2)
+        Payment.objects.create(order_number=29, card_number="8613 3334", sum_to_pay=52.6, status=0)
+        Payment.objects.create(order_number=77, card_number="9929 3334", sum_to_pay=523, status=1)
+        Payment.objects.create(order_number=34, card_number="7037 3399", sum_to_pay=556.56, status=2)
 
     def test_existed_bill(self):
         url = reverse("one_payment", args=[29])
@@ -156,16 +147,14 @@ class TestValidateCardNumber(CacheTestCase):
 
 class TestPayOneBill(CacheTestCase):
     def test_pay_correct_bill(self):
-        payment = Payment.objects.create(order_number=29, card_number="8613 3334",
-                                         sum_to_pay=52.6, status=0)
+        payment = Payment.objects.create(order_number=29, card_number="8613 3334", sum_to_pay=52.6, status=0)
         res = Pay.pay(payment)
         payment.refresh_from_db()
         self.assertTrue(res)
         self.assertEqual(payment.status, 1)
 
     def test_nopay_not_correct_bill(self):
-        payment = Payment.objects.create(order_number=29, card_number="8613 3337",
-                                         sum_to_pay=52.6, status=0)
+        payment = Payment.objects.create(order_number=29, card_number="8613 3337", sum_to_pay=52.6, status=0)
         res = Pay.pay(payment)
         payment.refresh_from_db()
         self.assertFalse(res)
@@ -180,14 +169,10 @@ class TestTask(CacheTestCase):
     def test_curr_bills(self):
         # несколько счетов в базе данных - "новым" должны поменяться статусы, на правильные
         # ненужным - статус не должен трогаться (даже если изначально записан неверный код)
-        p1 = Payment.objects.create(order_number=29, card_number="8613 3334",
-                                    sum_to_pay=52.6, status=0)
-        p2 = Payment.objects.create(order_number=35, card_number="8613 3337",
-                                    sum_to_pay=52.6, status=0)
-        p3 = Payment.objects.create(order_number=42, card_number="8613 3334",
-                                    sum_to_pay=52.6, status=42)
-        p4 = Payment.objects.create(order_number=66, card_number="8613 3331",
-                                    sum_to_pay=52.6, status=1)
+        p1 = Payment.objects.create(order_number=29, card_number="8613 3334", sum_to_pay=52.6, status=0)
+        p2 = Payment.objects.create(order_number=35, card_number="8613 3337", sum_to_pay=52.6, status=0)
+        p3 = Payment.objects.create(order_number=42, card_number="8613 3334", sum_to_pay=52.6, status=42)
+        p4 = Payment.objects.create(order_number=66, card_number="8613 3331", sum_to_pay=52.6, status=1)
         pay_actual_bills()
         p1.refresh_from_db()
         self.assertTrue(p1.status == 1)

@@ -429,34 +429,33 @@ class UpdateProfileTest(CacheTestCase):
 
 
 class TestViewHistory(CacheTestCase):
-
     @classmethod
     def setUpTestData(cls):
-        cls.user = get_user_model().objects.create_user(email='test@test.net', password='qwerty')
+        cls.user = get_user_model().objects.create_user(email="test@test.net", password="qwerty")
 
     def test_view_url_exists_at_desired_location(self):
         self.client.force_login(self.user)
-        resp = self.client.get('/history/')
+        resp = self.client.get("/history/")
         self.assertEqual(resp.status_code, 200)
 
     def test_view_url_accessible_by_name(self):
         self.client.force_login(self.user)
-        resp = self.client.get(reverse('views_history'))
+        resp = self.client.get(reverse("views_history"))
         self.assertEqual(resp.status_code, 200)
 
     def test_view_uses_correct_template(self):
         self.client.force_login(self.user)
-        resp = self.client.get(reverse('views_history'))
+        resp = self.client.get(reverse("views_history"))
         self.assertEqual(resp.status_code, 200)
-        self.assertTemplateUsed(resp, 'user/historyview.html')
+        self.assertTemplateUsed(resp, "user/historyview.html")
 
     def test_redirect_to_login_for_unauthorized_user(self):
-        resp = self.client.get(reverse('views_history'))
-        self.assertRedirects(resp, reverse('login-page') + '?next=/history/')
+        resp = self.client.get(reverse("views_history"))
+        self.assertRedirects(resp, reverse("login-page") + "?next=/history/")
 
     def test_product_list_in_context(self):
         self.client.force_login(self.user)
-        resp = self.client.get(reverse('views_history'))
+        resp = self.client.get(reverse("views_history"))
         self.assertEqual(resp.status_code, 200)
         context = resp.context
-        self.assertIsNotNone(context.get('viewed_products'))
+        self.assertIsNotNone(context.get("viewed_products"))
