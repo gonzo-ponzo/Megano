@@ -95,7 +95,11 @@ class MockResponsePayment:
             if self.status_code == 200:
                 response = {"order_number": self.order_number, "status": 1, "status_text": "Успешно оплачено"}
             elif self.status_code == 400:
-                response = {"error": "Счет не найден"}
+                response = {
+                    "order_number": self.order_number,
+                    "status": 9,
+                    "status_text": "Товары эти не нужны тебе, на полках магазина оставь их",
+                }
         return response
 
 
@@ -336,6 +340,13 @@ class OrderPaymentTest(CacheTestCase):
         )
         offer_new = [i for i in offer_new]
         self.assertEqual(offer_new, offer)
+        self.assertTrue(result.startswith("Good"))
+
+    @mock.patch("requests.get")
+    def test_update_order_task_false_result(self, requests_get):
+        order = Order.objects.first()
+        requests_get.return_value = MockResponsePayment(method="get", status_code=400, order_number=order.id)
+        result = update_order_after_payment(order.id)
         self.assertTrue(result.startswith("Good"))
 
 

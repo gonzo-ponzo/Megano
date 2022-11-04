@@ -6,7 +6,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import F, Prefetch
 from django.http import Http404
 
-from order.models import Offer, Delivery, Order, OrderOffer
+from order.models import Offer, Delivery, Order, OrderOffer, PaymentError
 from product.models import ProductImage, Product
 from shop.models import Shop
 from promotion.models import PromotionOffer
@@ -540,7 +540,7 @@ class CheckoutDB:
     def set_order_expectation_status(order: Order) -> Order:
         """Изменить статус заказа"""
         order.status_type = Order.STATUS_CHOICES[1][0]
-        order.error_type = None
+        order.error_type_id = None
         order.save()
         return order
 
@@ -548,14 +548,14 @@ class CheckoutDB:
     def set_order_payment(cls, data: Dict) -> Order:
         """Обновить данные при оплате"""
         order = Order.objects.get(pk=data.get("order_number"))
-        status = data.get("status")
-        if status == 1:
+        if data.get("status") == 1:
             order.status_type = Order.STATUS_CHOICES[2][0]
-            order.error_type = None
+            order.error_type_id = None
             cls.set_amounts_of_goods_sold(order)
         else:
             order.status_type = Order.STATUS_CHOICES[3][0]
-            order.error_type = status
+            payment_error, _ = PaymentError.objects.get_or_create(name=data.get("status_text"))
+            order.error_type_id = payment_error.id
         order.save()
         return order
 
@@ -564,7 +564,8 @@ class CheckoutDB:
         """Обновление статуса если истекут попытки"""
         order = Order.objects.get(pk=order_id)
         order.status_type = Order.STATUS_CHOICES[3][0]
-        order.error_type = Order.ERROR_CHOICES[0][0]
+        payment_error, _ = PaymentError.objects.get_or_create(name="Сервер оплаты не доступен")
+        order.error_type_id = payment_error.id
         order.save()
         return order
 

@@ -3,7 +3,6 @@ from timestamps.models import models, Model
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from product.models import Offer
-from payment.services import CONST_STATUS_CHOICES
 from django.db import transaction
 
 User = get_user_model()
@@ -15,7 +14,6 @@ class Order(Model):
     DELIVERY_CHOICES = ((1, _("Обычная доставка")), (2, _("Экспресс-доставка")))
     PAYMENT_CHOICES = ((1, _("Онлайн картой")), (2, _("Онлайн со случайного чужого счёта")))
     STATUS_CHOICES = ((1, "Новый заказ"), (2, "Ожидается оплата"), (3, _("Оплачен")), (4, _("Не оплачен")))
-    ERROR_CHOICES = ((1, "Сервер оплаты не доступен"),) + CONST_STATUS_CHOICES[2:]
 
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name=_("пользователь"))
     city = models.CharField(max_length=100, verbose_name=_("город"))
@@ -30,7 +28,10 @@ class Order(Model):
     status_type = models.IntegerField(
         choices=STATUS_CHOICES, verbose_name=_("статус заказа"), default=STATUS_CHOICES[0][0]
     )
-    error_type = models.IntegerField(blank=True, null=True, choices=ERROR_CHOICES, verbose_name=_("ошибка заказа"))
+    # error_type = models.IntegerField(blank=True, null=True, choices=ERROR_CHOICES, verbose_name=_("ошибка заказа"))
+    error_type = models.ForeignKey(
+        "PaymentError", blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("ошибка заказа")
+    )
     delivery = models.ForeignKey("Delivery", on_delete=models.DO_NOTHING, verbose_name=_("доставка"))
     offer = models.ManyToManyField(Offer, through="OrderOffer", verbose_name=_("заказанные продукты"))
 
@@ -70,6 +71,15 @@ class Delivery(Model):
                 self.id = None
             super().save(*args, **kwargs)
 
+    def __str__(self):
+        return f"Доставка: {self.price}, Экспресс: +{self.express_price}"
+
     class Meta:
         verbose_name = _("цена доставки")
         verbose_name_plural = _("цены доставки")
+
+
+class PaymentError(models.Model):
+    """Ошибки при оплате"""
+
+    name = models.CharField(max_length=512, unique=True, verbose_name=_("наименование"))
