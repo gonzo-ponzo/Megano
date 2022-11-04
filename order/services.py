@@ -620,16 +620,14 @@ class OrderHistory:
 
 
 class PaymentApi:
-    __url = "http://127.0.0.1:8000/payment/{}"
+    __url = "http://web:8000/payment/{}"
     __timeout = 10
 
     @classmethod
-    def get(cls, order_id: int, celery_run: bool = False) -> Tuple[Dict | str, bool]:
+    def get(cls, order_id: int) -> Tuple[Dict | str, bool]:
         """Получение результата по оплате"""
-        url = "http://web:8000/payment/{}" if celery_run else cls.__url
-
         try:
-            response = requests.get(url.format(order_id), timeout=cls.__timeout)
+            response = requests.get(cls.__url.format(order_id), timeout=cls.__timeout)
             data = response.json()
         except (Timeout, ConnectionError) as ex:
             return ex, False

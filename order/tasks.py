@@ -7,7 +7,7 @@ from .services import PaymentApi, CheckoutDB, OrderPaymentCache
 
 @shared_task(bind=True, name="update_order_after_payment")
 def update_order_after_payment(self, order_id: int) -> str:
-    data, status = PaymentApi.get(order_id, True)
+    data, status = PaymentApi.get(order_id)
 
     if status:
         try:
