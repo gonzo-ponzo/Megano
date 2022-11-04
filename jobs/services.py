@@ -53,7 +53,7 @@ class ShopBaseInfo(BaseModel):
             for file_name in v:  # TODO соотношение сторон проверять? в верстке картинки оквадачиваются
                 logo_path = os.path.join(settings.IMPORT_INCOME, values["email"], file_name)
                 try:
-                    check_image = Image.open(logo_path)
+                    Image.open(logo_path)
                     res.append((File(open(logo_path, 'rb'), name=file_name), ""))
                 except Exception as e:
                     res.append((None, f"invalid LOGO - {v}; error message - {e}"))
@@ -69,8 +69,20 @@ class OfferInfo(BaseModel):
 
     @validator("price")
     def check_correct_price(cls, v):
-        if int(v*100) < v*100:
-            raise ValueError(f"invalid price - {v}; must be 2 decimal points")
+        if (v < 0) or (int(v*100) < v*100):
+            raise ValueError(f"invalid price - {v}; must be positive, 2 decimal points")
+        return v
+
+    @validator("product_id")
+    def check_correct_product(cls, v):
+        if v <= 0:
+            raise ValueError(f"invalid product_id - {v}")
+        return v
+
+    @validator("amount")
+    def check_correct_amount(cls, v):  # TODO нулевое количество, чтоб снять товар с продажи, можно?
+        if v <= 0:
+            raise ValueError(f"invalid product value - {v}")
         return v
 
 
@@ -93,7 +105,7 @@ def one_shop_import(file_name):
     try:
         data = ShopModel.parse_file(file_name)
     except ValidationError as e:
-        return False, e.json
+        return False, f"ERROR: {e.json}"
 
     shop_data = data.shop
     email = shop_data.email
@@ -106,50 +118,59 @@ def one_shop_import(file_name):
     if shop_data.user_mail:
         user = get_user_model().objects.filter(email=shop_data.user_mail).first()
 
+    message_list = []
+    has_warnings = False
+
     if shop:  # редактирование информации о магазине
         if Shop.objects.filter(phone=shop_data.phone).exclude(pk=shop.pk).first():
-            return False, f"Phone {shop_data.phone} is already used"
+            return False, f"ERROR: Phone {shop_data.phone} is already used"
         for key in fields:
             if key in shop_data.__fields_set__:
                 setattr(shop, key, shop_data.__dict__.get(key))
-        if user:
-            shop.user = user
+        if shop_data.user_mail:
+            if user:
+                shop.user = user
+            else:
+                return False, f"ERROR: User with email {shop_data.user_mail} not found"
         shop.save()
+        message_list.append(f"Shop {shop.name}, id={shop.pk} edited")
     else:  # добавление нового магазина
         need_fields = fields_requred - shop_data.__fields_set__
         if len(need_fields) > 0:
-            return False, f"Required fields: {need_fields}"
+            return False, f"ERROR: Required fields: {need_fields}"
         if Shop.objects.filter(phone=shop_data.phone).first():
-            return False, f"Phone {shop_data.phone} is already used"
+            return False, f"ERROR: Phone {shop_data.phone} is already used"
         if not user:
-            return False, f"User with email {shop_data.user_mail} not found"
+            return False, f"ERROR: User with email {shop_data.user_mail} not found"
         shop = Shop.objects.create(email=email, user=user, **{key: shop_data.__dict__.get(key) for key in fields})
+        message_list.append(f"Shop {shop.name}, id={shop.pk} created")
 
-    error_list = []
     if shop_data.shop_photos:
         for f, e in shop_data.shop_photos:
             if f:
                 ShopImage.objects.create(image=f, shop=shop)
+                message_list.append(f"Photo {f} added")
             else:
-                error_list.append(e)
+                message_list.append(f"WARNING: {e}")
+                has_warnings = True
 
     if data.offers:
         for offer_data in data.offers:
             product = Product.objects.filter(pk=offer_data.product_id).first()
             if product:
-                offer = Offer.objects.filter(shop=shop, product=product).first()  # TODO update_or_create
-                if offer:
-                    offer.price = offer_data.price
-                    offer.amount = offer_data.amount
-                    offer.save()
+                offer, created = Offer.objects.update_or_create(shop=shop, product=product,
+                                                                defaults={"price": offer_data.price,
+                                                                          "amount": offer_data.amount})
+                if created:
+                    message_list.append(f"Offer ({product}, {offer_data.amount}, {offer_data.price}) created")
                 else:
-                    Offer.objects.create(shop=shop, product=product, price=offer_data.price, amount=offer_data.amount)
+                    message_list.append(f"Offer ({product}, {offer_data.amount}, {offer_data.price}) updated")
             else:
-                error_list.append(f"Product c offer_data.product_id={offer_data.product_id} not found")
+                message_list.append(f"WARNING: Product c offer_data.product_id={offer_data.product_id} not found")
+                has_warnings = True
 
-    if len(error_list) > 0:
-        return False, error_list
-    return True, "TODO promo"  # TODO
+    message_list.append("TODO promo")  # TODO
+    return not has_warnings, message_list
 
 
 def send_mail_from_site(subject, message, recipient_list):
