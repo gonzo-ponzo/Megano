@@ -1,16 +1,16 @@
-from django.test import TestCase
+from django.urls import reverse
 from django.contrib.auth import get_user_model
 from product.models import ProductCategory, Product, Manufacturer, Offer
 from promotion.models import DiscountType, PromotionOffer
 from product.services import DailyOffer
 from shop.models import Shop
 from order.models import Order, OrderOffer, Delivery
-from django.urls import reverse
+from user.tests import CacheTestCase
 
 User = get_user_model()
 
 
-class MainPageView(TestCase):
+class MainPageView(CacheTestCase):
 
     @classmethod
     def setUpTestData(cls):

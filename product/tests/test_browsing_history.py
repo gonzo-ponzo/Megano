@@ -1,13 +1,13 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 from product.models import ProductCategory, Product, Manufacturer
 from product.services import BrowsingHistory
-from django.urls import reverse
+from user.tests import CacheTestCase
 
 User = get_user_model()
 
 
-class TestBrowsingHistory(TestCase):
+class TestBrowsingHistory(CacheTestCase):
 
     @classmethod
     def setUpTestData(cls):

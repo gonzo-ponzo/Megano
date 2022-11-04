@@ -1,14 +1,14 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 from product.models import ProductCategory, Product, Manufacturer, Offer, Review
 from shop.models import Shop
 from order.models import Order, OrderOffer, Delivery
-from django.urls import reverse
+from user.tests import CacheTestCase
 
 User = get_user_model()
 
 
-class CatalogViewTest(TestCase):
+class CatalogViewTest(CacheTestCase):
 
     def test_view_url_exists_at_desired_location(self):
         resp = self.client.get('/catalog/')
@@ -30,7 +30,7 @@ class CatalogViewTest(TestCase):
         self.assertIsNotNone(context.get('product_list'))
 
 
-class CatalogByCategoryViewTest(TestCase):
+class CatalogByCategoryViewTest(CacheTestCase):
     category = 'category'
     category_another = 'another'
 
@@ -73,7 +73,7 @@ class CatalogByCategoryViewTest(TestCase):
             self.assertEqual(self.category, product.category.name)
 
 
-class CatalogViewsSorting(TestCase):
+class CatalogViewsSorting(CacheTestCase):
 
     @classmethod
     def setUpTestData(cls):
@@ -169,7 +169,7 @@ class CatalogViewsSorting(TestCase):
         self.assertTrue(products[0].order_count < products[1].order_count)
 
 
-class CatalogViewsFilter(TestCase):
+class CatalogViewsFilter(CacheTestCase):
 
     @classmethod
     def setUpTestData(cls):

@@ -1,9 +1,9 @@
-from django.test import TestCase
 from django.urls import reverse
 from django.conf import settings
+from user.tests import CacheTestCase
 
 
-class TestI18n(TestCase):
+class TestI18n(CacheTestCase):
 
     def test_language_select_exists_at_desired_location(self):
         resp = self.client.post('/i18n/setlang/', follow=True)

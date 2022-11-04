@@ -1,13 +1,13 @@
-from django.test import TestCase
 from django.urls import reverse
 from decimal import Decimal
 
 from .models import Payment
 from .services import Pay
 from .tasks import pay_actual_bills
+from user.tests import CacheTestCase
 
 
-class TestAddBill2Payment(TestCase):
+class TestAddBill2Payment(CacheTestCase):
     def test_correct_new_bill(self):
         url = reverse("one_payment", args=[77])
         data = {"card_number": "1111 2223",
@@ -97,7 +97,7 @@ class TestAddBill2Payment(TestCase):
         self.assertEqual(Payment.objects.count(), 2)
 
 
-class TestCheckBill(TestCase):
+class TestCheckBill(CacheTestCase):
     @classmethod
     def setUpTestData(cls):
         Payment.objects.create(order_number=29, card_number="8613 3334",
@@ -136,7 +136,7 @@ class TestCheckBill(TestCase):
         self.assertContains(response, "error")
 
 
-class TestValidateCardNumber(TestCase):
+class TestValidateCardNumber(CacheTestCase):
     def test_correct_numbers(self):
         res, info = Pay.validate_number("1111 2222")
         self.assertTrue(res)
@@ -154,7 +154,7 @@ class TestValidateCardNumber(TestCase):
         self.assertFalse(res)
 
 
-class TestPayOneBill(TestCase):
+class TestPayOneBill(CacheTestCase):
     def test_pay_correct_bill(self):
         payment = Payment.objects.create(order_number=29, card_number="8613 3334",
                                          sum_to_pay=52.6, status=0)
@@ -172,7 +172,7 @@ class TestPayOneBill(TestCase):
         self.assertTrue(payment.status > 1)
 
 
-class TestTask(TestCase):
+class TestTask(CacheTestCase):
     def test_empty_line(self):
         pay_actual_bills()
         self.assertEqual(Payment.objects.count(), 0)

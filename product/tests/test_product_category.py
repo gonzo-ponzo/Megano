@@ -1,14 +1,14 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
-from product.models import ProductCategory
 from django.core.cache import cache
 from django.conf import settings
 from django.urls import reverse
+from product.models import ProductCategory
+from user.tests import CacheTestCase
 
 User = get_user_model()
 
 
-class ProductCategoryTest(TestCase):
+class ProductCategoryTest(CacheTestCase):
     @classmethod
     def setUpTestData(cls):
         parent_name = "parent"
@@ -25,7 +25,7 @@ class ProductCategoryTest(TestCase):
         self.assertEquals(category.count(), 0)
 
 
-class ProductCategoryCacheCleanTest(TestCase):
+class ProductCategoryCacheCleanTest(CacheTestCase):
     fixtures = ["product_category.json", "manufacturer.json", "product.json", "banner.json"]
     _model = ProductCategory
     _cache_key = settings.CACHE_KEY_PRODUCT_CATEGORY

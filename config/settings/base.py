@@ -118,6 +118,13 @@ CACHES = {
     }
 }
 
+TEST_CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis_db:6379/5",
+    }
+}
+
 # Django-constance settings
 CONSTANCE_BACKEND = "constance.backends.redisd.CachingRedisBackend"
 CONSTANCE_REDIS_CONNECTION = "redis://redis_db:6379"

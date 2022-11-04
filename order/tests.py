@@ -10,6 +10,7 @@ from .models import Order, OrderOffer, Delivery
 from product.models import ProductCategory, Product, Manufacturer, Offer
 from shop.models import Shop
 from .tasks import update_order_after_payment
+from user.tests import CacheTestCase
 
 import random
 from typing import List
@@ -41,7 +42,7 @@ class MockResponsePayment:
         return response
 
 
-class OrderTest(TestCase):
+class OrderTest(CacheTestCase):
     fixtures = [
         "product_category.json",
         "manufacturer.json",
@@ -119,7 +120,7 @@ class OrderTest(TestCase):
         self.assertFalse(user.cart)
 
 
-class OrderHistoryTest(TestCase):
+class OrderHistoryTest(CacheTestCase):
     __password = "password12345"
     __emails = ["user1@test.com", "user2@test.com"]
     __order_id = 1
@@ -183,7 +184,7 @@ class OrderHistoryTest(TestCase):
         self.assertRedirects(response, reverse("order:payment-order", kwargs={"order_id": order.id}))
 
 
-class OrderPaymentTest(TestCase):
+class OrderPaymentTest(CacheTestCase):
     __password = "password12345"
     __emails = ["user1@test.com", "user2@test.com"]
     __payment_name_url = "order:payment-order"
