@@ -5,21 +5,9 @@ from django.contrib.auth import get_user_model, authenticate
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.core.files import File
-from django.conf import settings
-from django.core.cache import cache
 
 
-@override_settings(CACHES=settings.TEST_CACHES)
-class CacheTestCase(TestCase):
-    """Этот класс переопределяет хранилище кэша"""
-
-    @classmethod
-    def tearDownClass(cls):
-        cache.clear()
-        super().tearDownClass()
-
-
-class UserTestLoginExample(CacheTestCase):
+class UserTestLoginExample(TestCase):
     """Примеры создания пользователей для использования в тестах"""
     @classmethod
     def setUpTestData(cls):
@@ -52,7 +40,7 @@ def user_create(email="test@test.com"):
     return test_user
 
 
-class UserRegisterViewTest(CacheTestCase):
+class UserRegisterViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         user_create()
@@ -177,7 +165,7 @@ class UserRegisterViewTest(CacheTestCase):
         self.assertContains(response, _("required"))
 
 
-class UserLoginViewTest(CacheTestCase):
+class UserLoginViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         user = user_create()
@@ -214,7 +202,7 @@ class UserLoginViewTest(CacheTestCase):
         self.assertFalse(user.is_authenticated)
 
 
-class UserLogoutViewTest(CacheTestCase):
+class UserLogoutViewTest(TestCase):
     def test_success_logout(self):
         get_user_model().objects.create_user(email="test@e.mail", password="test_password")
         self.client.login(email="test@e.mail", password="test_password")
@@ -225,7 +213,7 @@ class UserLogoutViewTest(CacheTestCase):
         self.assertFalse(user.is_authenticated)
 
 
-class UserPageNotAuthenticatedTest(CacheTestCase):
+class UserPageNotAuthenticatedTest(TestCase):
     def test_userpages_not_allowed(self):
         names = ['account', 'profile', 'orders_history', 'views_history']
         url_login = reverse('login-page')
@@ -235,7 +223,7 @@ class UserPageNotAuthenticatedTest(CacheTestCase):
             self.assertRedirects(response, f'{url_login}?next={url}')
 
 
-class UserPagesTest(CacheTestCase):
+class UserPagesTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         get_user_model().objects.create_user(email="test@e.mail", password="test_password")
@@ -263,7 +251,7 @@ class UserPagesTest(CacheTestCase):
             self.assertContains(response, reverse(name))
 
 
-class AccountTest(CacheTestCase):
+class AccountTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         get_user_model().objects.create(email="test@e.mail", first_name="Hassan",
@@ -301,7 +289,7 @@ class AccountTest(CacheTestCase):
         self.assertContains(response, user3.avatar.url)
 
 
-class UpdateProfileTest(CacheTestCase):
+class UpdateProfileTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         get_user_model().objects.create_user(email="test@e.mail", password="password")
