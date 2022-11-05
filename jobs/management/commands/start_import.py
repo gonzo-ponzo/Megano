@@ -4,8 +4,6 @@ import glob
 from django.conf import settings
 from jobs.services import try_start_import
 
-from jobs.tasks import shop_import
-
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
@@ -32,11 +30,5 @@ class Command(BaseCommand):
             print("Файлов для импорта не найдено, попробуйте указать другие настройки.", help)
             return
 
-        # TODO временно:
-        shop_import(list_files, "shop_import", email_admin)
-
-        # такое должно быть:
-        #if try_start_import(list_files):
-        #    print("Import is started. Wait for results.")
-        #else:
-        #    print("Something is wrong. Import cancelled.")
+        status, message = try_start_import(list_files, email_admin)
+        print(status, message)

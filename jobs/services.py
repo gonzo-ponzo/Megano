@@ -91,13 +91,13 @@ class ShopModel(BaseModel):
     offers: list[OfferInfo] | None = None
 
 
-def try_start_import(file_names):
+def try_start_import(file_names, email_admin):
     process, _ = Process.objects.get_or_create(name="shop_import")
     if process.is_run:
         return False, "Предыдущий импорт ещё не выполнен. Пожалуйста, дождитесь его окончания"
     process.is_run = True
     process.save()
-    shop_import.delay(file_names, "shop_import")
+    shop_import.delay(file_names, "shop_import", email_admin)
     return True, "Импорт запущен"
 
 
