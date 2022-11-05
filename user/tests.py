@@ -6,11 +6,17 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.core.files import File
 from django.conf import settings
+from django.core.cache import cache
 
 
 @override_settings(CACHES=settings.TEST_CACHES)
 class CacheTestCase(TestCase):
     """Этот класс переопределяет хранилище кэша"""
+
+    @classmethod
+    def tearDownClass(cls):
+        cache.clear()
+        super().tearDownClass()
 
 
 class UserTestLoginExample(CacheTestCase):
