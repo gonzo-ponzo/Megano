@@ -29,7 +29,8 @@ class Product(Model):
         verbose_name = _("продукт")
         verbose_name_plural = _("продукты")
         constraints = [
-            models.UniqueConstraint(fields=["name", "manufacturer", "category"], name="unique name by manufacturer in category")
+            models.UniqueConstraint(fields=["name", "manufacturer", "category"],
+                                    name="unique name by manufacturer in category")
         ]
 
 

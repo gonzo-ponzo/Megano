@@ -101,7 +101,7 @@ def try_start_import(file_names, email_admin):
     return True, "Импорт запущен"
 
 
-def one_shop_import(file_name):
+def one_shop_import(file_name):  # noqa C901
     try:
         data = ShopModel.parse_file(file_name)
     except ValidationError as e:
@@ -171,7 +171,7 @@ def one_shop_import(file_name):
                 message_list.append(f"WARNING: Product with product_id={offer_data.product_id} not found")
                 has_warnings = True
 
-    message_list.append("TODO promo")  # TODO
+    # message_list.append("TODO promo")
     return not has_warnings, message_list
 
 
