@@ -118,17 +118,24 @@ CACHES = {
     }
 }
 
+TEST_CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis_db:6379/5",
+    }
+}
+
 # Django-constance settings
-CONSTANCE_BACKEND = 'constance.backends.redisd.CachingRedisBackend'
-CONSTANCE_REDIS_CONNECTION = 'redis://redis_db:6379'
+CONSTANCE_BACKEND = "constance.backends.redisd.CachingRedisBackend"
+CONSTANCE_REDIS_CONNECTION = "redis://redis_db:6379"
 CONSTANCE_IGNORE_ADMIN_VERSION_CHECK = True
 CONSTANCE_REDIS_CACHE_TIMEOUT = 0
 
 CONSTANCE_ADDITIONAL_FIELDS = {
-    'choice_select': ['django.forms.fields.ChoiceField', {
-        'widget': 'django.forms.Select',
-        'choices': (("No", "No"), ("Yes", "Yes"))
-    }],
+    "choice_select": [
+        "django.forms.fields.ChoiceField",
+        {"widget": "django.forms.Select", "choices": (("No", "No"), ("Yes", "Yes"))},
+    ],
 }
 
 CONSTANCE_CONFIG = {
@@ -136,10 +143,13 @@ CONSTANCE_CONFIG = {
     "OBJECTS_PER_PAGE": (12, "Count of objects per page"),
     "ORDERS_PER_PAGE": (12, "Count of orders per page"),
     "PRODUCTS_PER_SHOP": (6, "Count of products per shop"),
+    "COUNT_BANNERS": (3, "Count of banners per page"),
     "SHOPS_PER_PAGE": (2, "Count shops on one page in shop list"),
 
     "CLEAR_CACHE": ("No", "Clear all cache", "choice_select"),
     "CACHE_KEY_PRODUCT_CATEGORY": (60*60*24, "Product category cache timeout (default = 10 minutes)"),
+    "CACHE_TIMEOUT": (60 * 60 * 24, "Cache timeout (default = 24 hours)"),
+    "CACHE_KEY_PRODUCT_CATEGORY": (60 * 60 * 24, "Cache product category (default = 24 hours)"),
     "CACHE_KEY_BANNER": (60*10, "Banner cache timeout (default = 10 minutes)"),
     "CACHE_KEY_COMPARISON": (60*60*24*30, "Cache comparison (default = 1 month)"),
     "CACHE_KEY_CHECKOUT": (60*60, "Cache checkout (default = 1 hour)"),
@@ -152,6 +162,7 @@ CONSTANCE_CONFIG_FIELDSETS = {
     "Cache options": (
         "CLEAR_CACHE",
         "CACHE_KEY_PRODUCT_CATEGORY",
+        "CACHE_TIMEOUT",
         "CACHE_KEY_BANNER",
         "CACHE_KEY_COMPARISON",
         "CACHE_KEY_CHECKOUT",
@@ -164,7 +175,8 @@ CONSTANCE_CONFIG_FIELDSETS = {
         "OBJECTS_PER_PAGE",
         "ORDERS_PER_PAGE",
         "PRODUCTS_PER_SHOP",
-        "SHOPS_PER_PAGE"
+        "COUNT_BANNERS",
+        "SHOPS_PER_PAGE",
     ),
 }
 
@@ -206,7 +218,7 @@ DATABASES = {
 CELERY_COUNTDOWN_ORDER = 30
 CELERY_MAX_RETRIES_ORDER = 5
 
-CELERY_BROKER_URL = "redis://redis_db"
+CELERY_BROKER_URL = "redis://redis_db/1"
 CELERY_RESULT_BACKEND = "django-db"
 
 # Password validation

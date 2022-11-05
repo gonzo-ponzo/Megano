@@ -1,4 +1,3 @@
-from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
@@ -10,12 +9,71 @@ from .models import Order, OrderOffer, Delivery
 from product.models import ProductCategory, Product, Manufacturer, Offer
 from shop.models import Shop
 from .tasks import update_order_after_payment
+from user.tests import CacheTestCase
 
 import random
 from typing import List
 from unittest import mock
 
 User = get_user_model()
+
+
+def adding_data_to_tables(emails: List, password: str) -> List:
+    users = []
+    for email in emails:
+        user = User.objects.create_user(email=email, password=password)
+        users.append(user)
+    category = ProductCategory.objects.create(name="category", slug="category")
+    manufacturer = Manufacturer.objects.create(name="Manufacturer")
+    delivery = Delivery.objects.create(price=200, express_price=500, sum_order=2000)
+
+    products = []
+    for i in range(5):
+        product = Product(name=f"product{1}", category=category, manufacturer=manufacturer)
+        products.append(product)
+    Product.objects.bulk_create(products)
+
+    shops = []
+    for i in range(2):
+        shop = Shop(
+            name=f"shop{1}",
+            description="description",
+            phone=f"++37533758659{i}",
+            email=f"shop{i}@test.com",
+            address="address",
+            user=users[0],
+        )
+        shops.append(shop)
+    Shop.objects.bulk_create(shops)
+
+    offers = []
+    for shop in shops:
+        for product in products:
+            offer = Offer(
+                shop=shop, product=product, price=random.randint(50000, 200000), amount=random.randint(5, 10)
+            )
+            offers.append(offer)
+    Offer.objects.bulk_create(offers)
+
+    orders = []
+    for i in range(3):
+        user = users[0] if i % 2 == 0 else users[1]
+        order = Order(user=user, city=f"city{i}", address=f"address{i}", delivery=delivery)
+        orders.append(order)
+    Order.objects.bulk_create(orders)
+
+    orders_offers = []
+    offer_cnt = 0
+    for order in orders:
+        offer_cnt += 2
+        for offer in random.sample(offers, offer_cnt):
+            order_offer = OrderOffer(
+                order=order, offer=offer, price=offer.price, amount=random.randint(1, 3), discount=0
+            )
+            orders_offers.append(order_offer)
+    OrderOffer.objects.bulk_create(orders_offers)
+
+    return users
 
 
 class MockResponsePayment:
@@ -37,11 +95,15 @@ class MockResponsePayment:
             if self.status_code == 200:
                 response = {"order_number": self.order_number, "status": 1, "status_text": "Успешно оплачено"}
             elif self.status_code == 400:
-                response = {"error": "Счет не найден"}
+                response = {
+                    "order_number": self.order_number,
+                    "status": 9,
+                    "status_text": "Товары эти не нужны тебе, на полках магазина оставь их",
+                }
         return response
 
 
-class OrderTest(TestCase):
+class OrderTest(CacheTestCase):
     fixtures = [
         "product_category.json",
         "manufacturer.json",
@@ -119,7 +181,7 @@ class OrderTest(TestCase):
         self.assertFalse(user.cart)
 
 
-class OrderHistoryTest(TestCase):
+class OrderHistoryTest(CacheTestCase):
     __password = "password12345"
     __emails = ["user1@test.com", "user2@test.com"]
     __order_id = 1
@@ -183,7 +245,7 @@ class OrderHistoryTest(TestCase):
         self.assertRedirects(response, reverse("order:payment-order", kwargs={"order_id": order.id}))
 
 
-class OrderPaymentTest(TestCase):
+class OrderPaymentTest(CacheTestCase):
     __password = "password12345"
     __emails = ["user1@test.com", "user2@test.com"]
     __payment_name_url = "order:payment-order"
@@ -280,65 +342,34 @@ class OrderPaymentTest(TestCase):
         self.assertEqual(offer_new, offer)
         self.assertTrue(result.startswith("Good"))
 
+    @mock.patch("requests.get")
+    def test_update_order_task_false_result(self, requests_get):
+        order = Order.objects.first()
+        requests_get.return_value = MockResponsePayment(method="get", status_code=400, order_number=order.id)
+        result = update_order_after_payment(order.id)
+        self.assertTrue(result.startswith("Good"))
 
-def adding_data_to_tables(emails: List, password: str) -> List:
-    users = []
-    for email in emails:
-        user = User.objects.create_user(email=email, password=password)
-        users.append(user)
-    category = ProductCategory.objects.create(name="category", slug="category")
-    manufacturer = Manufacturer.objects.create(name="Manufacturer")
-    delivery = Delivery.objects.create(price=200, express_price=500, sum_order=2000)
 
-    products = []
-    for i in range(5):
-        product = Product(name=f"product{1}", category=category, manufacturer=manufacturer)
-        products.append(product)
-    Product.objects.bulk_create(products)
+class DeliveryTest(CacheTestCase):
+    def setUp(self) -> None:
+        self.delivery = Delivery.objects.create(price=200, express_price=500, sum_order=2000)
 
-    shops = []
-    for i in range(2):
-        shop = Shop(
-            name=f"shop{1}",
-            description="description",
-            phone=f"++37533758659{i}",
-            email=f"shop{i}@test.com",
-            address="address",
-            user=users[0],
-        )
-        shops.append(shop)
-    Shop.objects.bulk_create(shops)
+    def test_when_update_delete_old_and_create_new(self):
+        delivery_id_old = self.delivery.id
+        self.assertEqual(Delivery.objects.count(), 1)
+        self.delivery.price = 2000
+        self.delivery.save()
+        self.assertEqual(Delivery.objects.count(), 1)
+        self.assertTrue(delivery_id_old != self.delivery.id)
 
-    offers = []
-    for shop in shops:
-        for product in products:
-            offer = Offer(
-                shop=shop, product=product, price=random.randint(50000, 200000), amount=random.randint(5, 10)
-            )
-            offers.append(offer)
-    Offer.objects.bulk_create(offers)
+    def test_when_create_delete_old(self):
+        delivery_id_old = self.delivery.id
+        self.assertEqual(Delivery.objects.count(), 1)
+        delivery_new = Delivery.objects.create(price=2100, express_price=400, sum_order=1000)
+        self.assertEqual(Delivery.objects.count(), 1)
+        self.assertTrue(delivery_id_old != delivery_new.id)
 
-    orders = []
-    for i in range(3):
-        user = users[0] if i % 2 == 0 else users[1]
-        order = Order(user=user, city=f"city{i}", address=f"address{i}", delivery=delivery)
-        orders.append(order)
-    Order.objects.bulk_create(orders)
-
-    orders_offers = []
-    offer_cnt = 0
-    for order in orders:
-        offer_cnt += 2
-        for offer in random.sample(offers, offer_cnt):
-            order_offer = OrderOffer(
-                order=order, offer=offer, price=offer.price, amount=random.randint(1, 3), discount=0
-            )
-            orders_offers.append(order_offer)
-    OrderOffer.objects.bulk_create(orders_offers)
-
-    return users
-
-class CartTest(TestCase):
+class CartTest(CacheTestCase):
     fixtures = [
         "product_category.json",
         "manufacturer.json",
@@ -360,7 +391,7 @@ class CartTest(TestCase):
 
     def tearDown(self) -> None:
         self.client.get("/order/cart-clear/")
-        
+
     def test_view_url_exists_at_desired_location(self):
         resp = self.client.get("/order/cart/")
         self.assertEqual(resp.status_code, 200)
@@ -369,7 +400,7 @@ class CartTest(TestCase):
         resp = self.client.get(reverse("order:cart-page"))
         self.assertEqual(resp.status_code, 200)
         self.assertTemplateUsed(resp, "order/cart.html")
-        
+
     def test_cart_creation(self):
         resp = self.client.get(reverse("order:cart-page"))
         user = User.objects.filter(email=self.__email).first()
@@ -381,14 +412,14 @@ class CartTest(TestCase):
         user = User.objects.filter(email=self.__email).first()
         cart = user.cart
         self.assertNotEqual(cart, {})
-        
+
     def test_remove_from_cart(self):
         self.client.get("/order/cart-add/1/1/")
         self.client.get("/order/cart-lower/1/1/")
         user = User.objects.filter(email=self.__email).first()
         cart = user.cart
         self.assertEqual(cart, {})
-        
+
     def test_remove_from_cart(self):
         self.client.get("/order/cart-add/1/1/")
         self.client.get("/order/cart-clear/")

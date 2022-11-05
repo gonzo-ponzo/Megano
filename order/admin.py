@@ -23,6 +23,7 @@ class OrderAdmin(admin.ModelAdmin):
         "address",
         "comment",
         "status_type",
+        "delivery",
         "error_type",
         "created_at",
         "updated_at",

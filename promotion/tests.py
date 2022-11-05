@@ -1,8 +1,9 @@
-from django.test import TestCase
 from django.conf import settings
+from django.urls import reverse
 from product.tests.test_product_category import ProductCategoryCacheCleanTest
 from .models import Banner
 from product.models import Product
+from user.tests import CacheTestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
@@ -20,7 +21,7 @@ class BannerCacheCleanTest(ProductCategoryCacheCleanTest):
         cls._model.objects.create(name="new", product=product, image="")
 
 
-class PromotionOfferTest(TestCase):
+class PromotionOfferTest(CacheTestCase):
     fixtures = [
         "product_category.json",
         "manufacturer.json",
@@ -103,12 +104,12 @@ class PromotionOfferTest(TestCase):
         self.client.get("/order/cart-add/1/1/")
         for _ in range(3):
             self.client.get("/order/cart-add/2/2/")
-        
+
         user = User.objects.filter(email=self.__email).first()
         result = user.cart["1"]["1"]["discount"].get("3", None)
-        
+
         self.assertEqual(result, 0)
-        
+
     def test_cart_amounth_discount_from_different_shops(self):
         for _ in range(4):
             self.client.get("/order/cart-add/1/1/")
@@ -116,7 +117,7 @@ class PromotionOfferTest(TestCase):
 
         user = User.objects.filter(email=self.__email).first()
         result = user.cart["1"]["1"]["discount"].get("4", None)
-        
+
         self.assertEqual(result, 0)
 
 
