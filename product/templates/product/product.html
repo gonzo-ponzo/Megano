@@ -45,8 +45,13 @@
                       {% endif %}
                     </div>
                   </div>
-                  <div class="ProductCard-compare"><a class="btn btn_default" href="#"><img class="btn-icon" src="{% static 'img/icons/card/change.svg' %}" alt="change.svg"/></a>
-                  </div>
+                  <!-- <div class="ProductCard-compare"><a class="btn btn_default" href="#"><img class="btn-icon" src="{% static 'img/icons/card/change.svg' %}" alt="change.svg"/></a>
+                  </div> -->
+                  <div class="ProductCard-compare">
+                    <a class="Card-btn" onclick="openWin(url='{% url 'compare_add' product.id %}')">
+                        <img src="{% static 'img/icons/card/change.svg' %}" alt="сравнить"/>
+                    </a>
+                </div>
                 </div>
               </div>
               <div class="ProductCard-text">
