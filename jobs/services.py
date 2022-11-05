@@ -94,11 +94,11 @@ class ShopModel(BaseModel):
 def try_start_import(file_names):
     process, _ = Process.objects.get_or_create(name="shop_import")
     if process.is_run:
-        return False
+        return False, "Предыдущий импорт ещё не выполнен. Пожалуйста, дождитесь его окончания"
     process.is_run = True
     process.save()
     shop_import.delay(file_names, "shop_import")
-    return True
+    return True, "Импорт запущен"
 
 
 def one_shop_import(file_name):
@@ -106,6 +106,8 @@ def one_shop_import(file_name):
         data = ShopModel.parse_file(file_name)
     except ValidationError as e:
         return False, f"ERROR: {e.json}"
+    except Exception as e:
+        return False, f"ERROR {type(e)}: {e}"
 
     shop_data = data.shop
     email = shop_data.email
@@ -166,7 +168,7 @@ def one_shop_import(file_name):
                 else:
                     message_list.append(f"Offer ({product}, {offer_data.amount}, {offer_data.price}) updated")
             else:
-                message_list.append(f"WARNING: Product c offer_data.product_id={offer_data.product_id} not found")
+                message_list.append(f"WARNING: Product with product_id={offer_data.product_id} not found")
                 has_warnings = True
 
     message_list.append("TODO promo")  # TODO

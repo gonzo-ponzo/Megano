@@ -4,7 +4,8 @@ import glob
 from django.conf import settings
 from jobs.services import try_start_import
 
-from jobs.services import one_shop_import
+from jobs.tasks import shop_import
+
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
@@ -13,7 +14,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         '''
         варианты использования команды:
-        python manage.py start_import "*" - обработает все файлы из папки import/import-data, 
+        python manage.py start_import "*" - обработает все файлы из папки import/import-data,
                                             при использовании маски кавычки писать обязательно
         python manage.py start_import first_shop.json second_shop.json - точные имена файлов можно без кавычек
         '''
@@ -21,16 +22,14 @@ class Command(BaseCommand):
         list_files = set()
         for name in file_names:
             path = os.path.join(settings.IMPORT_INCOME, name)
-            files = glob.glob(path)
-            list_files = list_files | set(files)
+            files = set(filter(lambda x: os.path.isfile(x), glob.glob(path)))
+            list_files = list_files | files
         list_files = list(list_files)
         # TODO и если в список не попало ни одного файла, или нет параметров, тоже показать ошибку
-        
-        # временно, для отладки поштучной обработки файлов:
-        for file_name in list_files:
-            is_ok, message = one_shop_import(file_name)
-            print(file_name, "-", is_ok, "-", message)
-        
+
+        # TODO временно:
+        shop_import(list_files, "shop_import")
+
         # такое должно быть:
         #if try_start_import(list_files):
         #    print("Import is started. Wait for results.")

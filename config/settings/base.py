@@ -191,6 +191,7 @@ MEDIA_URL = "/media/"
 IMPORT_INCOME = BASE_DIR / "import" / "import-data"
 IMPORT_DONE = BASE_DIR / "import" / "import-done"
 IMPORT_FAIL = BASE_DIR / "import" / "import-fail"
+IMPORT_LOGS = BASE_DIR / "import" / "logs"
 
 LOGIN_URL = "/login/"
 
