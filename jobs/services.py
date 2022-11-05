@@ -12,7 +12,7 @@ from product.models import Product, Offer
 # from promotion.models import PromotionOffer
 from django.contrib.auth import get_user_model
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 
 
 class ShopBaseInfo(BaseModel):
@@ -175,6 +175,10 @@ def one_shop_import(file_name):
     return not has_warnings, message_list
 
 
-def send_mail_from_site(subject, message, recipient_list):
+def send_mail_from_site(subject, message, recipient_list, attach=None):
     # TODO отправку делать через механизм очереди, или на крайний случай обернуть в try
-    send_mail(subject=subject, message=message, from_email=settings.EMAIL_HOST_USER, recipient_list=recipient_list)
+    email = EmailMessage(subject=subject, body=message, from_email=settings.EMAIL_HOST_USER,
+                         to=recipient_list)
+    if attach:
+        email.attach_file(attach)
+    email.send()
