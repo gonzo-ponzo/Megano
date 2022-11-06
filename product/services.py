@@ -187,7 +187,7 @@ class QuerysetForCatalog:
         return queryset
 
 
-class FilterProductsResult:
+class FilterProductsResult(QuerysetForCatalog):
     """
     Фильтр для списка продуктов
     """
@@ -206,7 +206,6 @@ class FilterProductsResult:
         """
 
         self.__queryset = self.get_queryset_for_catalog()
-
         self.title = get_params.get("fil_title", None)
         self.actual = bool(get_params.get("fil_actual"))
         self.limit = bool(get_params.get("fil_limit"))
@@ -215,23 +214,6 @@ class FilterProductsResult:
         self.min_price = self.max_price = None
         if len(price) == 2 and price[0].isdigit() and price[1].isdigit():
             self.min_price, self.max_price = map(int, price)
-
-    @staticmethod
-    def get_queryset_for_catalog(without_offer=True):
-        queryset = Product.objects.all()
-        if without_offer:
-            queryset = queryset.filter(offer__isnull=False)
-        queryset = queryset.prefetch_related("productimage_set")
-        queryset = queryset.select_related("category")
-        # queryset = queryset.prefetch_related('shop')
-        queryset = queryset.annotate(offer_count=Count("offer", distinct=True))
-        queryset = queryset.annotate(min_price=Min("offer__price"))
-        queryset = queryset.annotate(review_count=Count("review", distinct=True))
-        queryset = queryset.annotate(rating=Avg("review__rating", default=0))
-        queryset = queryset.annotate(rest=Sum("offer__amount", distinct=True))
-        queryset = queryset.annotate(order_count=Sum("offer__orderoffer__amount", default=0, distinct=True))
-        queryset = queryset.order_by("pk")
-        return queryset
 
     @property
     def queryset(self):
@@ -401,7 +383,7 @@ class DailyOffer:
 
     @staticmethod
     def __get_random_product():
-        queryset = FilterProductsResult.get_queryset_for_catalog()
+        queryset = QuerysetForCatalog.get_queryset_for_catalog()
         queryset = queryset.only("id", "name", "category__name")
         queryset_for_choice = queryset.filter(limited=True).filter(rest__gt=0)
         if not queryset_for_choice:
@@ -522,7 +504,7 @@ class BrowsingHistory:
 
     def get_history(self, number_of_entries=20):
         """Получить последние записи истории просмотренных товаров"""
-        products = FilterProductsResult.get_queryset_for_catalog(without_offer=False)
+        products = QuerysetForCatalog.get_queryset_for_catalog(without_offer=False)
         products = products.filter(id__in=ProductView.objects.filter(user=self.user).values_list("product"))
         products = products.annotate(date_view=F("productview__updated_at"))
         products = products.order_by("-date_view")
