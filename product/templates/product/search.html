@@ -27,7 +27,7 @@
         <div>
             <b>{% trans "По запросу" %}:</b>
             {% trans "Задан пустой запрос для поиска. Введите текст в поле для поиска" as empty_query_message %}
-            {% firstof request.POST.search_query empty_query_message %}
+            {% firstof request.GET.search_query empty_query_message %}
         </div>
 
 

@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-27 16:38+0000\n"
-"PO-Revision-Date: 2022-10-31 12:37+0000\n"
-"Last-Translator:   <pruss.nikita@gmail.com>\n"
+"POT-Creation-Date: 2022-11-06 13:44+0000\n"
+"PO-Revision-Date: 2022-11-06 13:50+0000\n"
+"Last-Translator:   <admin@admin.ru>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -19,11 +19,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Translated-Using: django-rosetta 0.9.8\n"
 
-#: config/settings/base.py:179
+#: config/settings/base.py:243
 msgid "Русский"
 msgstr "Russian"
 
-#: config/settings/base.py:180
+#: config/settings/base.py:244
 msgid "Английский"
 msgstr "English"
 
@@ -31,71 +31,60 @@ msgstr "English"
 msgid "заказы"
 msgstr "orders"
 
-#: order/models.py:13
+#: order/models.py:14
 msgid "Обычная доставка"
 msgstr "Regular delivery"
 
-#: order/models.py:13
+#: order/models.py:14
 msgid "Экспресс-доставка"
 msgstr "Express delivery"
 
-#: order/models.py:14
+#: order/models.py:15
 msgid "Онлайн картой"
 msgstr "By card online"
 
-#: order/models.py:14
+#: order/models.py:15
 msgid "Онлайн со случайного чужого счёта"
 msgstr "Online from a random someone else's account"
 
-#: order/models.py:15
+#: order/models.py:16
 msgid "Оплачен"
 msgstr "Paid"
 
-#: order/models.py:15
+#: order/models.py:16
 msgid "Не оплачен"
 msgstr "Not paid"
 
-#: order/models.py:17
-msgid "Оплата не выполнена, на вашем счёте не хватает средств"
-msgstr ""
-"The payment has not been completed, there are not enough funds on your "
-"account"
-
-#: order/models.py:18
-msgid "Оплата не выполнена, произошел сбой при списании средств"
-msgstr ""
-"The payment was not completed, there was a failure when debiting funds"
-
-#: order/models.py:21 product/models.py:155 product/models.py:167
+#: order/models.py:18 product/models.py:155 product/models.py:167
 #: user/models.py:90
 msgid "пользователь"
 msgstr "user"
 
-#: order/models.py:22
+#: order/models.py:19
 msgid "город"
 msgstr "city"
 
-#: order/models.py:23 shop/models.py:40
+#: order/models.py:20 shop/models.py:40
 msgid "адрес"
 msgstr "address"
 
-#: order/models.py:24
+#: order/models.py:21
 msgid "комментарий"
 msgstr "comment"
 
-#: order/models.py:26
+#: order/models.py:23
 msgid "тип доставки"
 msgstr "delivery method"
 
-#: order/models.py:29
+#: order/models.py:26
 msgid "способ оплаты"
 msgstr "payment method"
 
-#: order/models.py:32
+#: order/models.py:29
 msgid "статус заказа"
 msgstr "order status"
 
-#: order/models.py:34
+#: order/models.py:33
 msgid "ошибка заказа"
 msgstr "order error"
 
@@ -143,13 +132,17 @@ msgstr "express price"
 msgid "мин. цена корзины"
 msgstr "min. cart price"
 
-#: order/models.py:68
+#: order/models.py:78
 msgid "цена доставки"
 msgstr "shipping cost"
 
-#: order/models.py:69
+#: order/models.py:79
 msgid "цены доставки"
 msgstr "shipping prices"
+
+#: order/models.py:85 product/models.py:14 product/models.py:109
+msgid "наименование"
+msgstr "name"
 
 #: order/templates/order/cart.html:3
 msgid "Корзина"
@@ -159,7 +152,7 @@ msgstr "Cart"
 msgid "Превышен лимит. Доступный остаток:"
 msgstr "Exceeded the limit. Available balance:"
 
-#: order/templates/order/cart.html:89 order/templates/order/oneorder.html:184
+#: order/templates/order/cart.html:89 order/templates/order/oneorder.html:191
 msgid "Итого"
 msgstr "Total"
 
@@ -169,43 +162,46 @@ msgstr "Place order"
 
 #: order/templates/order/historyorder.html:12
 #: order/templates/order/historyorder.html:19
-#: order/templates/order/oneorder.html:21 user/templates/user/account.html:53
+#: order/templates/order/oneorder.html:21 user/templates/user/account.html:54
 #: user/templates/user/user_nav.html:16
 msgid "История заказов"
 msgstr "Order history"
 
 #: order/templates/order/historyorder.html:16
 #: order/templates/order/oneorder.html:16
+#: order/templates/order/payment.html:25
 #: product/templates/product/compare.html:13 shop/templates/shop/shop.html:15
-#: shop/templates/shop/shop_list.html:17 user/templates/user/account.html:13
+#: shop/templates/shop/shop_list.html:19 user/templates/user/account.html:13
 #: user/templates/user/historyview.html:18 user/templates/user/profile.html:13
 msgid "Главная"
 msgstr "home"
 
 #: order/templates/order/historyorder.html:37
 #: order/templates/order/oneorder.html:11
-#: order/templates/order/oneorder.html:26 user/templates/user/account.html:44
+#: order/templates/order/oneorder.html:26
+#: order/templates/order/payment.html:50 user/templates/user/account.html:45
 msgid "Заказ"
 msgstr "Order"
 
 #: order/templates/order/historyorder.html:39
-#: product/templates/product/index.html:23 user/templates/user/account.html:46
-#| msgid "фото"
+#: product/templates/product/index.html:23 user/templates/user/account.html:47
 msgid "от"
 msgstr "from"
 
 #: order/templates/order/historyorder.html:48
-#: order/templates/order/oneorder.html:66 user/templates/user/account.html:60
+#: order/templates/order/oneorder.html:66 user/templates/user/account.html:61
 msgid "Тип доставки"
 msgstr "delivery method"
 
 #: order/templates/order/historyorder.html:56
-#: order/templates/order/oneorder.html:90 user/templates/user/account.html:68
+#: order/templates/order/oneorder.html:90
+#: order/templates/order/payment.html:14 order/templates/order/payment.html:31
+#: user/templates/user/account.html:69
 msgid "Оплата"
 msgstr "Payment"
 
 #: order/templates/order/historyorder.html:64
-#: user/templates/user/account.html:76
+#: user/templates/user/account.html:77
 msgid "Общая стоимость"
 msgstr "Total cost"
 
@@ -215,30 +211,29 @@ msgstr "Total cost"
 #: order/templates/order/oneorder.html:139
 #: order/templates/order/oneorder.html:143
 #: order/templates/order/oneorder.html:146
-#: order/templates/order/oneorder.html:176
-#: order/templates/order/oneorder.html:187
-#: order/templates/order/oneorder.html:190
+#: order/templates/order/oneorder.html:178
 #: order/templates/order/oneorder.html:194
+#: order/templates/order/oneorder.html:197
+#: order/templates/order/oneorder.html:201
 #: order/templates/order/order.html:207 order/templates/order/order.html:211
 #: order/templates/order/order.html:214 order/templates/order/order.html:245
 #: order/templates/order/order.html:257 order/templates/order/order.html:261
 #: order/templates/order/order.html:264 order/templates/order/order.html:280
 #: order/templates/order/order.html:292 order/templates/order/order.html:296
-#: order/templates/order/order.html:299
-#: product/templates/product/index.html:25 user/templates/user/account.html:81
-#: user/templates/user/account.html:84 user/templates/user/account.html:88
+#: order/templates/order/order.html:299 order/templates/order/payment.html:52
+#: product/templates/product/index.html:25 user/templates/user/account.html:82
+#: user/templates/user/account.html:85 user/templates/user/account.html:89
 msgid "руб."
 msgstr "rub."
 
 #: order/templates/order/historyorder.html:83
-#: order/templates/order/oneorder.html:98 user/templates/user/account.html:95
+#: order/templates/order/oneorder.html:98 user/templates/user/account.html:96
 msgid "Статус"
 msgstr "Status"
 
 #: order/templates/order/historyorder.html:92
 #: order/templates/order/oneorder.html:107
-#: user/templates/user/account.html:104
-#| msgid "изображение продукта"
+#: user/templates/user/account.html:105
 msgid "Оплата не прошла"
 msgstr "Payment failed"
 
@@ -248,33 +243,28 @@ msgid "ФИО"
 msgstr "Last First name Patronymic"
 
 #: order/templates/order/inc/_data_user.html:12
-#: shop/templates/shop/shop.html:78 shop/templates/shop/shop_list.html:80
+#: shop/templates/shop/shop.html:78 shop/templates/shop/shop_list.html:82
 #: user/templates/user/profile.html:52
 msgid "Телефон"
 msgstr "Telephone"
 
 #: order/templates/order/oneorder.html:45
-#| msgid "ошибка заказа"
 msgid "Дата заказа"
 msgstr "Order date"
 
 #: order/templates/order/oneorder.html:55
-#| msgid "комментарий"
 msgid "Комментарий к заказу"
 msgstr "Comment on the order"
 
 #: order/templates/order/oneorder.html:74
-#| msgid "город"
 msgid "Город"
 msgstr "City"
 
 #: order/templates/order/oneorder.html:82
-#| msgid "адрес"
 msgid "Адрес"
 msgstr "Address"
 
 #: order/templates/order/oneorder.html:154
-#| msgid "Продавцы"
 msgid "Продавец"
 msgstr "Seller"
 
@@ -283,39 +273,37 @@ msgstr "Seller"
 msgid "шт."
 msgstr "pc."
 
-#: order/templates/order/oneorder.html:173
+#: order/templates/order/oneorder.html:175
 #: order/templates/order/order.html:242 order/templates/order/order.html:277
-#| msgid "Доставка"
 msgid "Доставка:"
 msgstr "Delivery:"
 
+#: order/templates/order/oneorder.html:209
+#: order/templates/order/order.html:320 order/templates/order/payment.html:71
+msgid "Оплатить"
+msgstr "Pay"
+
 #: order/templates/order/order.html:11 order/templates/order/order.html:17
-#| msgid "Оформить заказ"
 msgid "Оформление заказа"
 msgstr "Order registration"
 
 #: order/templates/order/order.html:29
-#| msgid "предложения"
 msgid "Прогресс заполнения"
 msgstr "Filling progress"
 
 #: order/templates/order/order.html:36 order/templates/order/order.html:66
-#| msgid "суперпользователь"
 msgid "Шаг 1. Параметры пользователя"
 msgstr "Step 1. User Parameters"
 
 #: order/templates/order/order.html:41 order/templates/order/order.html:84
-#| msgid "Тип доставки"
 msgid "Шаг 2. Способ доставки"
 msgstr "Step 2. Delivery method"
 
 #: order/templates/order/order.html:46 order/templates/order/order.html:127
-#| msgid "способ оплаты"
 msgid "Шаг 3. Способ оплаты"
 msgstr "Step 3. Payment method"
 
 #: order/templates/order/order.html:51 order/templates/order/order.html:150
-#| msgid "Подтверждение пароля"
 msgid "Шаг 4. Подтверждение заказа"
 msgstr "Step 4. Confirm order"
 
@@ -325,39 +313,52 @@ msgid "Дальше"
 msgstr "Next"
 
 #: order/templates/order/order.html:163
-#| msgid "Тип доставки"
 msgid "Тип доставки:"
 msgstr "Delivery method:"
 
 #: order/templates/order/order.html:169
-#| msgid "город"
 msgid "Город:"
 msgstr "City:"
 
 #: order/templates/order/order.html:175
-#| msgid "адрес"
 msgid "Адрес:"
 msgstr "Address:"
 
 #: order/templates/order/order.html:181
-#| msgid "Оплата"
 msgid "Оплата:"
 msgstr "Payment:"
 
 #: order/templates/order/order.html:222
-#| msgid "Продавцы"
 msgid "Продавец:"
 msgstr "Seller:"
 
 #: order/templates/order/order.html:253 order/templates/order/order.html:288
-#| msgid "Итого"
 msgid "Итого:"
 msgstr "Total:"
 
-#: order/templates/order/order.html:320
-#| msgid "Оплата"
-msgid "Оплатить"
-msgstr "Pay"
+#: order/templates/order/payment.html:18 order/templates/order/payment.html:33
+#| msgid "Шаг 3. Способ оплаты"
+msgid "Ожидание оплаты"
+msgstr "Waiting for payment"
+
+#: order/templates/order/payment.html:52
+#| msgid "Не оплачен"
+msgid "к оплате"
+msgstr "to be paid"
+
+#: order/templates/order/payment.html:56
+#| msgid "номер карты"
+msgid "Номер карты"
+msgstr "Card number"
+
+#: order/templates/order/payment.html:64
+#| msgid "Зарегистрироваться"
+msgid "Сгенирировать случайный"
+msgstr "Generate a random"
+
+#: order/templates/order/payment.html:78
+msgid "Ждем подтверждения оплаты платежной системой"
+msgstr "Waiting for payment confirmation by the payment system"
 
 #: payment/apps.py:8 payment/models.py:24
 msgid "платежи"
@@ -404,10 +405,6 @@ msgstr "number of products"
 msgid "продукты"
 msgstr "products"
 
-#: product/models.py:14 product/models.py:109
-msgid "наименование"
-msgstr "name"
-
 #: product/models.py:15 product/models.py:72 product/models.py:110
 #: product/models.py:137 promotion/models.py:13 promotion/models.py:28
 #: promotion/models.py:45 shop/models.py:21
@@ -431,8 +428,7 @@ msgid "характеристики"
 msgstr "parameters"
 
 #: product/models.py:20 shop/models.py:64
-#: shop/templates/shop/shop_list.html:19
-#: shop/templates/shop/shop_list.html:132 templates/header.html:70
+#: shop/templates/shop/shop_list.html:21 templates/header.html:70
 msgid "магазины"
 msgstr "shops"
 
@@ -528,19 +524,19 @@ msgstr "viewed product"
 msgid "просмотренные продукты"
 msgstr "viewed products"
 
-#: product/services.py:259
+#: product/services.py:295
 msgid "цене"
 msgstr "price"
 
-#: product/services.py:260
+#: product/services.py:296
 msgid "популярности"
 msgstr "popularity"
 
-#: product/services.py:261
+#: product/services.py:297
 msgid "рейтингу"
 msgstr "rating"
 
-#: product/services.py:262
+#: product/services.py:298
 msgid "новизне"
 msgstr "newness"
 
@@ -587,6 +583,7 @@ msgid "Сбросить"
 msgstr "Reset"
 
 #: product/templates/product/catalog.html:121
+#: product/templates/product/search.html:48
 msgid "Сортировать по"
 msgstr "Sort by"
 
@@ -594,7 +591,8 @@ msgstr "Sort by"
 #: product/templates/product/index.html:124
 #: product/templates/product/index.html:157
 #: product/templates/product/index.html:240
-#: user/templates/user/account.html:133
+#: product/templates/product/search.html:63
+#: user/templates/user/account.html:135
 #: user/templates/user/historyview.html:42
 msgid "Продуктов не найдено"
 msgstr "No products found"
@@ -627,23 +625,23 @@ msgstr "Only differing characteristics"
 msgid "применить"
 msgstr "apply"
 
-#: product/templates/product/compare.html:74
+#: product/templates/product/compare.html:73
 msgid "Рейтинг"
 msgstr "Rating"
 
-#: product/templates/product/compare.html:107
+#: product/templates/product/compare.html:106
 msgid "Нет оценок"
 msgstr "No ratings"
 
-#: product/templates/product/compare.html:135
+#: product/templates/product/compare.html:134
 msgid "Цена от"
 msgstr "Price from"
 
-#: product/templates/product/compare.html:149
+#: product/templates/product/compare.html:148
 msgid "Очистить лист сравнений"
 msgstr "Clear the comparison sheet"
 
-#: product/templates/product/compare.html:152
+#: product/templates/product/compare.html:151
 msgid "Нет товаров для сравнения"
 msgstr "There are no products to compare"
 
@@ -720,6 +718,7 @@ msgid "О продукте"
 msgstr "About the product"
 
 #: product/templates/product/product.html:13
+#: product/templates/product/search.html:21
 #: promotion/templates/promotion/promotion.html:13
 #: promotion/templates/promotion/promotions.html:14
 msgid "На главную"
@@ -757,19 +756,45 @@ msgstr "Value"
 msgid "Добавить в корзину"
 msgstr "Add to cart"
 
-#: product/views.py:52
+#: product/templates/product/search.html:5
+#| msgid "Введите текст для поиска..."
+msgid "Результаты поиска"
+msgstr "Search results"
+
+#: product/templates/product/search.html:18
+#| msgid "поиск"
+msgid "Поиск"
+msgstr "Search"
+
+#: product/templates/product/search.html:28
+msgid "По запросу"
+msgstr "Search request"
+
+#: product/templates/product/search.html:29
+msgid "Задан пустой запрос для поиска. Введите текст в поле для поиска"
+msgstr "An empty search query. Enter the text in the search field"
+
+#: product/templates/product/search.html:64
+msgid ""
+"Уточните или измените запрос. Учитываются только слова длиной 3 и более "
+"символов"
+msgstr ""
+"Specify or change the request. Only words with a length of 3 or more "
+"characters are taken into account"
+
+#: product/views.py:59
 msgid "объект добавлен"
 msgstr "object added"
 
-#: product/views.py:195
+#: product/views.py:203
 msgid "Отзыв удален."
 msgstr "The review has been deleted."
 
-#: product/views.py:203
+#: product/views.py:211
 msgid "Отзыв добавлен."
 msgstr "Review added."
 
-#: product/views.py:208
+#: product/views.py:216
 msgid "Отзыв не добавлен, проверьте корректность ввода."
 msgstr "The review has not been added, check the correctness of the input."
 
@@ -870,26 +895,72 @@ msgstr "photo"
 msgid "фотографии"
 msgstr "photo"
 
-#: shop/templates/shop/shop.html:12 shop/templates/shop/shop_list.html:14
+#: shop/templates/shop/shop.html:12 shop/templates/shop/shop_list.html:16
 msgid "О Megano"
 msgstr "About Megano"
 
-#: shop/templates/shop/shop.html:79 shop/templates/shop/shop_list.html:81
+#: shop/templates/shop/shop.html:79 shop/templates/shop/shop_list.html:83
 msgid "Мобильный"
 msgstr "Mobile"
 
-#: shop/templates/shop/shop.html:105 shop/templates/shop/shop_list.html:107
+#: shop/templates/shop/shop.html:105 shop/templates/shop/shop_list.html:109
 #: templates/header.html:14
 msgid "Мы здесь"
 msgstr "Follow us"
 
-#: shop/templates/shop/shop.html:174
-msgid "У магазина нет предложений"
-msgstr "The store has no offers"
+#: shop/templates/shop/shop.html:168
+#| msgid "У магазина нет предложений"
+msgid "Магазин пока не имеет заказов для оценки"
+msgstr "The store does not have any orders for evaluation yet"
 
-#: shop/templates/shop/shop.html:179
+#: shop/templates/shop/shop.html:173
 msgid "Популярные товары магазина"
 msgstr "Popular store products"
+
+#: shop/templates/shop/shop_list.html:132
+#| msgid "магазин"
+msgid "Найти магазин"
+msgstr "Find a store"
+
+#: shop/templates/shop/shop_list.html:138
+#| msgid "магазины"
+msgid "магазины:"
+msgstr "shops:"
+
+#: shop/templates/shop/shop_list.html:145
+msgid "Список магазинов пуст"
+msgstr "The list of stores is empty"
+
+#: shop/templates/shop/shop_list.html:151
+msgid "первая"
+msgstr "first"
+
+#: shop/templates/shop/shop_list.html:152
+msgid "предыдущая"
+msgstr "previous"
+
+#: shop/templates/shop/shop_list.html:155
+#| msgid "Сохранить"
+msgid "Страница"
+msgstr "Page"
+
+#: shop/templates/shop/shop_list.html:155
+#| msgid "мин"
+msgid "из"
+msgstr "of"
+
+#: shop/templates/shop/shop_list.html:157
+#| msgid "Показать навигацию"
+msgid "показаны все записи"
+msgstr "all entries are shown"
+
+#: shop/templates/shop/shop_list.html:160
+msgid "следующая"
+msgstr "next"
+
+#: shop/templates/shop/shop_list.html:161
+msgid "последняя"
+msgstr "last"
 
 #: templates/admin/base_site.html:4
 msgid "Django site admin"
@@ -931,11 +1002,11 @@ msgstr "profile"
 msgid "Показать навигацию"
 msgstr "Show navigation"
 
-#: templates/header.html:107
+#: templates/header.html:108
 msgid "Введите текст для поиска..."
 msgstr "What are you looking for..."
 
-#: templates/header.html:108
+#: templates/header.html:109
 msgid "поиск"
 msgstr "serch"
 
@@ -980,7 +1051,7 @@ msgstr "The entered data is incorrect. Try again."
 msgid "Пользователь неактивен."
 msgstr "The user is inactive."
 
-#: user/forms.py:75 user/tests.py:131
+#: user/forms.py:75 user/tests.py:143
 msgid "Пользователь с таким емейлом уже зарегистрирован"
 msgstr "A user with such an email has already been registered"
 
@@ -988,7 +1059,7 @@ msgstr "A user with such an email has already been registered"
 msgid "Для верификации введите такой же пароль как ранее."
 msgstr "To verify, enter the same password as before."
 
-#: user/forms.py:95 user/tests.py:115
+#: user/forms.py:95 user/tests.py:127
 msgid "Пароли не совпадают"
 msgstr "Passwords don't match"
 
@@ -1000,7 +1071,7 @@ msgstr "Confirm password"
 msgid "Введите пароль повторно"
 msgstr "Enter the password again"
 
-#: user/forms.py:130 user/tests.py:334
+#: user/forms.py:130 user/tests.py:346
 msgid "Нужно написать Фамилию Имя"
 msgstr "You need to write the Last_Name First_Name"
 
@@ -1049,11 +1120,11 @@ msgstr "Personal account"
 msgid "Редактировать профиль"
 msgstr "Edit Profile"
 
-#: user/templates/user/account.html:122
+#: user/templates/user/account.html:124
 msgid "История просмотров"
 msgstr "Browsing history"
 
-#: user/templates/user/account.html:138
+#: user/templates/user/account.html:140
 msgid "Перейти на полный список"
 msgstr "Go to the full list"
 
@@ -1065,7 +1136,7 @@ msgstr "Viewing history"
 msgid "Вход"
 msgstr "Log in"
 
-#: user/templates/user/login.html:18 user/tests.py:189 user/tests.py:197
+#: user/templates/user/login.html:18 user/tests.py:201 user/tests.py:209
 msgid "Данные не корректны. Пожалуйста, попробуйте еще раз."
 msgstr "The data is incorrect. Pleace, try again."
 
@@ -1098,9 +1169,9 @@ msgstr "Here you can change the password"
 msgid "Сохранить"
 msgstr "Save"
 
-#: user/templates/user/profile.html:76 user/tests.py:317 user/tests.py:331
-#: user/tests.py:352 user/tests.py:368 user/tests.py:380 user/tests.py:400
-#: user/tests.py:416
+#: user/templates/user/profile.html:76 user/tests.py:329 user/tests.py:343
+#: user/tests.py:364 user/tests.py:380 user/tests.py:392 user/tests.py:412
+#: user/tests.py:428
 msgid "Профиль успешно сохранен"
 msgstr "Profile saved successfully"
 
@@ -1112,17 +1183,26 @@ msgstr "Sign up"
 msgid "Навигация"
 msgstr "Navigation"
 
-#: user/tests.py:147 user/tests.py:333
+#: user/tests.py:159 user/tests.py:345
 msgid "Enter a valid phone number"
 msgstr ""
 
-#: user/tests.py:162
+#: user/tests.py:174
 msgid "required"
 msgstr ""
 
-#: user/tests.py:332
+#: user/tests.py:344
 msgid "Введите правильный адрес электронной почты."
 msgstr "Enter the correct email address."
+
+#~ msgid "Оплата не выполнена, на вашем счёте не хватает средств"
+#~ msgstr ""
+#~ "The payment has not been completed, there are not enough funds on your "
+#~ "account"
+
+#~ msgid "Оплата не выполнена, произошел сбой при списании средств"
+#~ msgstr ""
+#~ "The payment was not completed, there was a failure when debiting funds"
 
 #, fuzzy
 #~ msgid "магазинs"
