@@ -1,12 +1,12 @@
 import os
 from datetime import datetime
 from django.conf import settings
+from celery import shared_task
 
-from payment.celery import app
 from .models import Process
 
 
-@app.task(name="shop_import", track_started=True)
+@shared_task(name="shop_import", track_started=True)
 def shop_import(file_names, pr_name, email=None):
     from .services import one_shop_import, send_mail_from_site
     name_log = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.txt")
