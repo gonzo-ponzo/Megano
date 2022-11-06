@@ -104,10 +104,9 @@
 
         <div class="Header-search">
           <div class="search">
-            <form class="form form_search" action="{% url 'search_product' %}" method="post">
-              {% csrf_token %}
+            <form class="form form_search" action="{% url 'search_product' %}" method="get">
               <input class="search-input" id="query" name="search_query" type="text" placeholder="{% trans "Введите текст для поиска..." %}"/>
-              <button class="search-button" type="submit" name="search" id="search"><img src="{% static 'img/icons/search.svg' %}" alt="search.svg"/>{% trans "поиск" %}
+              <button class="search-button" type="submit"><img src="{% static 'img/icons/search.svg' %}" alt="search.svg"/>{% trans "поиск" %}
               </button>
             </form>
           </div>

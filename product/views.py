@@ -224,17 +224,10 @@ class SearchView(ListView):
     template_name = "product/search.html"
     context_objects_name = "product_list"
 
-    def post(self, request):
-        return self.get(request)
-
     def get_queryset(self):
-
-        search_query = self.request.POST.get('search_query')
+        search_query = self.request.GET.get('search_query')
         products = SearchProduct(search_query)
-        queryset = products.queryset
-
-        # queryset = SortProductsResult(products=filter_product.queryset).sort_by_params(**self.request.GET.dict())
-
+        queryset = SortProductsResult(products=products.queryset).sort_by_params(**self.request.GET.dict())
         return queryset
 
     def get_paginate_by(self, queryset):
@@ -243,6 +236,6 @@ class SearchView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["sort_data"] = SortProductsResult.get_data_for_sort_links(**self.request.GET.dict())
-        context["sort_part_url"] = SortProductsResult.make_sort_part_url(self.request.GET.dict())
+        # context["sort_part_url"] = SortProductsResult.make_sort_part_url(self.request.GET.dict())
+        context["filter_part_url"] = f'search_query={self.request.GET.get("search_query")}'
         return context
-
