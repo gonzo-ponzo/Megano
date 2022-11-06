@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from product.models import ProductCategory, Product, Manufacturer, Offer
@@ -20,6 +21,7 @@ class MainPageView(CacheTestCase):
         p2 = Product.objects.create(name="product_222", limited=True, category=category, manufacturer=man)
         p3 = Product.objects.create(name="product_333", limited=True, category=category, manufacturer=man)
         user = User.objects.create_user(email="testabcd@abcdtest.net", password="qwerty")
+        group, _ = Group.objects.get_or_create(name="SHOP_owner")
         shop = Shop.objects.create(
             name="shop",
             description="description",

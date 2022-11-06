@@ -19,7 +19,7 @@ class TestPopularCategory(CacheTestCase):
             category = ProductCategory.objects.create(name=f"category_{i}", slug=f"category{i}")
             for p in range(i):
                 product = Product.objects.create(
-                    name=f"product_{i}", limited=False, category=category, manufacturer=man
+                    name=f"product_{i}_{p}", limited=False, category=category, manufacturer=man
                 )
                 ProductView.objects.create(user=user, product=product)
 

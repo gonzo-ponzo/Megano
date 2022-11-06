@@ -1,10 +1,11 @@
 from random import randint
+from functools import reduce
 from urllib.parse import urlencode
 from copy import copy
 from statistics import mean
 
 from django.db.models.query import QuerySet
-from django.db.models import F, Min, Max, Sum, Count, Avg, OuterRef, Subquery
+from django.db.models import F, Q, Min, Max, Sum, Count, Avg, OuterRef, Subquery
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
@@ -166,7 +167,27 @@ class PropertyCompare:
         return self.product_list
 
 
-class FilterProductsResult:
+class QuerysetForCatalog:
+
+    @staticmethod
+    def get_queryset_for_catalog(without_offer=True):
+        queryset = Product.objects.all()
+        if without_offer:
+            queryset = queryset.filter(offer__isnull=False)
+        queryset = queryset.prefetch_related("productimage_set")
+        queryset = queryset.select_related("category")
+        # queryset = queryset.prefetch_related('shop')
+        queryset = queryset.annotate(offer_count=Count("offer", distinct=True))
+        queryset = queryset.annotate(min_price=Min("offer__price"))
+        queryset = queryset.annotate(review_count=Count("review", distinct=True))
+        queryset = queryset.annotate(rating=Avg("review__rating", default=0))
+        queryset = queryset.annotate(rest=Sum("offer__amount", distinct=True))
+        queryset = queryset.annotate(order_count=Sum("offer__orderoffer__amount", default=0, distinct=True))
+        queryset = queryset.order_by("pk")
+        return queryset
+
+
+class FilterProductsResult(QuerysetForCatalog):
     """
     Фильтр для списка продуктов
     """
@@ -185,7 +206,6 @@ class FilterProductsResult:
         """
 
         self.__queryset = self.get_queryset_for_catalog()
-
         self.title = get_params.get("fil_title", None)
         self.actual = bool(get_params.get("fil_actual"))
         self.limit = bool(get_params.get("fil_limit"))
@@ -194,23 +214,6 @@ class FilterProductsResult:
         self.min_price = self.max_price = None
         if len(price) == 2 and price[0].isdigit() and price[1].isdigit():
             self.min_price, self.max_price = map(int, price)
-
-    @staticmethod
-    def get_queryset_for_catalog(without_offer=True):
-        queryset = Product.objects.all()
-        if without_offer:
-            queryset = queryset.filter(offer__isnull=False)
-        queryset = queryset.prefetch_related("productimage_set")
-        queryset = queryset.select_related("category")
-        # queryset = queryset.prefetch_related('shop')
-        queryset = queryset.annotate(offer_count=Count("offer", distinct=True))
-        queryset = queryset.annotate(min_price=Min("offer__price"))
-        queryset = queryset.annotate(review_count=Count("review", distinct=True))
-        queryset = queryset.annotate(rating=Avg("review__rating", default=0))
-        queryset = queryset.annotate(rest=Sum("offer__amount", distinct=True))
-        queryset = queryset.annotate(order_count=Sum("offer__orderoffer__amount", default=0, distinct=True))
-        queryset = queryset.order_by("pk")
-        return queryset
 
     @property
     def queryset(self):
@@ -380,7 +383,7 @@ class DailyOffer:
 
     @staticmethod
     def __get_random_product():
-        queryset = FilterProductsResult.get_queryset_for_catalog()
+        queryset = QuerysetForCatalog.get_queryset_for_catalog()
         queryset = queryset.only("id", "name", "category__name")
         queryset_for_choice = queryset.filter(limited=True).filter(rest__gt=0)
         if not queryset_for_choice:
@@ -421,13 +424,43 @@ class DailyOffer:
             return self.__product.id
 
 
-class SearchProduct:
+class SearchProduct(QuerysetForCatalog):
     """
     Поиск продукта
     """
 
+    def __init__(self, search_query=None):
+        self.__search_query = self.__handle_search_string(search_query)
+        if self.__search_query:
+            self.__queryset = self.get_queryset_for_catalog(without_offer=False)
+            self.search()
+        else:
+            self.__queryset = Product.objects.none()
+
+    @staticmethod
+    def __handle_search_string(search_query):
+        """Разбиваем запрос на слова, оставляем слова длиной 3 и больше символа """
+        if search_query:
+            search_query = [word for word in search_query.split() if len(word) >= 3]
+        return search_query
+
     def search(self):
-        pass
+
+        in_name = []
+        in_description = []
+
+        for word in self.__search_query:
+            in_name.append(Q(name__icontains=word))
+            in_description.append(Q(description__icontains=word))
+
+        in_name = reduce(lambda a, b: a & b, in_name)
+        in_description = reduce(lambda a, b: a & b, in_description)
+
+        self.__queryset = self.__queryset.filter(in_name | in_description)
+
+    @property
+    def queryset(self):
+        return self.__queryset
 
 
 class BrowsingHistory:
@@ -471,7 +504,7 @@ class BrowsingHistory:
 
     def get_history(self, number_of_entries=20):
         """Получить последние записи истории просмотренных товаров"""
-        products = FilterProductsResult.get_queryset_for_catalog(without_offer=False)
+        products = QuerysetForCatalog.get_queryset_for_catalog(without_offer=False)
         products = products.filter(id__in=ProductView.objects.filter(user=self.user).values_list("product"))
         products = products.annotate(date_view=F("productview__updated_at"))
         products = products.order_by("-date_view")
