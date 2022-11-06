@@ -4281,6 +4281,11 @@ a.Cart-title {
 .Section_columnLeft .Section-content {
   padding-left: 354px;
 }
+
+.Section_columnLeft .Section-search {
+  padding-left: 24px;
+}
+
 .Section_columnLeft .Section-column {
   margin-right: -304px;
 }

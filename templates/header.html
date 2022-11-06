@@ -101,15 +101,18 @@
         {% include 'inc/_product_category.html' %}
         <div class="Header-searchLink"><img src="{% static 'img/icons/search.svg' %}" alt="search.svg"/>
         </div>
+
         <div class="Header-search">
           <div class="search">
-            <form class="form form_search" action="#" method="post">
-              <input class="search-input" id="query" name="query" type="text" placeholder="{% trans "Введите текст для поиска..." %}"/>
+            <form class="form form_search" action="{% url 'search_product' %}" method="post">
+              {% csrf_token %}
+              <input class="search-input" id="query" name="search_query" type="text" placeholder="{% trans "Введите текст для поиска..." %}"/>
               <button class="search-button" type="submit" name="search" id="search"><img src="{% static 'img/icons/search.svg' %}" alt="search.svg"/>{% trans "поиск" %}
               </button>
             </form>
           </div>
         </div>
+
       </div>
     </div>
 
