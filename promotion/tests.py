@@ -4,7 +4,6 @@ from product.tests.test_product_category import ProductCategoryCacheCleanTest
 from .models import Banner
 from product.models import Product
 from user.tests import CacheTestCase
-from django.urls import reverse
 from django.contrib.auth import get_user_model
 
 
@@ -119,5 +118,3 @@ class PromotionOfferTest(CacheTestCase):
         result = user.cart["1"]["1"]["discount"].get("4", None)
 
         self.assertEqual(result, 0)
-
-

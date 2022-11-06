@@ -369,6 +369,7 @@ class DeliveryTest(CacheTestCase):
         self.assertEqual(Delivery.objects.count(), 1)
         self.assertTrue(delivery_id_old != delivery_new.id)
 
+
 class CartTest(CacheTestCase):
     fixtures = [
         "product_category.json",
@@ -402,7 +403,7 @@ class CartTest(CacheTestCase):
         self.assertTemplateUsed(resp, "order/cart.html")
 
     def test_cart_creation(self):
-        resp = self.client.get(reverse("order:cart-page"))
+        self.client.get(reverse("order:cart-page"))
         user = User.objects.filter(email=self.__email).first()
         cart = user.cart
         self.assertEqual(cart, {})
@@ -420,9 +421,10 @@ class CartTest(CacheTestCase):
         cart = user.cart
         self.assertEqual(cart, {})
 
-    def test_remove_from_cart(self):
+    def test_clear_cart(self):
         self.client.get("/order/cart-add/1/1/")
         self.client.get("/order/cart-clear/")
         user = User.objects.filter(email=self.__email).first()
         cart = user.cart
         self.assertEqual(cart, {})
+        

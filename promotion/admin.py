@@ -63,7 +63,7 @@ class PromotionOfferAdmin(admin.ModelAdmin):
     @admin.action(description=_("Деактивировать"))
     def make_inactive(self, request, queryset):
         queryset.update(is_active=False)
-        
+
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super().get_form(request, obj=obj, change=change, **kwargs)
         form.base_fields["discount_type_value"].help_text = """
