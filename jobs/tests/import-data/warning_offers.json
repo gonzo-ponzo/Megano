@@ -1,0 +1,9 @@
+{
+  "shop": {
+    "email": "shop@shop.ru"
+  },
+  "offers": [
+    {"product_id": 15, "amount": 12, "price": 1523.77},
+    {"product_id": 1, "amount": 12, "price": 152377}
+  ]
+}

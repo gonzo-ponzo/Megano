@@ -28,6 +28,10 @@ class Product(Model):
     class Meta:
         verbose_name = _("продукт")
         verbose_name_plural = _("продукты")
+        # constraints = [  # TODO вообще-то, это надо бы вернуть, и починить тесты
+        #    models.UniqueConstraint(fields=["name", "manufacturer", "category"],
+        #                            name="unique name by manufacturer in category")
+        # ]
 
 
 class Offer(Model):
@@ -115,6 +119,7 @@ class Property(Timestampable):
     class Meta:
         verbose_name = _("свойство продукта")
         verbose_name_plural = _("свойства продукта")
+        ordering = ("name",)
 
 
 class ProductProperty(Timestampable):
@@ -132,7 +137,7 @@ class ProductProperty(Timestampable):
 class Manufacturer(Model):
     """Производитель"""
 
-    name = models.CharField(max_length=255, verbose_name=_("название"))
+    name = models.CharField(max_length=255, unique=True, verbose_name=_("название"))
     logo = models.ImageField(blank=True, upload_to="manufacturer/%Y/%m/%d", verbose_name=_("логотип"))
     description = models.TextField(blank=True, verbose_name=_("описание"))
 

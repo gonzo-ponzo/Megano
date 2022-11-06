@@ -1,0 +1,14 @@
+{
+  "shop": {
+    "email": "email@email.email",
+    "phone": "+12154525252",
+    "address": "Адрес магазина",
+    "logo_image": "orig.webp"
+  },
+  "offers": [
+    {"product_id": 10, "amount": -12, "price": 1523},
+    {"product_id": 11, "amount": 12, "price": "4000"},
+    {"product_id": 15, "amount": 12, "price": -6000},
+    {"product_id": -18, "amount": 12, "price": 70000.3553}
+  ]
+}
