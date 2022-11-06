@@ -427,4 +427,3 @@ class CartTest(CacheTestCase):
         user = User.objects.filter(email=self.__email).first()
         cart = user.cart
         self.assertEqual(cart, {})
-        
