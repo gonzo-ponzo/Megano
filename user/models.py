@@ -47,10 +47,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
     avatar = models.ImageField(blank=True, upload_to="avatar/%Y/%m/%d", verbose_name=_("фото"))
 
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-    cart = models.JSONField(default=dict)
+    is_active = models.BooleanField(default=True, verbose_name=_('активный'))
+    is_staff = models.BooleanField(default=False, verbose_name=_('персонал'))
+    is_superuser = models.BooleanField(default=False, verbose_name=_('суперпользователь'))
+    cart = models.JSONField(default=dict, verbose_name=_('корзина'))
 
     objects = CustomUserManager()
 

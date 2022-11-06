@@ -39,9 +39,9 @@
                 <div class="ProductCard-info">
                   <div class="ProductCard-cost">
                       {% if detailed_product.get_min_price %}
-                        <div class="ProductCard-price">${{ detailed_product.get_min_price }} - ${{ detailed_product.get_top_price }}
+                        <div class="ProductCard-price">{{ detailed_product.get_min_price }} - {{ detailed_product.get_top_price }} руб.
                       {% else %}
-                        <div class="ProductCard-price">Нет в продаже
+                        <div class="ProductCard-price">{% trans "Нет в продаже" %}
                       {% endif %}
                     </div>
                   </div>
@@ -70,7 +70,7 @@
             </div>
           </div>
           <div class="Tabs Tabs_default">
-            <div class="Tabs-links" id="tabs"><a class="Tabs-link_ACTIVE Tabs-link" href="#description"><span>{% trans "Описание" %}</span></a><a class="Tabs-link" href="#sellers"><span>Продавцы</span></a><a class="Tabs-link" href="#reviews"><span>Отзывы ({{ count_reviews }})</span></a>
+            <div class="Tabs-links" id="tabs"><a class="Tabs-link_ACTIVE Tabs-link" href="#description"><span>{% trans "Описание" %}</span></a><a class="Tabs-link" href="#sellers"><span>{% trans "Продавцы" %}</span></a><a class="Tabs-link" href="#reviews"><span>{% trans "Отзывы" %} ({{ count_reviews }})</span></a>
             </div>
             <div class="Tabs-wrap">
               <div class="Tabs-block" id="description">
@@ -113,14 +113,14 @@
                       <div class="Categories-splitProps">
                       </div>
                       <div class="Categories-block Categories-price">
-                        <strong>€{{ price }}
+                        <strong>{{ price }} руб.
                         </strong>
                       </div>
                       <div class="Categories-block">
                         <strong>{{ amounth }} шт.
                         </strong>
                       </div>
-                      <div class="Categories-block Categories-button"><a class="btn btn_primary" href="{% url 'order:cart-add' object.id shop.id %}"><img class="btn-icon" src="{% static 'img/icons/card/cart_white.svg' %}" alt="cart_white.svg"/><span class="btn-content">Добавить в корзину</span></a>
+                      <div class="Categories-block Categories-button"><a class="btn btn_primary" href="{% url 'order:cart-add' object.id shop.id %}"><img class="btn-icon" src="{% static 'img/icons/card/cart_white.svg' %}" alt="cart_white.svg"/><span class="btn-content">{% trans "Добавить в корзину" %}</span></a>
                       </div>
                     </div>
                   {% endfor %}

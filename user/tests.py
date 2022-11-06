@@ -1,14 +1,27 @@
 import os
 from django.contrib import auth
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.contrib.auth import get_user_model, authenticate
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.core.files import File
+from django.conf import settings
+from django.core.cache import cache
 
 
-class UserTestLoginExample(TestCase):
+@override_settings(CACHES=settings.TEST_CACHES)
+class CacheTestCase(TestCase):
+    """Этот класс переопределяет хранилище кэша"""
+
+    @classmethod
+    def tearDownClass(cls):
+        cache.clear()
+        super().tearDownClass()
+
+
+class UserTestLoginExample(CacheTestCase):
     """Примеры создания пользователей для использования в тестах"""
+
     @classmethod
     def setUpTestData(cls):
         get_user_model().objects.create_user(email="test@e.mail", password="test_password")
@@ -32,15 +45,11 @@ User = get_user_model()
 
 def user_create(email="test@test.com"):
     email = email
-    test_user = User.objects.create(
-        email=email,
-        first_name="test_f",
-        last_name="test_l"
-    )
+    test_user = User.objects.create(email=email, first_name="test_f", last_name="test_l")
     return test_user
 
 
-class UserRegisterViewTest(TestCase):
+class UserRegisterViewTest(CacheTestCase):
     @classmethod
     def setUpTestData(cls):
         user_create()
@@ -63,8 +72,8 @@ class UserRegisterViewTest(TestCase):
                 "first_name": "test_first_name",
                 "last_name": "test_last_name",
                 "middle_name": "test_middle_name",
-                "phone": "+7(926)111-11-11"
-            }
+                "phone": "+7(926)111-11-11",
+            },
         )
         self.assertRedirects(response, reverse("main-page"))
         self.assertEqual(User.objects.filter(email=email).count(), 1)
@@ -75,7 +84,7 @@ class UserRegisterViewTest(TestCase):
         url = reverse("registration-page")
         email = "email@test.com"
         file_source = "user/pics/test_avatar.jpg"
-        with open(file_source, 'rb') as fp:
+        with open(file_source, "rb") as fp:
             response = self.client.post(
                 url,
                 {
@@ -86,8 +95,8 @@ class UserRegisterViewTest(TestCase):
                     "last_name": "test_last_name",
                     "middle_name": "test_middle_name",
                     "phone": "+7(926)111-11-11",
-                    "avatar": fp
-                }
+                    "avatar": fp,
+                },
             )
             self.assertRedirects(response, reverse("main-page"))
         self.assertEqual(User.objects.filter(email=email).count(), 1)
@@ -111,8 +120,8 @@ class UserRegisterViewTest(TestCase):
                 "first_name": "test_first_name",
                 "last_name": "test_last_name",
                 "middle_name": "test_middle_name",
-                "phone": "+7(926)111-11-11"
-            }
+                "phone": "+7(926)111-11-11",
+            },
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, _("Пароли не совпадают"))
@@ -127,8 +136,8 @@ class UserRegisterViewTest(TestCase):
                 "first_name": "test_first_name",
                 "last_name": "test_last_name",
                 "middle_name": "test_middle_name",
-                "phone": "+7(926)111-11-11"
-            }
+                "phone": "+7(926)111-11-11",
+            },
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, _("Пользователь с таким емейлом уже зарегистрирован"))
@@ -143,8 +152,8 @@ class UserRegisterViewTest(TestCase):
                 "first_name": "test_first_name",
                 "last_name": "test_last_name",
                 "middle_name": "test_middle_name",
-                "phone": "1111"
-            }
+                "phone": "1111",
+            },
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, _("Enter a valid phone number"))
@@ -158,14 +167,14 @@ class UserRegisterViewTest(TestCase):
                 "password2": "test_password",
                 "first_name": "test_first_name",
                 "last_name": "test_last_name",
-                "middle_name": "test_middle_name"
-            }
+                "middle_name": "test_middle_name",
+            },
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, _("required"))
 
 
-class UserLoginViewTest(TestCase):
+class UserLoginViewTest(CacheTestCase):
     @classmethod
     def setUpTestData(cls):
         user = user_create()
@@ -202,7 +211,7 @@ class UserLoginViewTest(TestCase):
         self.assertFalse(user.is_authenticated)
 
 
-class UserLogoutViewTest(TestCase):
+class UserLogoutViewTest(CacheTestCase):
     def test_success_logout(self):
         get_user_model().objects.create_user(email="test@e.mail", password="test_password")
         self.client.login(email="test@e.mail", password="test_password")
@@ -213,17 +222,17 @@ class UserLogoutViewTest(TestCase):
         self.assertFalse(user.is_authenticated)
 
 
-class UserPageNotAuthenticatedTest(TestCase):
+class UserPageNotAuthenticatedTest(CacheTestCase):
     def test_userpages_not_allowed(self):
-        names = ['account', 'profile', 'orders_history', 'views_history']
-        url_login = reverse('login-page')
+        names = ["account", "profile", "order:history-orders", "views_history"]
+        url_login = reverse("login-page")
         for name in names:
             url = reverse(name)
             response = self.client.get(url)
-            self.assertRedirects(response, f'{url_login}?next={url}')
+            self.assertRedirects(response, f"{url_login}?next={url}")
 
 
-class UserPagesTest(TestCase):
+class UserPagesTest(CacheTestCase):
     @classmethod
     def setUpTestData(cls):
         get_user_model().objects.create_user(email="test@e.mail", password="test_password")
@@ -232,8 +241,8 @@ class UserPagesTest(TestCase):
         self.client.login(email="test@e.mail", password="test_password")
 
     def test_userpage(self):
-        names = ['profile', 'orders_history', 'views_history']
-        url = reverse('account')
+        names = ["profile", "order:history-orders", "views_history"]
+        url = reverse("account")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "user/account.html")
@@ -242,26 +251,34 @@ class UserPagesTest(TestCase):
         # TODO проверить наличие остальных разделов
 
     def test_userpage_update_get(self):
-        names = ['account', 'orders_history', 'views_history']
-        url = reverse('profile')
+        names = ["account", "order:history-orders", "views_history"]
+        url = reverse("profile")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "user/profile.html")
         for name in names:
             self.assertContains(response, reverse(name))
 
+    def test_userpage_history_order(self):
+        names = ["account", "profile", "views_history"]
+        url = reverse("order:history-orders")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "order/historyorder.html")
+        for name in names:
+            self.assertContains(response, reverse(name))
 
-class AccountTest(TestCase):
+
+class AccountTest(CacheTestCase):
     @classmethod
     def setUpTestData(cls):
-        get_user_model().objects.create(email="test@e.mail", first_name="Hassan",
-                                        last_name="Abdurahman", middle_name="ibn Hottab")
-        get_user_model().objects.create(email="test@em.ail", first_name="Name",
-                                        last_name="Family")
-        file_source = 'user/pics/test_avatar.jpg'
-        with open(file_source, 'rb') as fp:
-            get_user_model().objects.create(email="test@ema.il",
-                                            avatar=File(fp, name=os.path.basename(fp.name)))
+        get_user_model().objects.create(
+            email="test@e.mail", first_name="Hassan", last_name="Abdurahman", middle_name="ibn Hottab"
+        )
+        get_user_model().objects.create(email="test@em.ail", first_name="Name", last_name="Family")
+        file_source = "user/pics/test_avatar.jpg"
+        with open(file_source, "rb") as fp:
+            get_user_model().objects.create(email="test@ema.il", avatar=File(fp, name=os.path.basename(fp.name)))
 
     @classmethod
     def tearDownClass(cls):
@@ -271,7 +288,7 @@ class AccountTest(TestCase):
         super(AccountTest, cls).tearDownClass()  # Call parent last
 
     def test_fio(self):
-        url = reverse('account')
+        url = reverse("account")
         user1 = get_user_model().objects.get(email="test@e.mail")
         self.client.force_login(user1)
         response = self.client.get(url)
@@ -282,14 +299,14 @@ class AccountTest(TestCase):
         self.assertContains(response, user2.get_fio)
 
     def test_avatar(self):
-        url = reverse('account')
+        url = reverse("account")
         user3 = get_user_model().objects.get(email="test@ema.il")
         self.client.force_login(user3)
         response = self.client.get(url)
         self.assertContains(response, user3.avatar.url)
 
 
-class UpdateProfileTest(TestCase):
+class UpdateProfileTest(CacheTestCase):
     @classmethod
     def setUpTestData(cls):
         get_user_model().objects.create_user(email="test@e.mail", password="password")
@@ -300,8 +317,13 @@ class UpdateProfileTest(TestCase):
     def test_post_simple_update(self):
         # только фамилию-имя, телефон, емейл
         url = reverse("profile")
-        form = {"email": "pupkin@mail.mail", "phone": "+79262221133",
-                "fio": "Pupkin Basil Mirmirovich", "password1": "", "password2": ""}
+        form = {
+            "email": "pupkin@mail.mail",
+            "phone": "+79262221133",
+            "fio": "Pupkin Basil Mirmirovich",
+            "password1": "",
+            "password2": "",
+        }
         response = self.client.post(url, form)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, _("Профиль успешно сохранен"))
@@ -330,8 +352,13 @@ class UpdateProfileTest(TestCase):
     def test_change_password(self):
         # форма с двумя введенными паролями
         url = reverse("profile")
-        form = {"email": "test@e.mail", "phone": "+79262221133", "fio": "Pupkin Basil",
-                "password1": "new_password", "password2": "new_password"}
+        form = {
+            "email": "test@e.mail",
+            "phone": "+79262221133",
+            "fio": "Pupkin Basil",
+            "password1": "new_password",
+            "password2": "new_password",
+        }
         response = self.client.post(url, form)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, _("Профиль успешно сохранен"))
@@ -341,15 +368,25 @@ class UpdateProfileTest(TestCase):
     def test_fail_change_password(self):
         # введен один пароль, несовпадающие пароли
         url = reverse("profile")
-        form = {"email": "test@e.mail", "phone": "+79262221133", "fio": "Pupkin Basil",
-                "password1": "new_password", "password2": ""}
+        form = {
+            "email": "test@e.mail",
+            "phone": "+79262221133",
+            "fio": "Pupkin Basil",
+            "password1": "new_password",
+            "password2": "",
+        }
         response = self.client.post(url, form)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, _("Профиль успешно сохранен"))
         self.assertTrue(authenticate(email="test@e.mail", password="password"))
         self.assertFalse(authenticate(email="test@e.mail", password="new_password"))
-        form = {"email": "test@e.mail", "phone": "+79262221133", "fio": "Pupkin Basil",
-                "password1": "new_password", "password2": "another_new_password"}
+        form = {
+            "email": "test@e.mail",
+            "phone": "+79262221133",
+            "fio": "Pupkin Basil",
+            "password1": "new_password",
+            "password2": "another_new_password",
+        }
         response = self.client.post(url, form)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, _("Профиль успешно сохранен"))
@@ -361,9 +398,15 @@ class UpdateProfileTest(TestCase):
         # повторный запрос с новой картинкой - файл должен замениться на новый
         url = reverse("profile")
         file_source = "user/pics/test_avatar.jpg"
-        with open(file_source, 'rb') as fp:
-            form = {"email": "pupkin@mail.mail", "phone": "+79262221133", "fio": "Pupkin Basil",
-                    "password1": "", "password2": "", "avatar": fp}
+        with open(file_source, "rb") as fp:
+            form = {
+                "email": "pupkin@mail.mail",
+                "phone": "+79262221133",
+                "fio": "Pupkin Basil",
+                "password1": "",
+                "password2": "",
+                "avatar": fp,
+            }
             response = self.client.post(url, form)
             self.assertEqual(response.status_code, 200)
             self.assertContains(response, _("Профиль успешно сохранен"))
@@ -371,9 +414,15 @@ class UpdateProfileTest(TestCase):
         self.assertEqual(os.path.basename(user.avatar.name), "test_avatar.jpg")
         last_avatar = user.avatar
         file_source = "user/pics/test_avatar.png"
-        with open(file_source, 'rb') as fp:
-            form = {"email": "pupkin@mail.mail", "phone": "+79262221133", "fio": "Pupkin Basil",
-                    "password1": "", "password2": "", "avatar": fp}
+        with open(file_source, "rb") as fp:
+            form = {
+                "email": "pupkin@mail.mail",
+                "phone": "+79262221133",
+                "fio": "Pupkin Basil",
+                "password1": "",
+                "password2": "",
+                "avatar": fp,
+            }
             response = self.client.post(url, form)
             self.assertEqual(response.status_code, 200)
             self.assertContains(response, _("Профиль успешно сохранен"))
@@ -383,3 +432,36 @@ class UpdateProfileTest(TestCase):
         avatar = user.avatar
         if os.path.isfile(avatar.path):
             os.remove(avatar.path)
+
+
+class TestViewHistory(CacheTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(email="test@test.net", password="qwerty")
+
+    def test_view_url_exists_at_desired_location(self):
+        self.client.force_login(self.user)
+        resp = self.client.get("/history/")
+        self.assertEqual(resp.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        self.client.force_login(self.user)
+        resp = self.client.get(reverse("views_history"))
+        self.assertEqual(resp.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        self.client.force_login(self.user)
+        resp = self.client.get(reverse("views_history"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp, "user/historyview.html")
+
+    def test_redirect_to_login_for_unauthorized_user(self):
+        resp = self.client.get(reverse("views_history"))
+        self.assertRedirects(resp, reverse("login-page") + "?next=/history/")
+
+    def test_product_list_in_context(self):
+        self.client.force_login(self.user)
+        resp = self.client.get(reverse("views_history"))
+        self.assertEqual(resp.status_code, 200)
+        context = resp.context
+        self.assertIsNotNone(context.get("viewed_products"))

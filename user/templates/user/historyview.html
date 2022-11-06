@@ -1,0 +1,60 @@
+{% load static %}
+{% load common %}
+{% load i18n %}
+{% trans "История просмотра" as trans_history %}
+{% include 'base.html' with title=trans_history %}
+
+<body class="Site">
+
+      {% include 'header.html' %}
+
+
+  <div class="Middle Middle_top">
+    <div class="Middle-top">
+      <div class="wrap">
+        <div class="Middle-header">
+          <h1 class="Middle-title">{{ trans_history }}</h1>
+          <ul class="breadcrumbs Middle-breadcrumbs">
+            <li class="breadcrumbs-item"><a href="../product/templates/product/index.html">{% trans "Главная" %}</a>
+            </li>
+            <li class="breadcrumbs-item breadcrumbs-item_current"><span>{{ trans_history }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="Section Section_column Section_columnLeft">
+      <div class="wrap">
+
+        {% include 'user/user_nav.html' with item="views" %}
+
+        <div class="Section-content">
+
+          <div class="Cards">
+
+                {% for product in viewed_products %}
+                    {# карточки продуктов #}
+                    {% include 'product/inc/_product_card.html' with card_class=card_style|index:forloop.counter0 %}
+                {% empty %}
+                    <div>
+                        {% trans "Продуктов не найдено" %}.
+                    </div>
+                {% endfor %}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% include 'footer.html' %}
+
+  <script src="assets/plg/jQuery/jquery-3.5.0.slim.min.js"></script>
+  <script src="assets/plg/form/jquery.form.js"></script>
+  <script src="assets/plg/form/jquery.maskedinput.min.js"></script>
+  <script src="assets/plg/range/ion.rangeSlider.min.js"></script>
+  <script src="assets/plg/Slider/slick.min.js"></script>
+  <script src="assets/js/scripts.js"></script>
+</body></html>

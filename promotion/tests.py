@@ -1,9 +1,9 @@
-from django.test import TestCase
 from django.conf import settings
+from django.urls import reverse
 from product.tests.test_product_category import ProductCategoryCacheCleanTest
 from .models import Banner
 from product.models import Product
-from django.urls import reverse
+from user.tests import CacheTestCase
 
 
 class BannerCacheCleanTest(ProductCategoryCacheCleanTest):
@@ -16,7 +16,7 @@ class BannerCacheCleanTest(ProductCategoryCacheCleanTest):
         cls._model.objects.create(name="new", product=product, image="")
 
 
-class PromotionOfferTest(TestCase):
+class PromotionOfferTest(CacheTestCase):
     def test_view_url_exists_at_desired_location(self):
         resp = self.client.get("/promotion/")
         self.assertEqual(resp.status_code, 200)

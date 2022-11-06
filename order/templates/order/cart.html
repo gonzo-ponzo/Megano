@@ -1,5 +1,9 @@
 {% load static %}
-{% include 'base.html' with title="Cart" %}
+{% load i18n %}
+{% trans "Корзина" as trans_cart %}
+{% include 'base.html' with title=trans_cart %}
+
+
 <body class="Site">
 {% if messages %}
 <ul class="messages">
@@ -13,12 +17,12 @@
     <div class="Middle-top">
       <div class="wrap">
         <div class="Middle-header">
-          <h1 class="Middle-title">Корзина
+          <h1 class="Middle-title">{{ trans_cart }}
           </h1>
           <ul class="breadcrumbs Middle-breadcrumbs">
             <li class="breadcrumbs-item"><a href="/static">home</a>
             </li>
-            <li class="breadcrumbs-item breadcrumbs-item_current"><span>Корзина</span>
+            <li class="breadcrumbs-item breadcrumbs-item_current"><span>{{ trans_cart }}</span>
             </li>
           </ul>
         </div>
@@ -40,25 +44,25 @@
               <div class="Cart-block Cart-block_info">
                 {% if item.quantity > item.limits %}
                   <div class="Cart-desc alert alert-error">
-                    Превышен лимит. Доступный остаток: {{ item.limits }}
+                    {% trans "Превышен лимит. Доступный остаток:" %} {{ item.limits }}
                   </div>
                 {% endif %}
               </div>
               {% if item.final_price < item.offer_price %}
                 <div class="Cart-block Cart-block_price">
                   <div class="Cart-price">
-                      {{ item.final_price }}$
+                      {{ item.final_price }} руб.
                   </div>
                 </div>
                 <div class="Cart-block Cart-block_price">
                   <div class="Cart-price">
-                    <s>{{ item.offer_price }}$</s>
+                    <s>{{ item.offer_price }} руб.</s>
                   </div>
                 </div>
               {% else %}
               <div class="Cart-block Cart-block_price">
                 <div class="Cart-price">
-                    {{ item.offer_price }}$
+                    {{ item.offer_price }} руб.
                 </div>
               </div>
               {% endif %}
@@ -82,10 +86,11 @@
           {% endfor %}
           <div class="Cart-total">
             <div class="Cart-block Cart-block_total">
-              <strong class="Cart-title">Итого:
-              </strong><span class="Cart-price">{{ cart_price }}$</span>
+              <strong class="Cart-title">{% trans "Итого" %}:
+              </strong><span class="Cart-price">{{ cart_price }} руб.</span>
             </div>
-            <div class="Cart-block"><a class="btn btn_success btn_lg" href="/order">Оформить заказ</a>
+            <div class="Cart-block">
+                <a class="btn btn_success btn_lg" href="{% url 'order:create-order' %}">{% trans "Оформить заказ" %}</a>
             </div>
           </div>
         </form>

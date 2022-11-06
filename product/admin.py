@@ -32,7 +32,7 @@ class ProductImageInLine(admin.TabularInline):
             return mark_safe(f'<img src="{obj.image.url}" width="150">')
         return "-"
 
-    get_image.short_description = "фото"
+    get_image.short_description = _("фото")
 
 
 @admin.register(Product)

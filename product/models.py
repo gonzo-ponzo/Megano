@@ -40,7 +40,7 @@ class Offer(Model):
     shop = models.ForeignKey(Shop, on_delete=models.DO_NOTHING, verbose_name=_("магазин"))
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, verbose_name=_("продукт"))
     price = models.DecimalField(max_digits=11, decimal_places=2, verbose_name=_("цена"))
-    amount = models.PositiveIntegerField(verbose_name=_("количество"))
+    amount = models.IntegerField(verbose_name=_("количество"))
 
     def __str__(self):
         return f"{self.shop} - {self.product}"
@@ -175,4 +175,4 @@ class ProductView(Model):
     class Meta:
         verbose_name = _("просмотренный продукт")
         verbose_name_plural = _("просмотренные продукты")
-        ordering = ["-created_at"]
+        # unique_together = ['user', 'product']

@@ -60,6 +60,43 @@
     fill: #ffc000;
 }
 
+/*Order*/
+.custom-form-error {
+  font-size: 14px;
+  color: #f26d7d;
+}
+
+.btn-Cart-total {
+    border-top: 0;
+    justify-content: flex-end;
+}
+
+.custom-Cart-total {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.custom-Order-total {
+    border-top: 0;
+    padding-top: 5px;
+}
+
+.custom-Order-delivery {
+    padding-bottom: 5px;
+}
+
+.order-total-normal,
+.order-total-express {
+    display: none;
+}
+
+.order-total {
+    display: block;
+}
+
+
 
 /*alert*/
 .alert {

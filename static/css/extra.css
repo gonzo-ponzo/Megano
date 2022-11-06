@@ -958,6 +958,12 @@
   justify-content: center;
   border-radius: 100px;
 }
+.Card-sale-right {
+  right: 19px;
+  left: auto;
+  top: 150px;
+  background-color: #ff0f0f;
+}
 @media screen and (max-width: 990px) {
   .Card-tabletHide {
     display: none;
