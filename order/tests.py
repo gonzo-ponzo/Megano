@@ -29,16 +29,16 @@ def adding_data_to_tables(emails: List, password: str) -> List:
 
     products = []
     for i in range(5):
-        product = Product(name=f"product{1}", category=category, manufacturer=manufacturer)
+        product = Product(name=f"product{i}", category=category, manufacturer=manufacturer)
         products.append(product)
     Product.objects.bulk_create(products)
 
     shops = []
     for i in range(2):
         shop = Shop(
-            name=f"shop{1}",
+            name=f"shop{i}",
             description="description",
-            phone=f"++37533758659{i}",
+            phone=f"+37533758659{i}",
             email=f"shop{i}@test.com",
             address="address",
             user=users[0],
