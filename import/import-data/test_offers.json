@@ -1,0 +1,14 @@
+{
+  "shop": {
+    "email": "email@email.email"
+  },
+  "offers": [
+    {"product_id": 10, "amount": 12, "price": 1523},
+    {"product_id": 11, "amount": 12, "price": "4000"},
+    {"product_id": 15, "amount": 12, "price": 6000},
+    {"product_id": 18, "amount": 12, "price": 70000},
+    {"product_id": 19, "amount": 12, "price": 120000},
+    {"product_id": 20, "amount": 12, "price": 80000},
+    {"product_id": 258, "amount": 12, "price": 70000}
+  ]
+}

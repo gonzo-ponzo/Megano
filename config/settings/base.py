@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "payment",
     "django_celery_beat",
     "django_celery_results",
+    "jobs",
     "rosetta",
 ]
 
@@ -265,6 +266,11 @@ STATIC_ROOT = os.path.join("", "staticfiles")
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 
+IMPORT_INCOME = BASE_DIR / "import" / "import-data"
+IMPORT_DONE = BASE_DIR / "import" / "import-done"
+IMPORT_FAIL = BASE_DIR / "import" / "import-fail"
+IMPORT_LOGS = BASE_DIR / "import" / "logs"
+
 LOGIN_URL = "/login/"
 
 # Default primary key field type
@@ -274,8 +280,19 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MPTT_ADMIN_LEVEL_INDENT = 20
 
+EMAIL_USE_TLS = True
+EMAIL_HOST = env.str("EMAIL_HOST")
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = env.str("EMAIL_PORT")
+
 # setting for Rosetta application that eases the translation process
 ROSETTA_MESSAGES_PER_PAGE = 50
 ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE = "ru"
 ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME = "Русский"
 ROSETTA_SHOW_AT_ADMIN_PANEL = True
+
+
+PRODUCT_PER_PAGES = 10
+
+COUNT_ELEMENTS_BEST_OFFER_SHOP = 6

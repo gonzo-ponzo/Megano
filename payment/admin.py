@@ -11,8 +11,8 @@ class PaymentAdmin(admin.ModelAdmin):
 
 
 class CustomTaskResultAdmin(TaskResultAdmin):
-    list_display = ('task_id', 'periodic_task_name', 'task_name', 'date_done',
-                    'status', 'result')
+    list_display = ("task_id", "task_name", "date_done",
+                    "status", "result")
 
 
 admin.site.unregister(TaskResult)

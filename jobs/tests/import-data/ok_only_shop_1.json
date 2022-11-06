@@ -1,0 +1,11 @@
+{
+  "shop": {
+    "email": "shop_4@shop.ru",
+    "name": "Shop example",
+    "description": "Описание",
+    "phone": "+13222485566",
+    "address": "Адрес",
+    "image": "orig.webp",
+    "user_mail": "test@test.mail"
+  }
+}
