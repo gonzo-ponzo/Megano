@@ -147,26 +147,30 @@ CONSTANCE_CONFIG = {
     "COUNT_BANNERS": (3, "Count of banners per page"),
     "SHOPS_PER_PAGE": (2, "Count shops on one page in shop list"),
 
-    "CLEAR_CACHE": ("No", "Clear all cache", "choice_select"),
+    "CLEAR_CACHE": ("No", "Clear all cache\n ***RESET ALL DISPLAY OPTIONS***", "choice_select"),
     "CACHE_TIMEOUT": (60 * 60 * 24, "Cache timeout (default = 24 hours)"),
-    "CACHE_KEY_PRODUCT_CATEGORY": (60 * 60 * 24, "Cache product category (default = 24 hours)"),
-    "CACHE_KEY_BANNER": (60 * 10, "Banner cache timeout (default = 10 minutes)"),
-    "CACHE_KEY_COMPARISON": (60 * 60 * 24 * 30, "Cache comparison (default = 1 month)"),
-    "CACHE_KEY_CHECKOUT": (60 * 60, "Cache checkout (default = 1 hour)"),
-    "CACHE_KEY_PAYMENT_ORDER": (60 * 20, "Cache timeout for payment (default = 20 minutes)"),
+    "CACHE_KEY_PRODUCT_CATEGORY": (60*60*24, "Cache product category (default = 24 hours)"),
+    "CACHE_KEY_BANNER": (60*10, "Banner cache timeout (default = 10 minutes)"),
+    "CACHE_KEY_COMPARISON": (60*60*24*30, "Cache comparison (default = 1 month)"),
+    "CACHE_KEY_CHECKOUT": (60*60, "Cache checkout (default = 1 hour)"),
+    "CACHE_KEY_POPULAR_CATEGORY": (60*60*24, "Cache checkout (default = 24 hours)"),
+    "CACHE_KEY_PAYMENT_ORDER": (60*20, "Cache timeout for payment (default = 20 minutes)"),
+    "SESSION_COOKIE_AGE": (60*60*24, "Session cookie age timeout (default = 24 hours)")
 }
 
 CONSTANCE_CONFIG_FIELDSETS = {
     "Cache options": (
         "CLEAR_CACHE",
-        "CACHE_TIMEOUT",
         "CACHE_KEY_PRODUCT_CATEGORY",
+        "CACHE_TIMEOUT",
         "CACHE_KEY_BANNER",
         "CACHE_KEY_COMPARISON",
         "CACHE_KEY_CHECKOUT",
+        "CACHE_KEY_POPULAR_CATEGORY",
         "CACHE_KEY_PAYMENT_ORDER",
+        "SESSION_COOKIE_AGE",
     ),
-    "Display Options": (
+    "Display Options (CACHED PARAMETERS)": (
         "COMMENTS_PER_PAGE",
         "OBJECTS_PER_PAGE",
         "ORDERS_PER_PAGE",
@@ -188,12 +192,12 @@ CACHE_TIMEOUT = {
     CACHE_KEY_BANNER: CONSTANCE_CONFIG["CACHE_KEY_BANNER"][0],
     CACHE_KEY_COMPARISON: CONSTANCE_CONFIG["CACHE_KEY_COMPARISON"][0],
     CACHE_KEY_CHECKOUT: CONSTANCE_CONFIG["CACHE_KEY_CHECKOUT"][0],
-    CACHE_KEY_POPULAR_CATEGORY: CONSTANCE_CONFIG["CACHE_KEY_CHECKOUT"][0],
+    CACHE_KEY_POPULAR_CATEGORY: CONSTANCE_CONFIG["CACHE_KEY_POPULAR_CATEGORY"][0],
     CACHE_KEY_PAYMENT_ORDER: CONSTANCE_CONFIG["CACHE_KEY_PAYMENT_ORDER"][0],
 }
 
 CART_SESSION_ID = "cart"
-SESSION_COOKIE_AGE = CONSTANCE_CONFIG["CACHE_TIMEOUT"][0]
+SESSION_COOKIE_AGE = CONSTANCE_CONFIG["SESSION_COOKIE_AGE"][0]
 
 WSGI_APPLICATION = "config.wsgi.application"
 
