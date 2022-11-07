@@ -20,7 +20,10 @@
           <h1 class="Middle-title">{{ trans_cart }}
           </h1>
           <ul class="breadcrumbs Middle-breadcrumbs">
-            <li class="breadcrumbs-item"><a href="/static">home</a>
+            <li class="breadcrumbs-item">
+                <a href="{% url 'main-page' %}">
+                    {% trans "Главная" %}
+                </a>
             </li>
             <li class="breadcrumbs-item breadcrumbs-item_current"><span>{{ trans_cart }}</span>
             </li>
@@ -84,15 +87,22 @@
             </div>
           </div>
           {% endfor %}
-          <div class="Cart-total">
-            <div class="Cart-block Cart-block_total">
-              <strong class="Cart-title">{% trans "Итого" %}:
-              </strong><span class="Cart-price">{{ cart_price }} руб.</span>
-            </div>
-            <div class="Cart-block">
-                <a class="btn btn_success btn_lg" href="{% url 'order:create-order' %}">{% trans "Оформить заказ" %}</a>
-            </div>
-          </div>
+            {% if cart %}
+                <div class="Cart-total">
+                    <div class="Cart-block Cart-block_total">
+                        <strong class="Cart-title">{% trans "Итого" %}:
+                        </strong><span class="Cart-price">{{ cart_price }} руб.</span>
+                    </div>
+                    <div class="Cart-block">
+                        <a class="btn btn_success btn_lg" href="{% url 'order:create-order' %}">
+                            {% trans "Оформить заказ" %}
+                        </a>
+                    </div>
+
+                </div>
+            {% else %}
+                {% trans 'Корзина не заполнена' %}
+            {% endif %}
         </form>
       </div>
     </div>
