@@ -35,6 +35,11 @@
           {% else %}
           <div class="ProgressPayment-title">Запущенных импортов нет, можно запустить новый
           </div>
+          <form method="post" enctype="multipart/form-data">
+              {{ import_form.as_p }}
+              {% csrf_token %}
+              <button type="submit">{% trans "Запустить" %}</button>
+          </form>
           {% endif %}
         </div>
       </div>

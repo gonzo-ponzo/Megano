@@ -42,7 +42,7 @@ class TestCoreImport(TestCase):
         self.assertEqual(shop.name, "Renamed shop")
 
     def test_ok_shop_without_logo(self):
-        # файл с данными для создания нового магазина без логотипа (TODO
+        # файл с данными для создания нового магазина без логотипа
         is_ok, messages = one_shop_import(os.path.join(settings.IMPORT_INCOME, "ok_only_shop_3.json"))
         self.assertTrue(is_ok)
         self.assertIn("created", "".join(messages))
@@ -86,3 +86,6 @@ class TestCoreImport(TestCase):
         shop = Shop.objects.get(email="shop@shop.ru")
         count_offers = Offer.objects.filter(shop=shop).count()
         self.assertEqual(count_offers, 1)
+
+    def test_import_from_site_need_permission(self):
+        pass  # TODO
