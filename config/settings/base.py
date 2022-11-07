@@ -146,7 +146,7 @@ CONSTANCE_CONFIG = {
     "COUNT_BANNERS": (3, "Count of banners per page"),
     "SHOPS_PER_PAGE": (2, "Count shops on one page in shop list"),
 
-    "CLEAR_CACHE": ("No", "Clear all cache", "choice_select"),
+    "CLEAR_CACHE": ("No", "Clear all cache\n ***RESET ALL DISPLAY OPTIONS***", "choice_select"),
     "CACHE_TIMEOUT": (60 * 60 * 24, "Cache timeout (default = 24 hours)"),
     "CACHE_KEY_PRODUCT_CATEGORY": (60*60*24, "Cache product category (default = 24 hours)"),
     "CACHE_KEY_BANNER": (60*10, "Banner cache timeout (default = 10 minutes)"),
@@ -169,7 +169,7 @@ CONSTANCE_CONFIG_FIELDSETS = {
         "CACHE_KEY_PAYMENT_ORDER",
         "SESSION_COOKIE_AGE",
     ),
-    "Display Options": (
+    "Display Options (CACHED PARAMETERS)": (
         "COMMENTS_PER_PAGE",
         "OBJECTS_PER_PAGE",
         "ORDERS_PER_PAGE",
