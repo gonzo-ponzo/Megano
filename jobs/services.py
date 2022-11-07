@@ -40,23 +40,27 @@ class ShopBaseInfo(BaseModel):
                 check_image = Image.open(logo_path)
                 ratio = check_image.width / check_image.height
                 if ratio > 1.05 or ratio < 0.95:
-                    raise ValueError(f"ratio ({ratio}) must be in [0.95,1.05]")
+                    return (None, f"invalid logo - {v}; ratio ({ratio}) must be in [0.95,1.05]")
             except Exception as e:
-                raise ValueError(f"invalid LOGO - {v}; error message - {e}")
-            return File(open(logo_path, 'rb'), name=v)
+                return (None, f"invalid logo - {v}; error message - {e}")
+            return (File(open(logo_path, 'rb'), name=v), "")
         return v
 
     @validator("shop_photos")
     def check_correct_photos(cls, v, values):
         if v and "email" in values.keys():
             res = []
-            for file_name in v:  # TODO соотношение сторон проверять? в верстке картинки оквадачиваются
+            for file_name in v:
                 logo_path = os.path.join(settings.IMPORT_INCOME, values["email"], file_name)
                 try:
-                    Image.open(logo_path)
-                    res.append((File(open(logo_path, 'rb'), name=file_name), ""))
+                    check_image = Image.open(logo_path)
+                    ratio = check_image.width / check_image.height
+                    if ratio > 1.05 or ratio < 0.95:
+                        res.append((None, f"invalid photo - {file_name}; ratio ({ratio}) must be in [0.95,1.05]"))
+                    else:
+                        res.append((File(open(logo_path, 'rb'), name=file_name), ""))
                 except Exception as e:
-                    res.append((None, f"invalid LOGO - {v}; error message - {e}"))
+                    res.append((None, f"invalid photo - {file_name}; error message - {e}"))
             v = res
         return v
 
@@ -80,7 +84,7 @@ class OfferInfo(BaseModel):
         return v
 
     @validator("amount")
-    def check_correct_amount(cls, v):  # TODO нулевое количество, чтоб снять товар с продажи, можно?
+    def check_correct_amount(cls, v):
         if v <= 0:
             raise ValueError(f"invalid product value - {v}")
         return v
@@ -113,7 +117,7 @@ def one_shop_import(file_name):  # noqa C901
     email = shop_data.email
     shop = Shop.objects.filter(email=email).first()
 
-    fields = {"name", "description", "phone", "address", "image"}
+    fields = {"name", "description", "phone", "address"}  # "image" отдельно
     fields_requred = fields | {"user_mail"}
 
     user = None
@@ -134,6 +138,11 @@ def one_shop_import(file_name):  # noqa C901
                 shop.user = user
             else:
                 return False, f"ERROR: User with email {shop_data.user_mail} not found"
+        if shop_data.image:
+            if shop_data.image[0]:
+                shop.image = shop_data.image[0]
+            else:
+                message_list.append(shop_data.image[1])
         shop.save()
         message_list.append(f"Shop {shop.name}, id={shop.pk} edited")
     else:  # добавление нового магазина
@@ -145,6 +154,14 @@ def one_shop_import(file_name):  # noqa C901
         if not user:
             return False, f"ERROR: User with email {shop_data.user_mail} not found"
         shop = Shop.objects.create(email=email, user=user, **{key: shop_data.__dict__.get(key) for key in fields})
+        if shop_data.image:
+            if shop_data.image[0]:
+                shop.image = shop_data.image[0]
+            else:
+                message_list.append(shop_data.image[1])
+        else:
+            message_list.append("logo missed")
+        shop.save()
         message_list.append(f"Shop {shop.name}, id={shop.pk} created")
 
     if shop_data.shop_photos:

@@ -41,6 +41,12 @@ class TestCoreImport(TestCase):
         shop = Shop.objects.get(email="shop_4@shop.ru")
         self.assertEqual(shop.name, "Renamed shop")
 
+    def test_ok_shop_without_logo(self):
+        # файл с данными для создания нового магазина без логотипа (TODO
+        is_ok, messages = one_shop_import(os.path.join(settings.IMPORT_INCOME, "ok_only_shop_3.json"))
+        self.assertTrue(is_ok)
+        self.assertIn("created", "".join(messages))
+
     def test_error_shop(self):
         # недостающие данные при создании магазина; некорректные (несуществующий юзер) - при редактировании
         is_ok, messages = one_shop_import(os.path.join(settings.IMPORT_INCOME, "ok_only_shop_2.json"))
