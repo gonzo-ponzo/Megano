@@ -455,6 +455,10 @@
   justify-content: center;
   width: 100%;
 }
+
+.Cards_promotion {
+  justify-content: flex-start;
+}
 @media screen and (min-width: 990px) {
   .Cards {
     width: auto;
