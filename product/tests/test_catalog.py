@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.urls import reverse
 from product.models import ProductCategory, Product, Manufacturer, Offer, Review
 from shop.models import Shop
@@ -85,7 +86,7 @@ class CatalogViewsSorting(CacheTestCase):
         user = User.objects.create_user(email="testabcd@abcdtest.net", password="qwerty")
         Review.objects.create(product=p1, user=user, text="text", rating=1)
         Review.objects.create(product=p2, user=user, text="text", rating=5)
-
+        group, _ = Group.objects.get_or_create(name="SHOP_owner")
         shop = Shop.objects.create(
             name="shop",
             description="description",
@@ -191,6 +192,7 @@ class CatalogViewsFilter(CacheTestCase):
 
         user = User.objects.create_user(email="testabcd@abcdtest.net", password="qwerty")
 
+        group, _ = Group.objects.get_or_create(name="SHOP_owner")
         shop = Shop.objects.create(
             name="shop",
             description="description",
