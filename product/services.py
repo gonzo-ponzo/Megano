@@ -175,7 +175,15 @@ class QuerysetForCatalog:
         if without_offer:
             queryset = queryset.filter(offer__isnull=False)
         queryset = queryset.prefetch_related("productimage_set")
-        queryset = queryset.select_related("category")
+        queryset = queryset.select_related("category").defer('category__created_at',
+                                                             'category__updated_at',
+                                                             'category__deleted_at',
+                                                             'category__description',
+                                                             'category__slug',
+                                                             'category__parent_id',
+                                                             'category__lft',
+                                                             'category__rght',
+                                                             'category__tree_id')
         # queryset = queryset.prefetch_related('shop')
         queryset = queryset.annotate(offer_count=Count("offer", distinct=True))
         queryset = queryset.annotate(min_price=Min("offer__price"))
