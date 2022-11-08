@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "payment",
     "django_celery_beat",
     "django_celery_results",
+    "jobs",
     "rosetta",
 ]
 
@@ -118,17 +119,24 @@ CACHES = {
     }
 }
 
+TEST_CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis_db:6379/5",
+    }
+}
+
 # Django-constance settings
-CONSTANCE_BACKEND = 'constance.backends.redisd.CachingRedisBackend'
-CONSTANCE_REDIS_CONNECTION = 'redis://redis_db:6379'
+CONSTANCE_BACKEND = "constance.backends.redisd.CachingRedisBackend"
+CONSTANCE_REDIS_CONNECTION = "redis://redis_db:6379"
 CONSTANCE_IGNORE_ADMIN_VERSION_CHECK = True
 CONSTANCE_REDIS_CACHE_TIMEOUT = 0
 
 CONSTANCE_ADDITIONAL_FIELDS = {
-    'choice_select': ['django.forms.fields.ChoiceField', {
-        'widget': 'django.forms.Select',
-        'choices': (("No", "No"), ("Yes", "Yes"))
-    }],
+    "choice_select": [
+        "django.forms.fields.ChoiceField",
+        {"widget": "django.forms.Select", "choices": (("No", "No"), ("Yes", "Yes"))},
+    ],
 }
 
 CONSTANCE_CONFIG = {
@@ -136,31 +144,39 @@ CONSTANCE_CONFIG = {
     "OBJECTS_PER_PAGE": (12, "Count of objects per page"),
     "ORDERS_PER_PAGE": (12, "Count of orders per page"),
     "PRODUCTS_PER_SHOP": (6, "Count of products per shop"),
+    "COUNT_BANNERS": (3, "Count of banners per page"),
     "SHOPS_PER_PAGE": (2, "Count shops on one page in shop list"),
 
-    "CLEAR_CACHE": ("No", "Clear all cache", "choice_select"),
-    "CACHE_TIMEOUT": (60*60*24, "Cache timeout (default = 24 hours)"),
+    "CLEAR_CACHE": ("No", "Clear all cache\n ***RESET ALL DISPLAY OPTIONS***", "choice_select"),
+    "CACHE_TIMEOUT": (60 * 60 * 24, "Cache timeout (default = 24 hours)"),
+    "CACHE_KEY_PRODUCT_CATEGORY": (60*60*24, "Cache product category (default = 24 hours)"),
     "CACHE_KEY_BANNER": (60*10, "Banner cache timeout (default = 10 minutes)"),
     "CACHE_KEY_COMPARISON": (60*60*24*30, "Cache comparison (default = 1 month)"),
-    "CACHE_KEY_CHECKOUT": (60*60*24, "Cache checkout (default = 24 hours)"),
+    "CACHE_KEY_CHECKOUT": (60*60, "Cache checkout (default = 1 hour)"),
+    "CACHE_KEY_POPULAR_CATEGORY": (60*60*24, "Cache checkout (default = 24 hours)"),
     "CACHE_KEY_PAYMENT_ORDER": (60*20, "Cache timeout for payment (default = 20 minutes)"),
+    "SESSION_COOKIE_AGE": (60*60*24, "Session cookie age timeout (default = 24 hours)")
 }
 
 CONSTANCE_CONFIG_FIELDSETS = {
     "Cache options": (
         "CLEAR_CACHE",
+        "CACHE_KEY_PRODUCT_CATEGORY",
         "CACHE_TIMEOUT",
         "CACHE_KEY_BANNER",
         "CACHE_KEY_COMPARISON",
         "CACHE_KEY_CHECKOUT",
-        "CACHE_KEY_PAYMENT_ORDER"
+        "CACHE_KEY_POPULAR_CATEGORY",
+        "CACHE_KEY_PAYMENT_ORDER",
+        "SESSION_COOKIE_AGE",
     ),
-    "Display Options": (
+    "Display Options (CACHED PARAMETERS)": (
         "COMMENTS_PER_PAGE",
         "OBJECTS_PER_PAGE",
         "ORDERS_PER_PAGE",
         "PRODUCTS_PER_SHOP",
-        "SHOPS_PER_PAGE"
+        "COUNT_BANNERS",
+        "SHOPS_PER_PAGE",
     ),
 }
 
@@ -172,16 +188,16 @@ CACHE_KEY_POPULAR_CATEGORY = "popular_category"
 CACHE_KEY_PAYMENT_ORDER = "payment_order-{user_id}-{order_id}"
 
 CACHE_TIMEOUT = {
-    CACHE_KEY_PRODUCT_CATEGORY: CONSTANCE_CONFIG["CACHE_TIMEOUT"][0],
+    CACHE_KEY_PRODUCT_CATEGORY: CONSTANCE_CONFIG["CACHE_KEY_PRODUCT_CATEGORY"][0],
     CACHE_KEY_BANNER: CONSTANCE_CONFIG["CACHE_KEY_BANNER"][0],
     CACHE_KEY_COMPARISON: CONSTANCE_CONFIG["CACHE_KEY_COMPARISON"][0],
     CACHE_KEY_CHECKOUT: CONSTANCE_CONFIG["CACHE_KEY_CHECKOUT"][0],
-    CACHE_KEY_POPULAR_CATEGORY: CONSTANCE_CONFIG["CACHE_KEY_CHECKOUT"][0],
+    CACHE_KEY_POPULAR_CATEGORY: CONSTANCE_CONFIG["CACHE_KEY_POPULAR_CATEGORY"][0],
     CACHE_KEY_PAYMENT_ORDER: CONSTANCE_CONFIG["CACHE_KEY_PAYMENT_ORDER"][0],
 }
 
 CART_SESSION_ID = "cart"
-SESSION_COOKIE_AGE = CONSTANCE_CONFIG["CACHE_TIMEOUT"][0]
+SESSION_COOKIE_AGE = CONSTANCE_CONFIG["SESSION_COOKIE_AGE"][0]
 
 WSGI_APPLICATION = "config.wsgi.application"
 
@@ -202,7 +218,7 @@ DATABASES = {
 CELERY_COUNTDOWN_ORDER = 30
 CELERY_MAX_RETRIES_ORDER = 5
 
-CELERY_BROKER_URL = "redis://redis_db"
+CELERY_BROKER_URL = "redis://redis_db/1"
 CELERY_RESULT_BACKEND = "django-db"
 
 # Password validation
@@ -254,6 +270,11 @@ STATIC_ROOT = os.path.join("", "staticfiles")
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 
+IMPORT_INCOME = BASE_DIR / "import" / "import-data"
+IMPORT_DONE = BASE_DIR / "import" / "import-done"
+IMPORT_FAIL = BASE_DIR / "import" / "import-fail"
+IMPORT_LOGS = BASE_DIR / "import" / "logs"
+
 LOGIN_URL = "/login/"
 
 # Default primary key field type
@@ -263,8 +284,19 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MPTT_ADMIN_LEVEL_INDENT = 20
 
+EMAIL_USE_TLS = True
+EMAIL_HOST = env.str("EMAIL_HOST")
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = env.str("EMAIL_PORT")
+
 # setting for Rosetta application that eases the translation process
 ROSETTA_MESSAGES_PER_PAGE = 50
 ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE = "ru"
 ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME = "Русский"
 ROSETTA_SHOW_AT_ADMIN_PANEL = True
+
+
+PRODUCT_PER_PAGES = 10
+
+COUNT_ELEMENTS_BEST_OFFER_SHOP = 6

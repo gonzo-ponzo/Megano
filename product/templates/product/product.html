@@ -45,28 +45,18 @@
                       {% endif %}
                     </div>
                   </div>
-                  <div class="ProductCard-compare"><a class="btn btn_default" href="#"><img class="btn-icon" src="{% static 'img/icons/card/change.svg' %}" alt="change.svg"/></a>
-                  </div>
+                  <div class="ProductCard-compare">
+                    <a class="Card-btn" onclick="openWin(url='{% url 'compare_add' product.id %}')">
+                        <img src="{% static 'img/icons/card/change.svg' %}" alt="сравнить"/>
+                    </a>
                 </div>
-              </div>
-              <div class="ProductCard-text">
-                <ul>
-                  <li>RESERVED FOR PRODUCT PROMOTION OR DELIVERY OPTIONS
-                  </li>
-                </ul>
+                </div>
               </div>
               <div class="ProductCard-cart">
-                <div class="ProductCard-cartElement ProductCard-cartElement_amount">
-                </div>
                 <div class="ProductCard-cartElement"><a class="btn btn_primary btn_tabs" href="#tabs"><img class="btn-icon" src="{% static 'img/icons/card/cart_white.svg' %}" alt="cart_white.svg"/><span class="btn-content">Смотреть предложения</span></a>
                 </div>
               </div>
-              <div class="ProductCard-footer">
-                <div class="ProductCard-tags">
-                  <strong class="ProductCard-tagsTitle">{% trans "Тэги" %}:
-                  </strong><a href="#">Accesories</a>,<a href="#">Creative</a>,<a href="#">Design</a>,<a href="#">Gaming</a>
-                </div>
-              </div>
+              
             </div>
           </div>
           <div class="Tabs Tabs_default">
@@ -77,7 +67,6 @@
                 <h2>{{ object.name }}
                 </h2>
                 <p>{{ object.description }}
-                </p><img class="pict pict_right" src="{{ detailed_product.get_main_pic.url }}" alt="product-img"/>
                 <div class="clearfix">
                 </div>
                 <div class="table">
@@ -117,7 +106,12 @@
                         </strong>
                       </div>
                       <div class="Categories-block">
-                        <strong>{{ amounth }} шт.
+                        <strong>
+                            {% if amounth >= 0 %}
+                                {{ amounth }} шт.
+                            {% else %}
+                                0 шт.
+                            {% endif %}
                         </strong>
                       </div>
                       <div class="Categories-block Categories-button"><a class="btn btn_primary" href="{% url 'order:cart-add' object.id shop.id %}"><img class="btn-icon" src="{% static 'img/icons/card/cart_white.svg' %}" alt="cart_white.svg"/><span class="btn-content">{% trans "Добавить в корзину" %}</span></a>

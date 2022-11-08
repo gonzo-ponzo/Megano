@@ -11,7 +11,9 @@
                     <h1 class="Middle-title">{% trans 'Оформление заказа' %}
                     </h1>
                     <ul class="breadcrumbs Middle-breadcrumbs">
-                        <li class="breadcrumbs-item"><a href="{% url 'main-page' %}">home</a>
+                        <li class="breadcrumbs-item"><a href="{% url 'main-page' %}">
+                            {% trans "Главная" %}
+                        </a>
                         </li>
                         <li class="breadcrumbs-item breadcrumbs-item_current">
                             <span>{% trans 'Оформление заказа' %}</span>
@@ -234,40 +236,40 @@
                                         </div>
                                     {% endfor %}
 
-                                     <div class="order-total-normal order-total">
-                                         {% with normal=order.total.normal %}
-                                             <div class="Cart-total custom-Order-delivery">
-                                                 <div class="Cart-block Cart-block_total">
-                                                     <strong class="Cart-title">
-                                                         {% trans 'Доставка:' %}
-                                                     </strong>
-                                                     <span class="Cart-price">
+                                    <div class="order-total-normal order-total">
+                                        {% with normal=order.total.normal %}
+                                            <div class="Cart-total custom-Order-delivery">
+                                                <div class="Cart-block Cart-block_total">
+                                                    <strong class="Cart-title">
+                                                        {% trans 'Доставка:' %}
+                                                    </strong>
+                                                    <span class="Cart-price">
                                                     {{ normal.delivery_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
                                                 </span>
-                                                 </div>
-                                             </div>
+                                                </div>
+                                            </div>
 
-                                             <div class="Cart-total custom-Order-total">
-                                                 <div class="Cart-block Cart-block_total">
-                                                     <strong class="Cart-title">
-                                                         {% trans 'Итого:' %}
-                                                     </strong>
-                                                     {% if normal.total_price == normal.full_total_price %}
-                                                         <span class="Cart-price">
-                                                    {{ normal.full_total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
-                                                </span>
-                                                     {% else %}
-                                                         <span class="Cart-price">
-                                                    {{ normal.total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
-                                                </span>
-                                                         <span class="Cart-price_old">
-                                                    {{ normal.full_total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
-                                                </span>
-                                                     {% endif %}
-                                                 </div>
-                                             </div>
-                                         {% endwith %}
-                                     </div>
+                                            <div class="Cart-total custom-Order-total">
+                                                <div class="Cart-block Cart-block_total">
+                                                    <strong class="Cart-title">
+                                                        {% trans 'Итого:' %}
+                                                    </strong>
+                                                    {% if normal.total_price == normal.full_total_price %}
+                                                        <span class="Cart-price">
+                                                            {{ normal.full_total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="Cart-price">
+                                                            {{ normal.total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                        </span>
+                                                        <span class="Cart-price_old">
+                                                            {{ normal.full_total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endwith %}
+                                    </div>
 
                                     <div class="order-total-express">
                                         {% with express=order.total.express %}
@@ -289,15 +291,15 @@
                                                     </strong>
                                                     {% if express.total_price == express.full_total_price %}
                                                         <span class="Cart-price">
-                                                    {{ express.full_total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
-                                                </span>
+                                                            {{ express.full_total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                        </span>
                                                     {% else %}
                                                         <span class="Cart-price">
-                                                    {{ express.total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
-                                                </span>
+                                                            {{ express.total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                        </span>
                                                         <span class="Cart-price_old">
-                                                    {{ express.full_total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}{{ express.full_total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
-                                                </span>
+                                                            {{ express.full_total_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                                        </span>
                                                     {% endif %}
                                                 </div>
                                             </div>

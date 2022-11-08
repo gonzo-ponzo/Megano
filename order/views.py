@@ -2,14 +2,15 @@ from django.views import View
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
-from order.services import Cart, Checkout, SerializersCache, CheckoutDB, OrderHistory, OrderPaymentCache, PaymentApi
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib import messages
-from django.http import HttpResponseRedirect
-from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseRedirect, HttpResponseBadRequest
+from django.utils.translation import gettext_lazy as _
+
 from copy import deepcopy
 from product.models import Product
 from .forms import OrderForm, OrderPaymentForm, PaymentForm
+from order.services import Cart, Checkout, SerializersCache, CheckoutDB, OrderHistory, OrderPaymentCache, PaymentApi
 from .tasks import update_order_after_payment
 from constance import config
 
@@ -71,7 +72,7 @@ class CreateOrderView(View):
         cart = request.user.cart if is_authenticated else request.session.get(settings.CART_SESSION_ID)
 
         if not cart:
-            raise PermissionDenied()
+            return HttpResponseBadRequest(_("Корзина не заполнена"))
 
         if is_authenticated:
             context = {
@@ -149,7 +150,7 @@ class OrderPaymentView(View):
     def get(self, request, order_id):
         order = OrderPaymentCache.get_cache_order_for_payment(order_id, request.user.id)
         if order is None:
-            raise PermissionDenied
+            return HttpResponseBadRequest(_("Нет заказа для оплаты"))
         order["form"] = PaymentForm()
         return render(request, "order/payment.html", context=order)
 

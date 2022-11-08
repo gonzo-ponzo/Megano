@@ -21,7 +21,7 @@
     </div>
     <div class="Section">
       <div class="wrap">
-        <div class="Cards Cards_blog">
+        <div class="Cards Cards_blog Cards_promotion">
         {% for promotion in promotionoffer_list %}
             {% if promotion.image %}
               <div class="Card"><a class="Card-picture" href="{{ promotion.get_absolute_url }}"><img src="{{ promotion.image.url }}" alt="promotion.jpg"/></a>

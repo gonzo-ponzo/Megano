@@ -1,9 +1,11 @@
 from random import randint
+from functools import reduce
 from urllib.parse import urlencode
 from copy import copy
 from statistics import mean
+
 from django.db.models.query import QuerySet
-from django.db.models import F, Min, Max, Sum, Count, Avg, OuterRef, Subquery
+from django.db.models import F, Q, Min, Max, Sum, Count, Avg, OuterRef, Subquery
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
@@ -57,7 +59,7 @@ class ReviewForItem:
     @staticmethod
     def get_stars_order_by():
         """Список оценок"""
-        return [star for star in range(Review.MIN_GRADE, Review.MAX_GRADE + 1)]
+        return list(range(Review.MIN_GRADE, Review.MAX_GRADE + 1))
 
 
 class ProductCompareList:
@@ -72,7 +74,7 @@ class ProductCompareList:
         self.category = category
         products = Product.objects.filter(id__in=product_list_id)
         self.category_list = set(i.category for i in products)
-        if self.category == 'None':
+        if self.category == "None":
             products_list = products
         else:
             products_list = products.filter(category=self.category)
@@ -87,7 +89,7 @@ class ProductCompareList:
                 try:
                     a = attributes.get(product=m, property=k).value
                 except ObjectDoesNotExist:
-                    a = '-'
+                    a = "-"
                 i.set_product(a)
 
         if self.short_list:
@@ -102,8 +104,7 @@ class ProductCompareList:
         Получение списка продуктов в сравнении
         """
         return [
-            i for i in self.product_list.values()
-            if self.category == 'None' or self.category == str(i.category.id)
+            i for i in self.product_list.values() if self.category == "None" or self.category == str(i.category.id)
         ]
 
 
@@ -125,15 +126,15 @@ class ProductCompare:
             min_price = product.offer_set.filter(
                 amount__gt=0,
                 deleted_at=None
-            ).values_list('price', flat=True)
+            ).values_list("price", flat=True)
             if min_price:
-                self.min_price = f'{min(min_price)} руб.'
+                self.min_price = f"{min(min_price)} руб."
 
     def get_rating_list(self, product):
         """
         Определяем средний рейтинг продукта в сравнении
         """
-        rating_list = product.review_set.all().values_list('rating', flat=True)
+        rating_list = product.review_set.all().values_list("rating", flat=True)
         if rating_list:
             avg_rating = mean(rating_list)
             star_list = list()
@@ -166,16 +167,37 @@ class PropertyCompare:
         return self.product_list
 
 
-class FilterProductsResult:
+class QuerysetForCatalog:
+
+    @staticmethod
+    def get_queryset_for_catalog(without_offer=True):
+        queryset = Product.objects.all()
+        if without_offer:
+            queryset = queryset.filter(offer__isnull=False)
+        queryset = queryset.prefetch_related("productimage_set")
+        queryset = queryset.select_related("category")
+        # queryset = queryset.prefetch_related('shop')
+        queryset = queryset.annotate(offer_count=Count("offer", distinct=True))
+        queryset = queryset.annotate(min_price=Min("offer__price"))
+        queryset = queryset.annotate(review_count=Count("review", distinct=True))
+        queryset = queryset.annotate(rating=Avg("review__rating", default=0))
+        queryset = queryset.annotate(rest=Sum("offer__amount", distinct=True))
+        queryset = queryset.annotate(order_count=Sum("offer__orderoffer__amount", default=0, distinct=True))
+        queryset = queryset.order_by("pk")
+        return queryset
+
+
+class FilterProductsResult(QuerysetForCatalog):
     """
     Фильтр для списка продуктов
     """
+
     filter_field_name = (
-        'fil_title',
-        'fil_actual',
-        'fil_limit',
-        'fil_shop',
-        'fil_price',
+        "fil_title",
+        "fil_actual",
+        "fil_limit",
+        "fil_shop",
+        "fil_price",
     )
 
     def __init__(self, **get_params):
@@ -184,32 +206,14 @@ class FilterProductsResult:
         """
 
         self.__queryset = self.get_queryset_for_catalog()
-
-        self.title = get_params.get('fil_title', None)
-        self.actual = bool(get_params.get('fil_actual'))
-        self.limit = bool(get_params.get('fil_limit'))
-        self.shop = get_params.get('fil_shop', None)
-        price = get_params.get('fil_price', '').split(";")
+        self.title = get_params.get("fil_title", None)
+        self.actual = bool(get_params.get("fil_actual"))
+        self.limit = bool(get_params.get("fil_limit"))
+        self.shop = get_params.get("fil_shop", None)
+        price = get_params.get("fil_price", "").split(";")
         self.min_price = self.max_price = None
         if len(price) == 2 and price[0].isdigit() and price[1].isdigit():
             self.min_price, self.max_price = map(int, price)
-
-    @staticmethod
-    def get_queryset_for_catalog(without_offer=True):
-        queryset = Product.objects.all()
-        if without_offer:
-            queryset = queryset.filter(offer__isnull=False)
-        queryset = queryset.prefetch_related('productimage_set')
-        queryset = queryset.select_related('category')
-        # queryset = queryset.prefetch_related('shop')
-        queryset = queryset.annotate(offer_count=Count('offer', distinct=True))
-        queryset = queryset.annotate(min_price=Min('offer__price'))
-        queryset = queryset.annotate(review_count=Count('review', distinct=True))
-        queryset = queryset.annotate(rating=Avg('review__rating', default=0))
-        queryset = queryset.annotate(rest=Sum('offer__amount', distinct=True))
-        queryset = queryset.annotate(order_count=Sum('offer__orderoffer__amount', default=0, distinct=True))
-        queryset = queryset.order_by('pk')
-        return queryset
 
     @property
     def queryset(self):
@@ -224,7 +228,7 @@ class FilterProductsResult:
         """
         :return: словарь с максимальной и минимальной стоимостью текущего набора продуктов
         """
-        return self.__queryset.aggregate(min=Min('min_price'), max=Max('min_price'))
+        return self.__queryset.aggregate(min=Min("min_price"), max=Max("min_price"))
 
     def all_filter_without_price(self) -> None:
         """Отфильтровать self.products по всем параметрам, кроме цены"""
@@ -266,16 +270,17 @@ class SortProductsResult:
     """
     Сортировка результатов поиска продуктов
     """
+
     # поля, по которым проводится сортировка, кортеж кортежей вида
     # (значение параметра sort_by в строке запроса, наименование поля на сайте)
     fields = (
-        ('price', _('цене')),
-        ('popular', _('популярности')),
-        ('rating', _('рейтингу')),
-        ('new', _('новизне')),
+        ("price", _("цене")),
+        ("popular", _("популярности")),
+        ("rating", _("рейтингу")),
+        ("new", _("новизне")),
     )
-    css_class_for_increment = 'Sort-sortBy_inc'
-    css_class_for_decrement = 'Sort-sortBy_dec'
+    css_class_for_increment = "Sort-sortBy_inc"
+    css_class_for_decrement = "Sort-sortBy_dec"
 
     def __init__(self, products: QuerySet):
         """
@@ -286,73 +291,75 @@ class SortProductsResult:
     @classmethod
     def make_sort_part_url(cls, get_params: dict):
         sort_params = {
-            'sort_by': get_params.get('sort_by', None),
-            'reverse': get_params.get('reverse', ''),
+            "sort_by": get_params.get("sort_by", None),
+            "reverse": get_params.get("reverse", ""),
         }
         return urlencode(sort_params)
 
     def sort_by_params(self, **get_params) -> QuerySet:
-        sort_by = get_params.get('sort_by', None)
-        sort_revers = bool(get_params.get('reverse'))
+        sort_by = get_params.get("sort_by", None)
+        sort_revers = bool(get_params.get("reverse"))
 
-        if sort_by == 'price':
+        if sort_by == "price":
             return self.by_price(reverse=sort_revers)
-        if sort_by == 'new':
+        if sort_by == "new":
             return self.by_newness(reverse=sort_revers)
-        if sort_by == 'rating':
+        if sort_by == "rating":
             return self.by_review(reverse=sort_revers)
-        if sort_by == 'popular':
+        if sort_by == "popular":
             return self.by_popularity(reverse=sort_revers)
 
         return self.products
 
     @classmethod
     def get_data_for_sort_links(cls, **get_params) -> list[dict]:
-        sort_by = get_params.get('sort_by', None)
-        sort_revers = bool(get_params.get('reverse', False))
+        sort_by = get_params.get("sort_by", None)
+        sort_revers = bool(get_params.get("reverse", False))
         result = []
         for field in cls.fields:
-            css_class = reverse = ''
+            css_class = reverse = ""
 
             if field[0] == sort_by:
                 if sort_revers:
                     css_class = cls.css_class_for_decrement
                 else:
                     css_class = cls.css_class_for_increment
-                    reverse = '&reverse=True'
+                    reverse = "&reverse=True"
 
-            result.append({
-                'css_class': css_class,
-                'title': field[1],
-                'arg_str': f'sort_by={field[0]}{reverse}',
-            })
+            result.append(
+                {
+                    "css_class": css_class,
+                    "title": field[1],
+                    "arg_str": f"sort_by={field[0]}{reverse}",
+                }
+            )
         return result
 
     def by_popularity(self, reverse=False) -> QuerySet:
-        field = 'order_count'
+        field = "order_count"
         if not reverse:
-            field = '-' + field
+            field = "-" + field
         return self.products.order_by(field)
 
     def by_price(self, reverse=False) -> QuerySet:
-        field = 'min_price'
+        field = "min_price"
         if field not in self.products.query.annotations:
-            self.products = self.products.annotate(min_price=Min('offer__price'))
+            self.products = self.products.annotate(min_price=Min("offer__price"))
         if reverse:
             return self.products.order_by(F(field).asc(nulls_last=True))
         else:
             return self.products.order_by(F(field).desc(nulls_last=True))
 
     def by_review(self, reverse=False) -> QuerySet:
-        field = 'rating'
+        field = "rating"
         if not reverse:
-            field = '-' + field
+            field = "-" + field
         return self.products.order_by(field)
 
     def by_newness(self, reverse=False) -> QuerySet:
-        field = 'created_at'
+        field = "created_at"
         if reverse:
-            field = '-' + field
+            field = "-" + field
         return self.products.order_by(field)
 
 
@@ -376,8 +383,8 @@ class DailyOffer:
 
     @staticmethod
     def __get_random_product():
-        queryset = FilterProductsResult.get_queryset_for_catalog()
-        queryset = queryset.only('id', 'name', 'category__name')
+        queryset = QuerysetForCatalog.get_queryset_for_catalog()
+        queryset = queryset.only("id", "name", "category__name")
         queryset_for_choice = queryset.filter(limited=True).filter(rest__gt=0)
         if not queryset_for_choice:
             queryset_for_choice = queryset
@@ -392,7 +399,7 @@ class DailyOffer:
         self.__date_expired = self.get_date_expired()
         if self.__product:
             self.__class__.__not_use = False
-            self.__product.expired = (self.__date_expired + timezone.timedelta(days=1)).strftime('%d.%m.%Y %H:%M')
+            self.__product.expired = (self.__date_expired + timezone.timedelta(days=1)).strftime("%d.%m.%Y %H:%M")
         else:
             self.__class__.__not_use = True
 
@@ -417,13 +424,43 @@ class DailyOffer:
             return self.__product.id
 
 
-class SearchProduct:
+class SearchProduct(QuerysetForCatalog):
     """
     Поиск продукта
     """
 
+    def __init__(self, search_query=None):
+        self.__search_query = self.__handle_search_string(search_query)
+        if self.__search_query:
+            self.__queryset = self.get_queryset_for_catalog(without_offer=False)
+            self.search()
+        else:
+            self.__queryset = Product.objects.none()
+
+    @staticmethod
+    def __handle_search_string(search_query):
+        """Разбиваем запрос на слова, оставляем слова длиной 3 и больше символа """
+        if search_query:
+            search_query = [word for word in search_query.split() if len(word) >= 3]
+        return search_query
+
     def search(self):
-        pass
+
+        in_name = []
+        in_description = []
+
+        for word in self.__search_query:
+            in_name.append(Q(name__icontains=word))
+            in_description.append(Q(description__icontains=word))
+
+        in_name = reduce(lambda a, b: a & b, in_name)
+        in_description = reduce(lambda a, b: a & b, in_description)
+
+        self.__queryset = self.__queryset.filter(in_name | in_description)
+
+    @property
+    def queryset(self):
+        return self.__queryset
 
 
 class BrowsingHistory:
@@ -467,10 +504,10 @@ class BrowsingHistory:
 
     def get_history(self, number_of_entries=20):
         """Получить последние записи истории просмотренных товаров"""
-        products = FilterProductsResult.get_queryset_for_catalog(without_offer=False)
-        products = products.filter(id__in=ProductView.objects.filter(user=self.user).values_list('product'))
-        products = products.annotate(date_view=F('productview__updated_at'))
-        products = products.order_by('-date_view')
+        products = QuerysetForCatalog.get_queryset_for_catalog(without_offer=False)
+        products = products.filter(id__in=ProductView.objects.filter(user=self.user).values_list("product"))
+        products = products.annotate(date_view=F("productview__updated_at"))
+        products = products.order_by("-date_view")
         return products[:number_of_entries]
 
 
@@ -653,17 +690,17 @@ class PopularCategory:
         category = ProductCategory.objects.add_related_count(
             queryset=category,
             rel_model=ProductView,
-            rel_field='product__category',
-            count_attr='parameter',
+            rel_field="product__category",
+            count_attr="parameter",
             cumulative=False,
         )
-        category = category.order_by('-parameter')
+        category = category.order_by("-parameter")
         return category
 
     @staticmethod
     def __add_foto_and_price(category):
-        category = category.annotate(min_price=Min('product__offer__price'))
-        fotos = ProductImage.objects.filter(product__category_id=OuterRef('id')).order_by('?')
-        category = category.annotate(foto=Subquery(fotos.values('image')[:1]))
+        category = category.annotate(min_price=Min("product__offer__price"))
+        fotos = ProductImage.objects.filter(product__category_id=OuterRef("id")).order_by("?")
+        category = category.annotate(foto=Subquery(fotos.values("image")[:1]))
 
         return category

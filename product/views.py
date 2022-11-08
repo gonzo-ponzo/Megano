@@ -8,7 +8,7 @@ from product.models import Product, ProductCategory
 from shop.models import Shop
 from promotion.services import BannerMain
 from .services import ReviewForItem, ProductCompareList, SortProductsResult, FilterProductsResult, DetailedProduct
-from .services import DailyOffer, BrowsingHistory, PopularCategory
+from .services import DailyOffer, BrowsingHistory, PopularCategory, SearchProduct
 from constance import config
 from django.core.paginator import Paginator
 from django.contrib import messages
@@ -217,3 +217,25 @@ class DetailedProductView(DetailView):
                 return render(request, self.template_name, context=context)
 
         return redirect("product-page", self.object.pk)
+
+
+class SearchView(ListView):
+
+    template_name = "product/search.html"
+    context_objects_name = "product_list"
+
+    def get_queryset(self):
+        search_query = self.request.GET.get('search_query')
+        products = SearchProduct(search_query)
+        queryset = SortProductsResult(products=products.queryset).sort_by_params(**self.request.GET.dict())
+        return queryset
+
+    def get_paginate_by(self, queryset):
+        return config.OBJECTS_PER_PAGE
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["sort_data"] = SortProductsResult.get_data_for_sort_links(**self.request.GET.dict())
+        # context["sort_part_url"] = SortProductsResult.make_sort_part_url(self.request.GET.dict())
+        context["filter_part_url"] = f'search_query={self.request.GET.get("search_query")}'
+        return context

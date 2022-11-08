@@ -1,0 +1,12 @@
+{
+  "shop": {
+    "email": "shop_4@shop.ru",
+    "name": "Shop example",
+    "description": "Описание",
+    "phone": "+1322248",
+    "address": "Адрес",
+    "image": "orig.webp",
+    "user_mail": "admin_new@asd.sf",
+    "shop_photos": ["photo1665243880.jpeg", "orig.webp", "34309111_975595762616639_6775679799886086144_n.jpg"]
+  
+}
