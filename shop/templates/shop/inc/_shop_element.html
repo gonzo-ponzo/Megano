@@ -12,10 +12,10 @@
         </div>
         <div class="shop_text_card_in_list">
             <div class="shop_name_card_in_list">
-                {{ shop.name }}
+                {{ shop.name|truncatechars:20 }}
             </div>
             <div class="shop_paragraph_card_in_list">
-                {{ shop.description|truncatechars:":50"}}
+                {{ shop.description|truncatechars:34 }}
             </div>
         </div>
     </div>
