@@ -3,6 +3,7 @@ from django.db.models.functions import Cast
 from shop.models import Shop, ShopImage
 from product.models import Offer
 from constance import config
+from django.db.models.functions import Round
 
 
 class ShopDetail:
@@ -40,7 +41,7 @@ class ShopDetail:
             '-sorted_amount_offers_buy'
         )[:config.PRODUCTS_PER_SHOP]
         top_products = top_products.annotate(
-            rating=Avg('product__review__rating', default=0)
+            rating=Round(Avg('product__review__rating', default=0), precision=1)
         )
         top_products = top_products.annotate(
             discount_decimals=Max('promotionoffer__discount_decimals', filter=Q(
@@ -65,14 +66,14 @@ class ShopDetail:
                                                    )
                                                ),
                                                DecimalField(
-                                                   max_digits=6,
+                                                   max_digits=11,
                                                    decimal_places=2
                                                )
                                            ) /
                                            Cast(
                                                100,
                                                DecimalField(
-                                                   max_digits=6,
+                                                   max_digits=11,
                                                    decimal_places=2
                                                )
                                            ) *
@@ -80,7 +81,7 @@ class ShopDetail:
                                                'price'
                                            ),
                                            DecimalField(
-                                               max_digits=6,
+                                               max_digits=11,
                                                decimal_places=2
                                            )
                                            )
