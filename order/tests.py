@@ -143,14 +143,14 @@ class OrderTest(CacheTestCase):
     def tearDown(self) -> None:
         cache.clear()
 
-    def test_http403_if_cart_empty_and_logout(self):
+    def test_http400_if_cart_empty_and_logout(self):
         response = self.client.get(reverse(self.__url))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 400)
 
-    def test_http403_if_cart_empty_and_login(self):
+    def test_http400_if_cart_empty_and_login(self):
         self.client.login(email=self.__emails[0], password=self.__password)
         response = self.client.get(reverse(self.__url))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 400)
 
     def test_http200_and_cache_if_cart_full_and_login(self):
         self.client.login(email=self.__emails[1], password=self.__password)
@@ -283,7 +283,7 @@ class OrderPaymentTest(CacheTestCase):
                 order.save()
             response = self.client.get(reverse(self.__payment_name_url, kwargs={"order_id": order.id}))
             if status == 3:
-                self.assertEqual(response.status_code, 403)
+                self.assertEqual(response.status_code, 400)
             else:
                 self.assertEqual(response.status_code, 200)
             cache.clear()
