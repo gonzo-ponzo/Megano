@@ -104,7 +104,11 @@
                   {% for shop, price, amounth in detailed_product.get_offer_list %}
                     <div class="Categories-row">
                       <div class="Categories-block Categories-block_shop_img">
-                          <img src={{ shop.image.url }} alt="shop-img">
+                          {% if shop.image %}
+                              <img src="{{ shop.image.url }}" alt="shop-img">
+                          {% else %}
+                              <img src="{% static 'img/default_logo_shop.png' %}" alt="shop-img">
+                          {% endif %}
                         <div class="Categories-shop_name">
                           <a href="{{ shop.get_absolute_url }}"><strong>{{ shop.name }}
                           </strong></a>
