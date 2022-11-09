@@ -69,7 +69,6 @@ class OfferInfo(BaseModel):
     product_id: int
     amount: int
     price: Decimal
-    promotion: int | None = None  # TODO
 
     @validator("price")
     def check_correct_price(cls, v):
@@ -188,12 +187,10 @@ def one_shop_import(file_name):  # noqa C901
                 message_list.append(f"WARNING: Product with product_id={offer_data.product_id} not found")
                 has_warnings = True
 
-    # message_list.append("TODO promo")
     return not has_warnings, message_list
 
 
 def send_mail_from_site(subject, message, recipient_list, attach=None):
-    # TODO отправку делать через механизм очереди, или на крайний случай обернуть в try
     email = EmailMessage(subject=subject, body=message, from_email=settings.EMAIL_HOST_USER,
                          to=recipient_list)
     if attach:

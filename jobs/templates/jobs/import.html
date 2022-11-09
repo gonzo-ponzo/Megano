@@ -22,7 +22,7 @@
       <div class="wrap">
         <div class="ProgressPayment">
           {% if is_run %}
-          <div class="ProgressPayment-title">Ждем завершения запущенного импорта
+          <div class="ProgressPayment-title">{% if message %}{{ message }}{% else %}Ждем завершения запущенного импорта{% endif %}
           </div>
           <div class="ProgressPayment-icon">
             <div class="cssload-thecube">
@@ -33,13 +33,27 @@
             </div>
           </div>
           {% else %}
-          <div class="ProgressPayment-title">Запущенных импортов нет, можно запустить новый
-          </div>
-          <form method="post" enctype="multipart/form-data">
-              {{ import_form.as_p }}
+          <div class="login-form-container">
+          <form class="login-form" method="post" enctype="multipart/form-data">
               {% csrf_token %}
-              <button type="submit">{% trans "Запустить" %}</button>
+              <table class="login-form-table">
+                <thead>
+                <tr>
+                    <th colspan="2">{% trans "Запущенных импортов нет, можно запустить новый" %}</th>
+                </tr>
+                </thead>
+                {% for field in import_form %}
+                <tr>
+                    <td>{{ field.label_tag }}</td>
+                    <td>{{ field }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                  <td colspan="2" class="login-form-button"><button class="btn btn_primary" type="submit">{% trans "Запустить" %}</button></td>
+                </tr>
+              </table>
           </form>
+          </div>
           {% endif %}
         </div>
       </div>
