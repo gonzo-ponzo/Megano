@@ -6,6 +6,7 @@ from statistics import mean
 
 from django.db.models.query import QuerySet
 from django.db.models import F, Q, Min, Max, Sum, Count, Avg, OuterRef, Subquery
+from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
@@ -14,6 +15,7 @@ from django.core.cache import cache
 from django.conf import settings
 
 from .models import Product, ProductImage, Offer, ProductProperty, Property, Review, ProductCategory, ProductView
+from order.models import OrderOffer
 from shop.models import Shop
 from user.models import CustomUser
 
@@ -175,14 +177,31 @@ class QuerysetForCatalog:
         if without_offer:
             queryset = queryset.filter(offer__isnull=False)
         queryset = queryset.prefetch_related("productimage_set")
-        queryset = queryset.select_related("category")
+        queryset = queryset.select_related("category").defer('category__created_at',
+                                                             'category__updated_at',
+                                                             'category__deleted_at',
+                                                             'category__description',
+                                                             'category__slug',
+                                                             'category__parent_id',
+                                                             'category__lft',
+                                                             'category__rght',
+                                                             'category__tree_id')
         # queryset = queryset.prefetch_related('shop')
         queryset = queryset.annotate(offer_count=Count("offer", distinct=True))
         queryset = queryset.annotate(min_price=Min("offer__price"))
         queryset = queryset.annotate(review_count=Count("review", distinct=True))
         queryset = queryset.annotate(rating=Avg("review__rating", default=0))
-        queryset = queryset.annotate(rest=Sum("offer__amount", distinct=True))
-        queryset = queryset.annotate(order_count=Sum("offer__orderoffer__amount", default=0, distinct=True))
+
+        offers = Offer.objects.filter(product=OuterRef('pk')).values('product')
+        rest_product = offers.annotate(total=Sum('amount')).values('total')
+        queryset = queryset.annotate(rest=Subquery(rest_product))
+
+        paid_orders = OrderOffer.objects\
+            .filter(order__status_type=3, offer__product=OuterRef('pk'))\
+            .values('offer__product')
+        sold_product = paid_orders.annotate(total=Sum('amount')).values('total')
+        queryset = queryset.annotate(sold=Coalesce(Subquery(sold_product), 0))
+
         queryset = queryset.order_by("pk")
         return queryset
 
@@ -336,7 +355,7 @@ class SortProductsResult:
         return result
 
     def by_popularity(self, reverse=False) -> QuerySet:
-        field = "order_count"
+        field = "sold"
         if not reverse:
             field = "-" + field
         return self.products.order_by(field)

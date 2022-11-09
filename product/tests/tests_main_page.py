@@ -55,9 +55,9 @@ class MainPageView(CacheTestCase):
 
         offer1 = Offer.objects.create(shop=shop, product=p1, price=1000, amount=10)
         Offer.objects.create(shop=shop, product=p2, price=1000, amount=10)
-        Offer.objects.create(shop=shop, product=p3, price=1000, amount=10)
+        offer3 = Offer.objects.create(shop=shop, product=p3, price=1000, amount=10)
         delivery = Delivery.objects.create(price=200, express_price=500, sum_order=2000)
-        order = Order.objects.create(
+        order_non_paid = Order.objects.create(
             user=user,
             city="city",
             address="address",
@@ -66,8 +66,17 @@ class MainPageView(CacheTestCase):
             status_type=1,
             delivery=delivery,
         )
-
-        OrderOffer.objects.create(order=order, offer=offer1, price=1000, amount=5)
+        order_paid = Order.objects.create(
+            user=user,
+            city="city",
+            address="address",
+            delivery_type=1,
+            payment_type=1,
+            status_type=3,
+            delivery=delivery,
+        )
+        OrderOffer.objects.create(order=order_non_paid, offer=offer1, price=1000, amount=10)
+        OrderOffer.objects.create(order=order_paid, offer=offer3, price=1000, amount=1)
 
     def test_view_url_exists_at_desired_location(self):
         resp = self.client.get("")
@@ -113,7 +122,7 @@ class MainPageView(CacheTestCase):
     def test_sort_top_product_by_popularity(self):
         resp = self.client.get(reverse("main-page"))
         top_product = resp.context["top_product"]
-        self.assertTrue(top_product[0].order_count > top_product[1].order_count)
+        self.assertTrue(top_product[0].sold > top_product[1].sold)
 
     def test_if_limited_product_relly_limited(self):
         resp = self.client.get(reverse("main-page"))

@@ -102,7 +102,7 @@ class CatalogViewsSorting(CacheTestCase):
 
         delivery = Delivery.objects.create(price=200, express_price=500, sum_order=2000)
 
-        order = Order.objects.create(
+        order_non_paid = Order.objects.create(
             user=user,
             city="city",
             address="address",
@@ -111,9 +111,18 @@ class CatalogViewsSorting(CacheTestCase):
             status_type=1,
             delivery=delivery,
         )
+        order_paid = Order.objects.create(
+            user=user,
+            city="city",
+            address="address",
+            delivery_type=1,
+            payment_type=1,
+            status_type=3,
+            delivery=delivery,
+        )
 
-        OrderOffer.objects.create(order=order, offer=offer1, price=1000, amount=10)
-        OrderOffer.objects.create(order=order, offer=offer3, price=1000, amount=1)
+        OrderOffer.objects.create(order=order_non_paid, offer=offer1, price=1000, amount=10)
+        OrderOffer.objects.create(order=order_paid, offer=offer3, price=1000, amount=1)
 
     def test_sort_by_newness(self):
         url = reverse("catalog-page")
@@ -169,7 +178,7 @@ class CatalogViewsSorting(CacheTestCase):
         resp = self.client.get(url, data)
         self.assertEqual(resp.status_code, 200)
         products = resp.context["product_list"]
-        self.assertTrue(products[0].order_count > products[1].order_count)
+        self.assertTrue(products[0].sold > products[1].sold)
 
     def test_sort_by_popularity_reverse(self):
         url = reverse("catalog-page")
@@ -177,7 +186,7 @@ class CatalogViewsSorting(CacheTestCase):
         resp = self.client.get(url, data)
         self.assertEqual(resp.status_code, 200)
         products = resp.context["product_list"]
-        self.assertTrue(products[0].order_count < products[1].order_count)
+        self.assertTrue(products[0].sold < products[1].sold)
 
 
 class CatalogViewsFilter(CacheTestCase):
