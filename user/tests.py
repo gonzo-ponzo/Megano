@@ -248,7 +248,6 @@ class UserPagesTest(CacheTestCase):
         self.assertTemplateUsed(response, "user/account.html")
         for name in names:
             self.assertContains(response, reverse(name))
-        # TODO проверить наличие остальных разделов
 
     def test_userpage_update_get(self):
         names = ["account", "order:history-orders", "views_history"]

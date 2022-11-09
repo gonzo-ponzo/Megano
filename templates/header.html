@@ -48,6 +48,12 @@
             <div class="row ControlPanel-rowSplit">
               {% if request.user.is_authenticated %}
                 <div class="row-block"><a class="ControlPanel-title" href="{% url 'account' %}">{% trans "добро пожаловать" %}, {{ request.user.email }}</a></div>
+                {% if request.user.is_staff %}
+                      <div class="row-block"><a class="ControlPanel-title" href="{% url 'admin:index' %}">{% trans "админка" %}</a></div>
+                {% endif %}
+                {% if perms.jobs.start_import %}
+                      <div class="row-block"><a class="ControlPanel-title" href="{% url 'shop_import' %}">{% trans "импорт" %}</a></div>
+                {% endif %}
                 <div class="row-block"><a class="ControlPanel-title" href="{% url 'logout' %}?next={{ request.path }}">{% trans "выход" %}</a></div>
               {% else %}
                 <div class="row-block"><a class="ControlPanel-title" href="{% url 'login-page' %}?next={{ request.path }}">{% trans "вход/регистрация" %}</a></div>
