@@ -10,4 +10,3 @@ class Process(models.Model):
         permissions = [
             ("start_import", _("Запускать импорт")),
         ]
-

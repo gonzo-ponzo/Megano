@@ -3,6 +3,7 @@ from django.test import TestCase, override_settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.conf import settings
+from django.urls import reverse
 
 from jobs.services import one_shop_import
 from product.models import ProductCategory, Manufacturer, Product, Offer
@@ -87,5 +88,34 @@ class TestCoreImport(TestCase):
         count_offers = Offer.objects.filter(shop=shop).count()
         self.assertEqual(count_offers, 1)
 
-    def test_import_from_site_need_permission(self):
-        pass  # TODO
+
+class TestAccessToImportPage(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # юзер c правами для импорта, и юзер без прав
+        user = User.objects.create_user(email="test@e.mail", password="test_password")
+        group, _ = Group.objects.get_or_create(name="Importer")
+        perm = Permission.objects.get(codename="start_import")
+        group.permissions.add(perm)
+        group.save()
+        user.groups.add(group)
+        user.save()
+        User.objects.create_user(email="another@e.mail", password="test_password")
+
+    def test_import_notauthenticated_user(self):
+        url = reverse("shop_import")
+        response = self.client.get(url)
+        self.assertRedirects(response, f"{reverse('login-page')}?next={url}")
+
+    def test_import_user_without_perm(self):
+        self.client.login(email="another@e.mail", password="test_password")
+        url = reverse("shop_import")
+        response = self.client.get(url)
+        self.assertRedirects(response, f"{reverse('login-page')}?next={url}")
+
+    def test_import_user_with_perm(self):
+        self.client.login(email="test@e.mail", password="test_password")
+        url = reverse("shop_import")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "jobs/import.html")
