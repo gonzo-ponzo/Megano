@@ -684,7 +684,17 @@ var Order = function(){
                 var $this = $(this),
                     href = $this.attr('href'),
                     error = false,
-                    $validate = $this.closest($blocks).find('[data-validate]')
+                    $validate = $this.closest($blocks).find('[data-validate]');
+
+                if( href === '#step3') {
+                    let $city = $this.closest($blocks).find('#id_city'),
+                        $address = $this.closest($blocks).find('#id_address');
+                    $city.val($city.val().trim());
+                    $address.val($address.val().trim());
+                    // $city.val("Минск");
+                    // $address.val("ул. Рокоссовского");
+                }
+
                 if ($(e.target).is('.Order-next')) {
                     $validate.each(function(){
                         var $this = $(this);
@@ -694,6 +704,29 @@ var Order = function(){
                         }
                     });
                 }
+//переписать
+                if( href === '#step4') {
+                    let city = $('#id_city').val(),
+                        address = $('#id_address').val(),
+                        delivery_type = $('input[name="delivery_type"]:checked'),
+                        delivery_type_name = delivery_type.parent().text().trim(),
+                        payment_type = $('input[name="payment_type"]:checked').parent().text().trim();
+                    $('.order-delivery').text(delivery_type_name);
+                    $('.order-city').text(city);
+                    $('.order-address').text(address);
+                    $('.order-payment').text(payment_type);
+
+                    if (delivery_type.val() === "1"){
+                        $('.order-total-normal').addClass('order-total');
+                        $('.order-total-express').removeClass('order-total');
+                    }
+                    else if (delivery_type.val() === "2") {
+                        $('.order-total-normal').removeClass('order-total');
+                        $('.order-total-express').addClass('order-total');
+                    }
+
+                }
+
                 if ( error===false && ($(e.target).is('.Order-next') ||
                     $blocks.index($(href)) < $blocks.index($blocks.filter('.Order-block_OPEN')))
                 ) {

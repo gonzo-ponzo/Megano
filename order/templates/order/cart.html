@@ -1,17 +1,31 @@
 {% load static %}
-{% include 'base.html' with title="Cart" %}
+{% load i18n %}
+{% trans "Корзина" as trans_cart %}
+{% include 'base.html' with title=trans_cart %}
+
+
 <body class="Site">
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
   {% include 'header.html' with cart_price=cart_price cart_counter=cart_counter %}
   <div class="Middle Middle_top">
     <div class="Middle-top">
       <div class="wrap">
         <div class="Middle-header">
-          <h1 class="Middle-title">Корзина
+          <h1 class="Middle-title">{{ trans_cart }}
           </h1>
           <ul class="breadcrumbs Middle-breadcrumbs">
-            <li class="breadcrumbs-item"><a href="/static">home</a>
+            <li class="breadcrumbs-item">
+                <a href="{% url 'main-page' %}">
+                    {% trans "Главная" %}
+                </a>
             </li>
-            <li class="breadcrumbs-item breadcrumbs-item_current"><span>Корзина</span>
+            <li class="breadcrumbs-item breadcrumbs-item_current"><span>{{ trans_cart }}</span>
             </li>
           </ul>
         </div>
@@ -20,50 +34,75 @@
     <div class="Section">
       <div class="wrap">
         <form class="form Cart" action="#" method="post">
-
-          {% for price, quantity, shop, name, image, product_id, shop_id in cart %}
+          {% for item in cart %}
           <div class="Cart-product">
             <div class="Cart-block Cart-block_row">
-              <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img class="Cart-img" src=/media/{{ image }} alt="card.jpg"/></a>
+              <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img class="Cart-img" src=/media/{{ item.product_image }} alt="card.jpg"/></a>
               </div>
-              <div class="Cart-block Cart-block_info"><a class="Cart-title" href="/product/{{ product_id }}">{{ name }}</a>
-                <div class="Cart-desc">{{ shop }}
+              <div class="Cart-block Cart-block_info"><a class="Cart-title" href="/product/{{ item.product_id }}">{{ item.product_name }}</a>
+                <div class="Cart-desc">{{ item.shop_name }}
                 </div>
+
               </div>
+              <div class="Cart-block Cart-block_info">
+                {% if item.quantity > item.limits %}
+                  <div class="Cart-desc alert alert-error">
+                    {% trans "Превышен лимит. Доступный остаток:" %} {{ item.limits }}
+                  </div>
+                {% endif %}
+              </div>
+              {% if item.final_price < item.offer_price %}
+                <div class="Cart-block Cart-block_price">
+                  <div class="Cart-price">
+                      {{ item.final_price }} руб.
+                  </div>
+                </div>
+                <div class="Cart-block Cart-block_price">
+                  <div class="Cart-price">
+                    <s>{{ item.offer_price }} руб.</s>
+                  </div>
+                </div>
+              {% else %}
               <div class="Cart-block Cart-block_price">
-                <div class="Cart-price">{{ price }}$
+                <div class="Cart-price">
+                    {{ item.offer_price }} руб.
                 </div>
               </div>
+              {% endif %}
             </div>
             <div class="Cart-block Cart-block_row">
-
               <div class="Cart-block Cart-block_amount">
                 <div class="Cart-amount">
                   <div class="Amount">
-                    <button class="Amount-remove" type="button" onclick="location.href='{% url 'order:cart-lower' product_id shop_id %}'">
+                    <button class="Amount-remove" type="button" onclick="location.href='{% url 'order:cart-lower' item.product_id item.shop_id %}'">
                     </button>
-                    <input class="Amount-input form-input" name="amount" type="text" value={{ quantity }}>
-                    <button class="Amount-add" type="button" onclick="location.href='{% url 'order:cart-add' product_id shop_id %}'">
+                    <input class="Amount-input form-input" name="amount" type="text" value={{ item.quantity }}>
+                    <button class="Amount-add" type="button" onclick="location.href='{% url 'order:cart-add' item.product_id item.shop_id %}'">
                     </button>
                   </div>
                 </div>
               </div>
-              <div class="Cart-block Cart-block_delete"><a class="Cart-delete" href="{% url 'order:cart-remove' product_id shop_id %}"><img src="{% static 'img/icons/card/delete.svg' %}" alt="delete.svg"/></a>
+              <div class="Cart-block Cart-block_delete"><a class="Cart-delete" href="{% url 'order:cart-remove' item.product_id item.shop_id %}"><img src="{% static 'img/icons/card/delete.svg' %}" alt="delete.svg"/></a>
               </div>
             </div>
           </div>
           {% endfor %}
+            {% if cart %}
+                <div class="Cart-total">
+                    <div class="Cart-block Cart-block_total">
+                        <strong class="Cart-title">{% trans "Итого" %}:
+                        </strong><span class="Cart-price">{{ cart_price }} руб.</span>
+                    </div>
+                    <div class="Cart-block">
+                        <a class="btn btn_success btn_lg" href="{% url 'order:create-order' %}">
+                            {% trans "Оформить заказ" %}
+                        </a>
+                    </div>
 
-
-
-          <div class="Cart-total">
-            <div class="Cart-block Cart-block_total">
-              <strong class="Cart-title">Итого:
-              </strong><span class="Cart-price">{{ cart_price }}$</span>
-            </div>
-            <div class="Cart-block"><a class="btn btn_success btn_lg" href="/order">Оформить заказ</a>
-            </div>
-          </div>
+                </div>
+            {% else %}
+                {% trans 'Корзина не заполнена' %}
+            {% endif %}
         </form>
       </div>
     </div>

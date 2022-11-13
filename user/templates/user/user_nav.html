@@ -1,0 +1,25 @@
+{% load i18n %}
+
+        <div class="Section-column">
+          <div class="Section-columnSection">
+            <header class="Section-header">
+              <strong class="Section-title">{% trans "Навигация" %}
+              </strong>
+            </header>
+            <div class="Section-columnContent">
+              <div class="NavigateProfile">
+                <ul class="menu menu_vt">
+                  <li class="{% if item == 'account' %}menu-item_ACTIVE {% endif %}menu-item"><a class="menu-link" href="{% url 'account' %}">{% trans "Личный кабинет" %}</a>
+                  </li>
+                  <li class="{% if item == 'update' %}menu-item_ACTIVE {% endif %}menu-item"><a class="menu-link" href="{% url 'profile' %}">{% trans "Профиль" %}</a>
+                  </li>
+                  <li class="{% if item == 'orders' %}menu-item_ACTIVE {% endif %}menu-item"><a class="menu-link" href="{% url 'order:history-orders' %}">{% trans "История заказов" %}</a>
+                  </li>
+                  <li class="{% if item == 'views' %}menu-item_ACTIVE {% endif %}menu-item"><a class="menu-link" href="{% url 'views_history' %}">{% trans "История просмотра" %}</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+

@@ -1,15 +1,17 @@
-from django.views.generic import TemplateView
-from .models import Promotion
+from django.views.generic import ListView, DetailView
+from .models import PromotionOffer
+from constance import config
+
 
 # Create your views here.
+class PromotionListView(ListView):
+    model = PromotionOffer
+    template_name = "promotion/promotions.html"
+
+    def get_paginate_by(self, queryset):
+        return config.OBJECTS_PER_PAGE
 
 
-class PromotionView(TemplateView):
-    model = Promotion
-    template_name = 'promotion/promotion.html'
-    context_objects_name = 'promotion_list'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['list'] = Promotion.objects.all()
-        return context
+class PromotionView(DetailView):
+    model = PromotionOffer
+    template_name = "promotion/promotion.html"

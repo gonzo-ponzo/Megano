@@ -14,3 +14,10 @@ def get_product_categories():
         settings.CACHE_TIMEOUT.get(settings.CACHE_KEY_PRODUCT_CATEGORY),
     )
     return category
+
+
+@register.simple_tag(takes_context=True)
+def url_replace(context, field, value):
+    dict_ = context['request'].GET.copy()
+    dict_[field] = value
+    return dict_.urlencode()

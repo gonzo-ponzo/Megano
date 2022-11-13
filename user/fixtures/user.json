@@ -1,0 +1,42 @@
+[
+  {
+    "model": "user.customuser",
+    "pk": 1,
+    "fields": {
+      "password": "qwerasd1234",
+      "last_login": "2022-10-01T18:34:07.559Z",
+      "email": "test@test.com",
+      "first_name": "тест",
+      "last_name": "тест",
+      "middle_name": "",
+      "phone": "+375335689645",
+      "avatar": "",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "cart": {},
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "user.customuser",
+    "pk": 2,
+    "fields": {
+      "password": "qwerasd12341",
+      "last_login": "2022-10-01T18:34:07.559Z",
+      "email": "tes2t@test.com",
+      "first_name": "тест2",
+      "last_name": "тест2",
+      "middle_name": "",
+      "phone": "+375334689645",
+      "avatar": "",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "cart": {},
+      "groups": [],
+      "user_permissions": []
+    }
+  }
+]

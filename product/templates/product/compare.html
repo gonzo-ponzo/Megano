@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 {% include 'base.html' with title="Compare" %}
 <body class="Site">
   {% include 'header.html' %}
@@ -6,12 +7,12 @@
     <div class="Middle-top">
       <div class="wrap">
         <div class="Middle-header">
-          <h1 class="Middle-title">Сравнение товаров
+          <h1 class="Middle-title">{% trans "Сравнение товаров" %}
           </h1>
           <ul class="breadcrumbs Middle-breadcrumbs">
-            <li class="breadcrumbs-item"><a href="/static">home</a>
+            <li class="breadcrumbs-item"><a href="/static">{% trans "Главная" %}</a>
             </li>
-            <li class="breadcrumbs-item breadcrumbs-item_current"><span>Сравнение товаров</span>
+            <li class="breadcrumbs-item breadcrumbs-item_current"><span>{% trans "Сравнение товаров" %}</span>
             </li>
           </ul>
         </div>
@@ -20,436 +21,135 @@
     <div class="Section">
       <div class="wrap">
         <article class="Article">
-          <p>Разнообразный и богатый опыт постоянный количественный рост и сфера нашей активности обеспечивает широкому кругу (специалистов) участие в формировании системы обучения кадров, соответствует насущным потребностям. Идейные соображения высшего порядка, а также консультация с широким активом требуют определения и уточнения соответствующий условий активизации.
+          <p>
+              {% trans "Разнообразный и богатый опыт постоянный количественный рост и сфера нашей активности обеспечивает широкому кругу (специалистов) участие в формировании системы обучения кадров, соответствует насущным потребностям. Идейные соображения высшего порядка, а также консультация с широким активом требуют определения и уточнения соответствующий условий активизации." %}
           </p>
         </article>
+
+      {% if compare_list.get_product_list %}
         <div class="Compare">
-          <div class="Compare-header">
-            <label class="toggle Compare-checkDifferent">
-              <input type="checkbox" name="differentFeature" value="true" checked="checked"/><span class="toggle-box"></span><span class="toggle-text">Только различающиеся характеристики</span>
-            </label>
-          </div>
-          <div class="Compare-row">
-            <div class="Compare-title Compare-title_blank">
+            <div class="Compare-header">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <label class="toggle Compare-checkDifferent">
+                        <input type="checkbox" name="differentFeature" {% if compare_list.short_list  %}checked="checked" value="True"{% else %}value="False"{% endif %}/>
+                        <span class="toggle-box"></span>
+                        <span class="toggle-text">{% trans "Только различающиеся характеристики" %}</span>
+                    </label>
+                <select name="ChoiceCategory">
+                    <option value="None">Все</option>
+                    {% for category in compare_list.category_list %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+
+                    <br><input type="submit" value="{% trans "применить" %}" />
+                </form>
             </div>
-            <div class="Compare-products">
-              <div class="Compare-product">
-                <div class="Compare-nameProduct Compare-nameProduct_main">Ноутбук SE40302
-                </div>
-                <div class="Compare-feature"><img class="Compare-pict" src="{% static 'img/content/home/card.jpg' %}" alt="card.jpg"/>
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct Compare-nameProduct_main">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature"><img class="Compare-pict" src="{% static 'img/content/sale/product.png' %}" alt="product.png"/>
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct Compare-nameProduct_main">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature"><img class="Compare-pict" src="{% static 'img/content/sale/product.png' %}" alt="product.png"/>
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct Compare-nameProduct_main">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature"><img class="Compare-pict" src="{% static 'img/content/sale/product.png' %}" alt="product.png"/>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="Compare-row">
-            <div class="Compare-title Compare-title_blank">
-            </div>
-            <div class="Compare-products">
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Ноутбук SE40302
-                </div>
-                <div class="Compare-feature"><a class="Compare-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Compare-btn" href="#"><img src="{%  static 'img/icons/card/delete.svg' %}" alt="delete.svg"/></a>
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature"><a class="Compare-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Compare-btn" href="#"><img src="{%  static 'img/icons/card/delete.svg' %}" alt="delete.svg"/></a>
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature"><a class="Compare-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Compare-btn" href="#"><img src="{%  static 'img/icons/card/delete.svg' %}" alt="delete.svg"/></a>
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature"><a class="Compare-btn" href="#"><img src="{% static 'img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Compare-btn" href="#"><img src="{%  static 'img/icons/card/delete.svg' %}" alt="delete.svg"/></a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="Compare-row">
-            <div class="Compare-title">Рейтинг
-            </div>
-            <div class="Compare-products">
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Ноутбук SE40302
-                </div>
-                <div class="Compare-feature">
-                  <div class="Rating">
-                    <div class="Rating-stars"><span class="Rating-star Rating-star_view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star Rating-star_view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star Rating-star_view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star Rating-star_view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span>
-                    </div>
-                    <div class="Rating-title">
-                    </div>
+            <div class="Compare-row">
+              {% for product in compare_list.get_product_list %}
+                  <div class="Compare-title Compare-title_blank">
                   </div>
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">
-                  <div class="Rating">
-                    <div class="Rating-stars"><span class="Rating-star Rating-star_view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star Rating-star_view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star Rating-star_view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span>
-                    </div>
-                    <div class="Rating-title">
-                    </div>
+                  <div class="Compare-products">
+                      <div class="Compare-product">
+                          <div class="Compare-nameProduct Compare-nameProduct_main">
+                              <a href="{% url 'product-page' product.id %}">{{ product.name }}</a>
+                          </div>
+                          <div class="Compare-feature">
+                              <img class="Compare-pict"
+                                   src="{% if product.image %}{{ product.image.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}"
+                                   alt="{{ product.name|truncatechars:30 }}">
+                          </div>
+                          <div class="Compare-feature">
+                          <a class="Compare-btn" href="{% url 'compare_remove' product.id %}">
+                              <img src="{%  static 'img/icons/card/delete.svg' %}" alt="delete.svg"/>
+                          </a>
+                          </div>
+                      </div>
                   </div>
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">
-                  <div class="Rating">
-                    <div class="Rating-stars"><span class="Rating-star Rating-star_view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star Rating-star_view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star Rating-star_view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star Rating-star_view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span>
+                  {% endfor %}
+          </div>
+            <div class="Compare-row">
+            <div class="Compare-title">{% trans "Рейтинг" %}
+            </div>
+            <div class="Compare-products">
+
+                {% for product in compare_list.get_product_list %}
+                    {% if product.rating %}
+                        <div class="Compare-product">
+                            <div class="Compare-feature">
+                                <div class="Rating">
+                                    <div class="Rating-stars">
+                                        {% for star in product.rating %}
+                                            <span class="Rating-star Rating-star_view">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
+                                                    <g>
+                                                        <g>
+                                                            <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z">
+
+                                                            </path>
+                                                        </g>
+                                                    </g>
+                                                    <rect x="{{ star }}%" y="0" width="19" height="18" fill="white" />
+                                                </svg>
+                                            </span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="Compare-product">
+                            <div class="Compare-feature">
+                                <div class="Rating">
+                                    <div class="Rating-stars">
+                                        {% trans "Нет оценок" %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+              <div class="Rating-title"></div>
+          </div>
+            {% for attribute in compare_list.attribute_list.values %}
+                <div class="Compare-row">
+                    <div class="Compare-title">
+                        {{ attribute.name }}
                     </div>
-                    <div class="Rating-title">
+                    <div class="Compare-products">
+                        {% for elem in attribute.get_attribute_list %}
+                            <div class="Compare-product">
+                            <div class="Compare-feature">
+                                {{ elem }}
+                            </div>
+                            </div>
+                        {% endfor %}
                     </div>
-                  </div>
                 </div>
+            {% endfor %}
+            <div class="Compare-row">
+              <div class="Compare-title">
+                  {% trans "Цена от" %}
               </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">
-                  <div class="Rating">
-                    <div class="Rating-stars"><span class="Rating-star Rating-star_view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star Rating-star_view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span><span class="Rating-star">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                          <g>
-                            <g>
-                              <path fill="#ffc000" d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                            </g>
-                          </g>
-                        </svg></span>
-                    </div>
-                    <div class="Rating-title">
-                    </div>
-                  </div>
-                </div>
+              <div class="Compare-products">
+                  {% for product in compare_list.get_product_list %}
+                      <div class="Compare-product">
+                          <div class="Compare-feature">
+                              <strong class="Compare-price">
+                                  {{ product.min_price }}
+                              </strong>
+                          </div>
+                      </div>
+                  {% endfor %}
               </div>
-            </div>
           </div>
-          <div class="Compare-row">
-            <div class="Compare-title">Частота процессора
-            </div>
-            <div class="Compare-products">
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Ноутбук SE40302
-                </div>
-                <div class="Compare-feature">2.2 ГГц
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">1.2 ГГц
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">1.2 ГГц
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">1.2 ГГц
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="Compare-row Compare-row_hide">
-            <div class="Compare-title">Время зарядки от сети
-            </div>
-            <div class="Compare-products">
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Ноутбук SE40302
-                </div>
-                <div class="Compare-feature">3 часа
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">3 часа
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">3 часа
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">3 часа
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="Compare-row">
-            <div class="Compare-title">Время работы от батареи
-            </div>
-            <div class="Compare-products">
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Ноутбук SE40302
-                </div>
-                <div class="Compare-feature">3 часа
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">8 часов
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">8 часов
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">8 часов
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="Compare-row">
-            <div class="Compare-title">Разъемы usb
-            </div>
-            <div class="Compare-products">
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Ноутбук SE40302
-                </div>
-                <div class="Compare-feature">3
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">1
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">1
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">1
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="Compare-row">
-            <div class="Compare-title">Цена
-            </div>
-            <div class="Compare-products">
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Ноутбук SE40302
-                </div>
-                <div class="Compare-feature">
-                  <strong class="Compare-priceOld">$115.00
-                  </strong>
-                  <strong class="Compare-price">$85.00
-                  </strong>
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">
-                  <strong class="Compare-priceOld">$85.00
-                  </strong>
-                  <strong class="Compare-price">$50.00
-                  </strong>
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">
-                  <strong class="Compare-priceOld">$85.00
-                  </strong>
-                  <strong class="Compare-price">$50.00
-                  </strong>
-                </div>
-              </div>
-              <div class="Compare-product">
-                <div class="Compare-nameProduct">Планшет Windows A848sls
-                </div>
-                <div class="Compare-feature">
-                  <strong class="Compare-priceOld">$85.00
-                  </strong>
-                  <strong class="Compare-price">$50.00
-                  </strong>
-                </div>
-              </div>
-            </div>
-          </div>
+            <a href="{% url 'compare_clear' %}">{% trans "Очистить лист сравнений" %}</a>
         </div>
+      {% else %}
+          <div class="Compare-feature">{% trans "Нет товаров для сравнения" %}</div>
+      {% endif %}
       </div>
     </div>
   </div>

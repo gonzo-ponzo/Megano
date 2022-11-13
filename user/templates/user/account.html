@@ -1,0 +1,156 @@
+{% load static %}
+{% load i18n %}
+{% include 'base.html' with title="Личный кабинет" %}
+<body class="Site">
+  {% include 'header.html' %}
+  <div class="Middle Middle_top">
+    <div class="Middle-top">
+      <div class="wrap">
+        <div class="Middle-header">
+          <h1 class="Middle-title">{% trans "Личный кабинет" %}
+          </h1>
+          <ul class="breadcrumbs Middle-breadcrumbs">
+            <li class="breadcrumbs-item"><a href="{% url 'main-page' %}">{% trans "Главная" %}</a>
+            </li>
+            <li class="breadcrumbs-item breadcrumbs-item_current"><span>{% trans "Личный кабинет" %}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="Section Section_column Section_columnLeft">
+      <div class="wrap">
+        {% include 'user/user_nav.html' with item="account" %}
+        <div class="Section-content">
+          <div class="Account">
+            <div class="Account-group">
+              {% if request.user.avatar %}<div class="Account-column">
+                <div class="Account-avatar"><img src="{{ request.user.avatar.url }}" alt="avatar"/>
+                </div>
+              </div>{% endif %}
+              <div class="Account-column">
+                <div class="Account-name">{{ request.user.get_fio }}
+                </div><a class="Account-editLink" href="{% url 'profile' %}">{% trans "Редактировать профиль" %}</a>
+              </div>
+            </div>
+            
+            {% if order %}
+                <div class="Account-group">
+                    <div class="Account-column Account-column_full">
+                        <div class="Order Order_anons">
+                            <div class="Order-personal">
+                                <div class="row">
+                                    <div class="row-block">
+                                        <a class="Order-title" href="{{ order.get_absolute_url }}">
+                                            {% trans "Заказ" %}&#32;
+                                            <span class="Order-numberOrder">№{{ order.pk }}</span>
+                                            &#32;{% trans 'от' %}&#32;
+                                            <span class="Order-dateOrder">
+                                  {{ order.created_at|date:'Y-m-d H:i:s' }}
+                              </span>
+                                        </a>
+                                        <div class="Account-editLink">
+                                            <a href="{% url 'order:history-orders' %}">
+                                                {% trans "История заказов" %}
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="row-block">
+                                        <div class="Order-info Order-info_delivery">
+                                            <div class="Order-infoType">
+                                                {% trans "Тип доставки" %}:
+                                            </div>
+                                            <div class="Order-infoContent">
+                                                {{ order.get_delivery_type_display }}
+                                            </div>
+                                        </div>
+                                        <div class="Order-info Order-info_pay">
+                                            <div class="Order-infoType">
+                                                {% trans "Оплата" %}:
+                                            </div>
+                                            <div class="Order-infoContent">
+                                                {{ order.get_payment_type_display }}
+                                            </div>
+                                        </div>
+                                        <div class="Order-info">
+                                            <div class="Order-infoType">
+                                                {% trans "Общая стоимость" %}:
+                                            </div>
+                                            <div class="Order-infoContent">
+                                                {% if order.sum_discount %}
+                                                    <span class="Order-price">
+                                  {{ order.total_full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                </span>
+                                                    <span class="Order-price_old">
+                                  {{ order.full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                </span>
+                                                {% else %}
+                                                    <span class="Order-price">
+                                  {{ order.full_price|floatformat:"-2" }}&nbsp;{% trans 'руб.' %}
+                                </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="Order-info Order-info_status">
+                                            <div class="Order-infoType">
+                                                {% trans "Статус" %}:
+                                            </div>
+                                            <div class="Order-infoContent">
+                                                {{ order.get_status_type_display }}
+                                            </div>
+                                        </div>
+                                        {% if order.error_type %}
+                                            <div class="Order-info Order-info_error">
+                                                <div class="Order-infoType">
+                                                    {% trans 'Оплата не прошла' %}:
+                                                </div>
+                                                <div class="Order-infoContent">
+                                                    {{ order.error_name }}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="Account-group">
+
+              <div class="Account-column Account-column_full">
+                <header class="Section-header">
+                  <h2 class="Section-title">{% trans "История просмотров" %}</h2>
+                </header>
+                <div class="Cards Cards_account">
+
+                    {% for product in viewed_products %}
+                        {# карточки продуктов #}
+                        {% cycle '' 'hide_700' 'hide_md' as add_class silent %}
+                        {% include 'product/inc/_product_card.html' with card_class=add_class %}
+
+                    {% empty %}
+                        <div>
+                            {% trans "Продуктов не найдено" %}.
+                        </div>
+                    {% endfor %}
+
+                </div>
+                <div class="Account-editLink Account-editLink_view"><a href="{% url "views_history" %}">{% trans "Перейти на полный список" %}</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% include 'footer.html' %}
+  <script src="assets/plg/jQuery/jquery-3.5.0.slim.min.js"></script>
+  <script src="assets/plg/form/jquery.form.js"></script>
+  <script src="assets/plg/form/jquery.maskedinput.min.js"></script>
+  <script src="assets/plg/range/ion.rangeSlider.min.js"></script>
+  <script src="assets/plg/Slider/slick.min.js"></script>
+  <script src="assets/js/scripts.js"></script>
+</body>

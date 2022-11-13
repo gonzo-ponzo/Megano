@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import PromotionView
+from .views import PromotionListView, PromotionView
 
 urlpatterns = [
-    path('', PromotionView.as_view(), name='promotion-page'),
+    path("", PromotionListView.as_view(), name="promotion-list-page"),
+    path("<int:pk>/", PromotionView.as_view(), name="promotion-page"),
 ]
